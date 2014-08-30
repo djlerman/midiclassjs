@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MIDI.File demos: Convert to single track</title>
+
+<script src="../js/Window/DOMLoader.XMLHttp.js"></script>
+<script src="../js/Window/DOMLoader.script.js"></script>
+<script src="../js/MIDI/AudioDetect.js"></script>
+<script src="../js/MIDI/LoadPlugin.js"></script>
+<script src="../js/MIDI/Plugin.js"></script>
+<script src="../js/MIDI/Player.js"></script>
+<script src="../inc/jasmid/stream.js"></script>
+<script src="../inc/jasmid/midifile.js"></script>
+<script src="../inc/jasmid/replayer.js"></script>
+<script src="../inc/base64binary.js"></script>
+
+<script src="../js/MIDI/File.js"></script>
+<script src="common.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="common.css" />
+
+<script type="text/javascript">
+
+var player;
+
+
+function convert()
+	{
+	var data = player.mfile.data();
+	if (data.tracks.length <= 1)
+		{
+		el("output").innerHTML = "The midi type is 0.";
+		return;
+		}
+	
+	var events = [];
+	var i = 0;
+	for (var ti = 0; ti < data.tracks.length; ti++)
+		{
+		var track = data.tracks[ti];
+		var time = 0;
+		for (var ei = 0; ei < track.length; ei++)
+			events.push({i: i++, time: time += track[ei].deltaTime, event: track[ei]});
+		}
+	events.sort(function (a, b) {return (a.time - b.time)? a.time - b.time: a.i - b.i;});
+	var time = 0;
+	var track = [];
+	for (var ei = 0; ei < events.length; ei++)
+		{
+		events[ei].event.deltaTime = events[ei].time - time;
+		if (events[ei].event.subtype != "endOfTrack")
+			{
+			track.push(events[ei].event);
+			time = events[ei].time;
+			}
+		}
+	track.push({
+			type: "meta",
+			subtype: "endOfTrack",
+			deltaTime: events[events.length - 1].time - time
+			});
+	data.tracks = [track];
+	data.header.formatType = 0; 
+	
+	el("output").innerHTML = "The new midi type is 0.";
+//	el("output").innerHTML = "<pre>" + player.mfile.exportText() + "</pre>";	
+	player.el.name.value += ".0";
+	player.show();
+	}
+
+
+
+</script>
+
+</head>
+
+<body onLoad="init();">
+
+	<div class="status">Status: <span id="status">...</span></div>
+	
+	<table class=layout width=100%>
+		<tr>
+			<td id="col1">
+				<table>
+					<tr><th>Current tune</th></tr>
+					<tr class="line">
+						<td>
+							Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
+							Events: <span id="currentEvents">?</span>
+						</td>
+					</tr>
+					<tr class="line">
+						<td>
+							<input type="button" value="Start" id="start">
+							<input type="button" value="Stop" id="stop">
+							&nbsp;&nbsp;&nbsp;
+							<a id="dl" href="#">Download</a>
+							<br>
+							<br>
+							Name: <input type="text" id="name" size=12 value="-untitled-">
+							<input type="button" value="Save" id="save">
+						</td>
+					</tr>
+				</table>
+			
+			<div class="demo">
+				<input type="button" value="Convert" onClick="makeTry(convert);">
+				<div id="output"></div>
+			</div>	
+							
+			</td>
+			
+			<td id="col2">
+				<table>
+					  <tr><th colspan=3>Saved tunes</th></tr>
+					 <tbody id="saved"></tbody>
+				</table>				
+			</td>
+			
+			<td id="col3">
+			See also:
+				 <ul id="dir"></ul>
+			</td>
+			
+		</tr>
+	</table>
+	
+	
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MIDI.File demos: Count duration</title>
+
+<script src="../js/Window/DOMLoader.XMLHttp.js"></script>
+<script src="../js/Window/DOMLoader.script.js"></script>
+<script src="../js/MIDI/AudioDetect.js"></script>
+<script src="../js/MIDI/LoadPlugin.js"></script>
+<script src="../js/MIDI/Plugin.js"></script>
+<script src="../js/MIDI/Player.js"></script>
+<script src="../inc/jasmid/stream.js"></script>
+<script src="../inc/jasmid/midifile.js"></script>
+<script src="../inc/jasmid/replayer.js"></script>
+<script src="../inc/base64binary.js"></script>
+
+<script src="../js/MIDI/File.js"></script>
+<script src="common.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="common.css" />
+
+<script type="text/javascript">
+
+var player;
+
+
+function count()
+	{
+	var outEl = 	document.getElementById("output");
+	var data = player.mfile.data();
+	var dur = 0;
+	for (var ti = 0; ti < data.tracks.length; ti++)
+		{
+		var track = data.tracks[ti];
+		var time = 0;
+		for (var ei = 0; ei < track.length; ei++) time += track[ei].deltaTime;
+		dur = Math.max(dur, time);
+		}
+	outEl.innerHTML = "Duration [sec]: "
+			+ (dur * player.mfile.getTempo() / player.mfile.getTimebase() / 1000000);
+	}
+
+
+</script>
+
+</head>
+
+<body onLoad="init();">
+
+	<div class="status">Status: <span id="status">...</span></div>
+	
+	<table class=layout width=100%>
+		<tr>
+			<td id="col1">
+				<table>
+					<tr><th>Current tune</th></tr>
+					<tr class="line">
+						<td>
+							Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
+							Events: <span id="currentEvents">?</span>
+						</td>
+					</tr>
+					<tr class="line">
+						<td>
+							<input type="button" value="Start" id="start">
+							<input type="button" value="Stop" id="stop">
+							&nbsp;&nbsp;&nbsp;
+							<a id="dl" href="#">Download</a>
+							<br>
+							<br>
+							Name: <input type="text" id="name" size=12 value="-untitled-">
+							<input type="button" value="Save" id="save">
+						</td>
+					</tr>
+				</table>
+			
+			<div class="demo">
+				<input type="button" value="Count" onClick="makeTry(count);">
+				<div id="output"></div>
+			</div>	
+							
+			</td>
+			
+			<td id="col2">
+				<table>
+					  <tr><th colspan=3>Saved tunes</th></tr>
+					 <tbody id="saved"></tbody>
+				</table>				
+			</td>
+			
+			<td id="col3">
+			See also:
+				 <ul id="dir"></ul>
+			</td>
+			
+		</tr>
+	</table>
+	
+	
+
+</body>
+</html>

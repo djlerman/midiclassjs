@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Index</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Index</h1>
+    
+    
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+<section>
+    
+<header>
+    <h2>
+    MIDI/File.js
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><h3>Description</h3><p>The MIDI.File class supplements the mudcube/MIDI.jsjavascript object.<p>The class is intended for creating, modifying, analyzing and playing (via MIDI.Player) standard MIDI files of type 0 or 1. A MIDI song is represented  as an array of tracks, where each track is an array of messages, and each message  is a javascript object. The whole structure is compatible with the mudcube/MIDI.js scripts.  <p>The class provides methods to generate and manipulate MIDI data  and to import and export binary midi files (SMF, *.mid), text in the MF2T/T2MF format  and MIDI XML. <p><em>The class provides in javascript the functionality of the PHP MIDI class by fluxus@freenet.de</em><p><p><h4>Constructor</h4><a href="MIDI.File.html">MIDI.File()</a><br><p><h3>Methods</h3><h4>Import</h4><a href="MIDI.File.html#importBinary">importBinary()</a><br><a href="MIDI.File.html#importText">importText(text)</a><br><a href="MIDI.File.html#importXML">importXML(xmlString)</a><br><h4>Export</h4><a href="MIDI.File.html#exportBinary">exportBinary()</a><br><a href="MIDI.File.html#exportText">exportText(relativeTS)</a><br><a href="MIDI.File.html#exportTrackText">exportTrackText(trackNumber, relativeTS)</a><br><a href="MIDI.File.html#exportXML">exportXML(relativeTS)</a><br><h4>Player control</h4><a href="MIDI.File.html#play">play(callback)</a><br><a href="MIDI.File.html#stop">stop()</a><br><h4>Info</h4><a href="MIDI.File.html#getTempo">getTempo()</a><br><a href="MIDI.File.html#getBpm">getBpm()</a><br><a href="MIDI.File.html#getTimebase">getTimebase()</a><br><a href="MIDI.File.html#getMsgCount">getMsgCount(trackNumber)</a><br><a href="MIDI.File.html#getEventBySubtype">getEventBySubtype(trackNumber, subtype)</a><br><a href="MIDI.File.html#exportMsgText">exportMsgText(trackNumber, messageNumber)</a><br><h4>Generation/Manipulation</h4><a href="MIDI.File.html#reset">reset(timebase)</a><br><a href="MIDI.File.html#setTempo">setTempo(tempo)</a><br><a href="MIDI.File.html#setBpm">setBpm(bpm)</a><br><a href="MIDI.File.html#setTimebase">setTimebase(timebase)</a><br><a href="MIDI.File.html#deleteTrack">deleteTrack(trackNumber)</a><br><a href="MIDI.File.html#soloTrack">soloTrack(trackNumber)</a><br><a href="MIDI.File.html#appendTextMsg">appendTextMsg(trackNumber, message)</a><br><a href="MIDI.File.html#insertTextMsg">insertTextMsg(trackNumber, message)</a><br><a href="MIDI.File.html#deleteMsg">deleteMsg(trackNumber, messageNumber)</a><br><a href="MIDI.File.html#transpose">transpose(steps)</a><br><a href="MIDI.File.html#transposeTrack">transposeTrack(trackNumber, steps)</a><br><h4>Save/Load</h4><a href="MIDI.File.html#data">data()</a><br><a href="MIDI.File.html#loadData">loadData()</a><br><h4>MIDI object supplement</h4><a href="MIDI.html#drumset">MIDI.drumset</a><br><a href="MIDI.html#drumkitList">MIDI.drumkitList</a><br><br><hr><br><h3>Demos</h3>Each demo exposes the player and the storage list.To run a demo, first load a midi from the "Saved tunes" list or using the <a href="../demos/import.html">demos/import.html</a> demo.<p>The Save button saves the current tune to the browser's local storage.<p>demos/common.js subsequently contains the player and storage directorycode used in every demo. <ul><li><a href="../demos/manipulate.html">demos/manipulate.html</a>demonstrates manipulation of MIDI data (imported MIDI file) in various ways<li><a href="../demos/sequencer.html">demos/sequencer.html</a>A little online sequencer, 4 drum tracks, 4 instrument tracks, 1 bar only.<p>The mix data is saved within the MIDI as Text messages. Subsequently, as a MIDI with such Text messages gets loaded, the sequencer restores the patterns. <p>Though all the instruments are available in the selectors,  the MIDI.Player used to play the mix will play only the loaded soundfonts. Specify soundfonts to load in the demos/common.js file under the "var instruments =" line.<li><a href="../demos/import.html">demos/import.html</a>demonstrates text (MF2T/T2MF format) and MIDI XML import.<li><a href="../demos/export.html">demos/export.html</a>demonstrates export to text (MF2T/T2MF format) and MIDI XML.<li><a href="../demos/meta.html">demos/meta.html</a>shows content of all meta events in a MIDI file.These events are often used for song title, copyright informations etc.(like ID3 tags in mp3 files).<li><a href="../demos/duration.html">demos/duration.html</a>demonstrates how to find the duration of a MIDI file.<li><a href="../demos/convert.html">demos/convert.html</a>converts MIDI files of type 1 to type 0.</ul> <br><hr><br><h3>Compatibility</h3>Browsers supported:<ul><li>Google chrome only.</ul><br><hr><br></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="File.js.html">File.js</a>, <a href="File.js.html#line2">line 2</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/mudcube/MIDI.js"> mudcube/MIDI.js</a></li>
+        
+            <li><a href="http://www.recordare.com/dtds/midixml.html"> MIDI XML</a></li>
+        </ul>
+    </dd>
+    
+    
+    
+</dl>
+
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="MIDI.File.html">.File</a></li></ul><h3>Namespaces</h3><ul><li><a href="MIDI.html">MIDI</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Oct 10 2013 22:43:50 GMT+0300 (EEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+
+body
+	{
+	padding: 0;
+	margin: 0;
+	font-family:arial; font-size:11px;
+	}
+	
+input,
+select,
+option
+	{
+	font-size:11px
+	}
+	
+table
+	{
+	border-collapse:collapse;
+	}
+	
+table.layout > tbody > tr > td
+	{
+	padding: 1.3ex;
+	}
+		
+tr
+	{
+	}	
+
+td
+	{
+	vertical-align: top;
+	padding: 0.5ex;
+	margin: 1ex;
+	border: 0;
+	}
+
+th
+	{
+	color: #fff;
+	background: #333;
+	font-weight: bold;
+	padding: 0.3em 1em;
+	text-align: left;
+	}
+
+tr.head td
+	{
+	color: #000;
+	background: #bbb;
+	font-weight: normal;
+	padding: 0.3em 0 0.3em 1em;
+	}
+
+tr.line td
+	{
+	vertical-align: middle;
+	background: #ddd;
+	padding: 0.2em 1em;
+	}
+
+
+tr.track td
+	{
+	vertical-align: middle;
+	background: #dadada;
+	padding: 0;
+	}
+	
+td.check:nth-child(8n),
+td.check:nth-child(8n-1),
+td.check:nth-child(8n-2),
+td.check:nth-child(8n-3)
+	{
+	vertical-align: middle;
+	background: #eee;
+	padding: 0;
+	}
+
+
+td#col1
+	{
+	width: 60em;
+	}	
+td#col2
+	{
+	width: 30em;
+	}	
+td#col3
+	{
+	}	
+
+	
+div.status
+	{
+	padding: 1ex;
+	background: #777;
+	color: #ccc;
+	}
+div.status span
+	{
+	padding: 1ex;
+	background: #ccc;
+	color: #000;
+	width: 100%;
+	}
+
+div.demo
+	{
+	margin: 2em 0;
+	border: 1px solid #000000;
+	padding: 1em;
+
+	}
+	
+
+div.midi-view
+	{
+	padding: 1ex;
+	border: 1px solid #000000;
+	display: none;
+	width: 33em;
+	word-wrap: break-word;
+	}
+
+
