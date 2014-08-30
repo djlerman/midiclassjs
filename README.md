@@ -21,3 +21,7 @@ Import from txt/xml
 Sequencer
 
 *** PLEASE USE AND UPDATE!!!!!
+
+
+You can find it on my website:
+http://iqaat.com/music/midiclassjs/demos/sequencer.html
