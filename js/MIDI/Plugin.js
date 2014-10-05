@@ -241,18 +241,24 @@ if (typeof (MIDI) === "undefined") var MIDI =
 				if (!audioBuffers[instrument + "" + note]) return;
 				// / convert relative delay to absolute delay
 				if (delay < ctx.currentTime) delay += ctx.currentTime;
-				// / crate audio buffer
+				// / create audio buffer
 				var source = ctx.createBufferSource();
 				sources[channel + "" + note] = source;
 				source.buffer = audioBuffers[instrument + "" + note];
 				source.connect(ctx.destination);
-				// /
-				var gainNode = ctx.createGainNode();
+
+		        // createGainNode uses the old audio API, createGain is the standardized API
+		        var createGain = (ctx.createGain ? 'createGain' : 'createGainNode');
+		        var gain = ctx[createGain]();
+
 				var value = (velocity / 127) * (masterVolume / 127) * 2 - 1;
-				gainNode.connect(ctx.destination);
-				gainNode.gain.value = Math.max(-1, value);
-				source.connect(gainNode);
-				source.noteOn(delay || 0);
+				gain.connect(ctx.destination);
+				gain.gain.value = Math.max(-1, value);
+				source.connect(gain);
+        
+		        // start the note using whichever audio API is defined
+				var startNote = (source.noteOn ? 'noteOn' : 'start');
+				source[startNote](delay || 0);
 				return source;
 				};
 
@@ -263,12 +269,25 @@ if (typeof (MIDI) === "undefined") var MIDI =
 				var source = sources[channel + "" + note];
 				if (!source) return;
 				// @Miranet: "the values of 0.2 and 0.3 could ofcourse be used
-				// as
-				// a 'release' parameter for ADSR like time settings."
+				// as a 'release' parameter for ADSR like time settings."
 				// add { "metadata": { release: 0.3 } } to soundfont files
-				source.gain.linearRampToValueAtTime(1, delay);
-				source.gain.linearRampToValueAtTime(0, delay + 0.2);
-				source.noteOff(delay + 0.3);
+
+        // createGainNode uses the old audio API, createGain is the standardized API
+        var createGain = (ctx.createGain ? 'createGain' : 'createGainNode');
+        var gain = ctx[createGain]();
+        var damper = null;
+        if (createGain === 'createGain') {
+			source.connect(gain);
+			damper = gain.gain;
+        } else {
+			damper = source.gain;
+        }
+		damper.linearRampToValueAtTime(1, delay);
+		damper.linearRampToValueAtTime(0, delay + 0.2);
+        
+        // stop the note using whichever audio API is defined
+		var stopNote = (source.noteOff ? 'noteOff' : 'stop'); 
+        source[stopNote](delay + 0.3);
 				return source;
 				};
 
