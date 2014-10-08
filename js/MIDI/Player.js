@@ -320,7 +320,8 @@ if (typeof (MIDI.Player) === "undefined") MIDI.Player =
 				{ // webaudio
 				var source = o.source;
 				source.disconnect(0);
-				source.noteOff(0);
+				var sourceOff = (source.stop || source.noteOff);
+				sourceOff.call(source, 0);
 				}
 			}
 		// run callback to cancel any notes still playing
