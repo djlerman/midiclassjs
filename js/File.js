@@ -1,4 +1,3 @@
-
 /**
  * @see {@link https://github.com/mudcube/MIDI.js  mudcube/MIDI.js}
  * @see {@link http://www.recordare.com/dtds/midixml.html  MIDI XML}
@@ -125,29 +124,172 @@
  * <a href="../demos/convert.html">demos/convert.html</a>
  * converts MIDI files of type 1 to type 0.
  * </ul>
- * <br>
- * <hr>
- * <br>
- * <h3>Compatibility</h3>
- * Browsers supported:
- * <ul>
- * <li>
- * Google chrome only.
- * </ul>
- * <br>
- * <hr>
- * <br>
- *
  */
 (function(MIDI) {
 
-  /**
-   * @external MIDI
-   * @see {@link https://github.com/mudcube/MIDI.js  mudcube/MIDI.js}
-   * @namespace
+  /*!
+   * Constants
    */
-  if (typeof(MIDI) === "undefined") var MIDI = {};
 
+  var subtypes = {
+    sequenceNumber: {
+      type: "meta",
+      id: 0x00,
+      txt: "Seqnr",
+      xml: "SequenceNumber"
+    },
+    text: {
+      type: "meta",
+      id: 0x01,
+      txt: "Meta Text",
+      xml: "TextEvent"
+    },
+    copyrightNotice: {
+      type: "meta",
+      id: 0x02,
+      txt: "Meta Copyright",
+      xml: "CopyrightNotice"
+    },
+    trackName: {
+      type: "meta",
+      id: 0x03,
+      txt: "Meta TrkName",
+      xml: "TrackName"
+    },
+    instrumentName: {
+      type: "meta",
+      id: 0x04,
+      txt: "Meta InstrName",
+      xml: "InstrumentName"
+    },
+    lyrics: {
+      type: "meta",
+      id: 0x05,
+      txt: "Meta Lyric",
+      xml: "Lyric"
+    },
+    marker: {
+      type: "meta",
+      id: 0x06,
+      txt: "Meta Marker",
+      xml: "Marker"
+    },
+    cuePoint: {
+      type: "meta",
+      id: 0x07,
+      txt: "Meta Cue",
+      xml: "CuePoint"
+    },
+    midiChannelPrefix: {
+      type: "meta",
+      id: 0x20,
+      txt: "Meta 0x20",
+      xml: "MIDIChannelPrefix"
+    },
+    midiChannelPrefixOrPort: {
+      type: "meta",
+      id: 0x21,
+      txt: "Meta 0x21",
+      xml: "MIDIChannelPrefixOrPort"
+    },
+    endOfTrack: {
+      type: "meta",
+      id: 0x2f,
+      txt: "Meta TrkEnd",
+      xml: "EndOfTrack"
+    },
+    setTempo: {
+      type: "meta",
+      id: 0x51,
+      txt: "Tempo",
+      xml: "SetTempo"
+    },
+    smpteOffset: {
+      type: "meta",
+      id: 0x54,
+      txt: "SMPTE",
+      xml: "SMPTEOffset"
+    },
+    timeSignature: {
+      type: "meta",
+      id: 0x58,
+      txt: "TimeSig",
+      xml: "TimeSignature"
+    },
+    keySignature: {
+      type: "meta",
+      id: 0x59,
+      txt: "KeySig",
+      xml: "KeySignature"
+    },
+    sequencerSpecific: {
+      type: "meta",
+      id: 0x7f,
+      txt: "SeqSpec",
+      xml: "SequencerSpecific"
+    },
+
+    noteOff: {
+      type: "channel",
+      id: 0x08,
+      txt: "Off",
+      xml: "NoteOff"
+    },
+    noteOn: {
+      type: "channel",
+      id: 0x09,
+      txt: "On",
+      xml: "NoteOn"
+    },
+    noteAftertouch: {
+      type: "channel",
+      id: 0x0a,
+      txt: "PoPr",
+      xml: "PolyKeyPressure"
+    },
+    controller: {
+      type: "channel",
+      id: 0x0b,
+      txt: "Par",
+      xml: "ControlChange"
+    },
+    programChange: {
+      type: "channel",
+      id: 0x0c,
+      txt: "PrCh",
+      xml: "ProgramChange"
+    },
+    channelAftertouch: {
+      type: "channel",
+      id: 0x0d,
+      txt: "ChPr",
+      xml: "ChannelKeyPressure"
+    },
+    pitchBend: {
+      type: "channel",
+      id: 0x0e,
+      txt: "Pb",
+      xml: "PitchBendChange"
+    },
+
+    sysEx: {
+      type: "sysEx",
+      id: 0xf0,
+      txt: "SysEx",
+      xml: "SystemExclusive"
+    },
+    //    dividedSysEx:      {type: "dividedSysEx", id: 0xf7, txt: "SysEx",    xml: "SystemExclusive"},
+
+  };
+
+  var txt2subtype = {};
+  var id2subtype = {};
+  var xml2subtype = {};
+  for (var i in subtypes)
+    txt2subtype[subtypes[i].txt] =
+    id2subtype[subtypes[i].id] =
+    xml2subtype[subtypes[i].xml] =
+    i;
 
 
   /**
@@ -161,13 +303,12 @@
    * var mfile = new MIDI.File();
    * @returns {MIDI.File}
    */
-
   MIDI.File = function(timebase) {
     var data;
 
     /**
      * Resets the song to the ititial state.
-     * @param {Number} timebase (default = 480)
+     * @param {Number} [timebase] (default = 480)
      * @example
      * mfile.reset(240);
      */
@@ -253,7 +394,6 @@
       // Currently MIDI.Player doesn't support programChange event.
       //  Just setting the instruments before playing.
       //  Hopefully there is no more then one programChange per channel.
-
       for (var ti = data.tracks.length; ti--;)
         for (var ei = data.tracks[ti].length; ei--;)
           if (data.tracks[ti][ei].subtype == "programChange")
@@ -356,9 +496,6 @@
       return data.header.ticksPerBeat;
     };
 
-
-
-
     /**
      * @private
      * @param {Number} n
@@ -382,170 +519,6 @@
       while (n >>= 7) s = String.fromCharCode((n & 0x7F) | 0x80) + s;
       return s;
     }
-
-
-
-    var subtypes = {
-      sequenceNumber: {
-        type: "meta",
-        id: 0x00,
-        txt: "Seqnr",
-        xml: "SequenceNumber"
-      },
-      text: {
-        type: "meta",
-        id: 0x01,
-        txt: "Meta Text",
-        xml: "TextEvent"
-      },
-      copyrightNotice: {
-        type: "meta",
-        id: 0x02,
-        txt: "Meta Copyright",
-        xml: "CopyrightNotice"
-      },
-      trackName: {
-        type: "meta",
-        id: 0x03,
-        txt: "Meta TrkName",
-        xml: "TrackName"
-      },
-      instrumentName: {
-        type: "meta",
-        id: 0x04,
-        txt: "Meta InstrName",
-        xml: "InstrumentName"
-      },
-      lyrics: {
-        type: "meta",
-        id: 0x05,
-        txt: "Meta Lyric",
-        xml: "Lyric"
-      },
-      marker: {
-        type: "meta",
-        id: 0x06,
-        txt: "Meta Marker",
-        xml: "Marker"
-      },
-      cuePoint: {
-        type: "meta",
-        id: 0x07,
-        txt: "Meta Cue",
-        xml: "CuePoint"
-      },
-      midiChannelPrefix: {
-        type: "meta",
-        id: 0x20,
-        txt: "Meta 0x20",
-        xml: "MIDIChannelPrefix"
-      },
-      midiChannelPrefixOrPort: {
-        type: "meta",
-        id: 0x21,
-        txt: "Meta 0x21",
-        xml: "MIDIChannelPrefixOrPort"
-      },
-      endOfTrack: {
-        type: "meta",
-        id: 0x2f,
-        txt: "Meta TrkEnd",
-        xml: "EndOfTrack"
-      },
-      setTempo: {
-        type: "meta",
-        id: 0x51,
-        txt: "Tempo",
-        xml: "SetTempo"
-      },
-      smpteOffset: {
-        type: "meta",
-        id: 0x54,
-        txt: "SMPTE",
-        xml: "SMPTEOffset"
-      },
-      timeSignature: {
-        type: "meta",
-        id: 0x58,
-        txt: "TimeSig",
-        xml: "TimeSignature"
-      },
-      keySignature: {
-        type: "meta",
-        id: 0x59,
-        txt: "KeySig",
-        xml: "KeySignature"
-      },
-      sequencerSpecific: {
-        type: "meta",
-        id: 0x7f,
-        txt: "SeqSpec",
-        xml: "SequencerSpecific"
-      },
-
-      noteOff: {
-        type: "channel",
-        id: 0x08,
-        txt: "Off",
-        xml: "NoteOff"
-      },
-      noteOn: {
-        type: "channel",
-        id: 0x09,
-        txt: "On",
-        xml: "NoteOn"
-      },
-      noteAftertouch: {
-        type: "channel",
-        id: 0x0a,
-        txt: "PoPr",
-        xml: "PolyKeyPressure"
-      },
-      controller: {
-        type: "channel",
-        id: 0x0b,
-        txt: "Par",
-        xml: "ControlChange"
-      },
-      programChange: {
-        type: "channel",
-        id: 0x0c,
-        txt: "PrCh",
-        xml: "ProgramChange"
-      },
-      channelAftertouch: {
-        type: "channel",
-        id: 0x0d,
-        txt: "ChPr",
-        xml: "ChannelKeyPressure"
-      },
-      pitchBend: {
-        type: "channel",
-        id: 0x0e,
-        txt: "Pb",
-        xml: "PitchBendChange"
-      },
-
-      sysEx: {
-        type: "sysEx",
-        id: 0xf0,
-        txt: "SysEx",
-        xml: "SystemExclusive"
-      },
-      //    dividedSysEx:      {type: "dividedSysEx", id: 0xf7, txt: "SysEx",    xml: "SystemExclusive"},
-
-    };
-
-    var txt2subtype = {};
-    var id2subtype = {};
-    var xml2subtype = {};
-    for (var i in subtypes)
-      txt2subtype[subtypes[i].txt] =
-      id2subtype[subtypes[i].id] =
-      xml2subtype[subtypes[i].xml] =
-      i;
-
-
 
     var lastEventTypeByte;
 
