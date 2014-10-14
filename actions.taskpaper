@@ -1,0 +1,42 @@
+fixes:
+	- remove direct dependence on jasmid library (brittle / old)
+api:
+	construction:
+	- MIDI.File
+	import methods:
+		- MIDI.File#importBinary importBinary()
+		- MIDI.File#importText importText(text)
+		- MIDI.File#importXML importXML(xmlString)
+	export methods:
+		- exportBinary()
+		- exportText(relativeTS)
+		- exportTrackText(trackNumber, relativeTS)
+		- exportXML(relativeTS)
+	player:
+		- play(callback)
+		- stop()
+	info:
+		- getTempo()
+		- getBpm()
+		- getTimebase()
+		- getMsgCount(trackNumber)
+		- getEventBySubtype(trackNumber, subtype)
+		- exportMsgText(trackNumber, messageNumber)
+	  Generation / Manipulation:
+		- reset(timebase)
+		- setTempo(tempo)
+		- setBpm(bpm)
+		- setTimebase setTimebase(timebase)
+		- deleteTrack(trackNumber)
+		- soloTrack(trackNumber)
+		- appendTextMsg(trackNumber, message)
+		- insertTextMsg(trackNumber, message)
+		- deleteMsg(trackNumber, messageNumber)
+		- transpose(steps)
+		- transposeTrack(trackNumber, steps)
+	Save / Load:
+		-   data()
+		-   loadData()
+	MIDI object supplement:
+		- MIDI.drumset
+		- MIDI.drumkitList
