@@ -26,28 +26,28 @@ var player;
 
 
 function show()
-	{
-	var types =
-		{
-		text: true,
-		copyrightNotice: true,
-		trackName: true,
-		instrumentName: true,
-		lyrics: true,
-		marker: true,
-		cuePoint: true
-		};
-	
-	for (var res = "", ti = 0; ti < player.mfile.data().tracks.length; ti++)
-		{
-		var track = player.mfile.data().tracks[ti];
-		for (var ei = 0; ei < track.length; ei++)
-			if (types[track[ei].subtype])
-				res += player.mfile.exportMsgText(ti, ei) + "\n"; 
-		}
-	
-	el("output").innerHTML = "<pre>" + (res || "No events found!") + "</pre>";
-	}
+  {
+  var types =
+    {
+    text: true,
+    copyrightNotice: true,
+    trackName: true,
+    instrumentName: true,
+    lyrics: true,
+    marker: true,
+    cuePoint: true
+    };
+  
+  for (var res = "", ti = 0; ti < player.mfile.data().tracks.length; ti++)
+    {
+    var track = player.mfile.data().tracks[ti];
+    for (var ei = 0; ei < track.length; ei++)
+      if (types[track[ei].subtype])
+        res += player.mfile.exportMsgText(ti, ei) + "\n"; 
+    }
+  
+  el("output").innerHTML = "<pre>" + (res || "No events found!") + "</pre>";
+  }
 
 
 </script>
@@ -56,58 +56,58 @@ function show()
 
 <body onLoad="init();">
 
-	<div class="status">Status: <span id="status">...</span></div>
-	
-	<table class=layout width=100%>
-		<tr>
-			<td id="col1">
-				<table>
-					<tr><th>Current tune</th></tr>
-					<tr class="line">
-						<td>
-							Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
-							Events: <span id="currentEvents">?</span>
-						</td>
-					</tr>
-					<tr class="line">
-						<td>
-							<input type="button" value="Start" id="start">
-							<input type="button" value="Stop" id="stop">
-							&nbsp;&nbsp;&nbsp;
-							<a id="dl" href="#">Download</a>
-							<br>
-							<br>
-							Name: <input type="text" id="name" size=12 value="-untitled-">
-							<input type="button" value="Save" id="save">
-						</td>
-					</tr>
-				</table>
-			
-			<div class="demo">
-				<input type="button" value="Show" onClick="makeTry(show);">
-			</div>	
-							
-			</td>
-			
-			<td id="col2">
-				<table>
-					  <tr><th colspan=3>Saved tunes</th></tr>
-					 <tbody id="saved"></tbody>
-				</table>				
-			</td>
-			
-			<td id="col3">
-			See also:
-				 <ul id="dir"></ul>
-			</td>
-			
-		</tr>
-	</table>
-	
-	<div class="demo">
-		<div id="output"></div>
-	</div>	
-	
+  <div class="status">Status: <span id="status">...</span></div>
+  
+  <table class=layout width=100%>
+    <tr>
+      <td id="col1">
+        <table>
+          <tr><th>Current tune</th></tr>
+          <tr class="line">
+            <td>
+              Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
+              Events: <span id="currentEvents">?</span>
+            </td>
+          </tr>
+          <tr class="line">
+            <td>
+              <input type="button" value="Start" id="start">
+              <input type="button" value="Stop" id="stop">
+              &nbsp;&nbsp;&nbsp;
+              <a id="dl" href="#">Download</a>
+              <br>
+              <br>
+              Name: <input type="text" id="name" size=12 value="-untitled-">
+              <input type="button" value="Save" id="save">
+            </td>
+          </tr>
+        </table>
+      
+      <div class="demo">
+        <input type="button" value="Show" onClick="makeTry(show);">
+      </div>  
+              
+      </td>
+      
+      <td id="col2">
+        <table>
+            <tr><th colspan=3>Saved tunes</th></tr>
+           <tbody id="saved"></tbody>
+        </table>        
+      </td>
+      
+      <td id="col3">
+      See also:
+         <ul id="dir"></ul>
+      </td>
+      
+    </tr>
+  </table>
+  
+  <div class="demo">
+    <div id="output"></div>
+  </div>  
+  
 
 </body>
 </html>

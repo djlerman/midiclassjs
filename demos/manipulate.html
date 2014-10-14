@@ -25,35 +25,35 @@
 var player;
 
 function play()
-	{
-	var orig = JSON.parse(JSON.stringify(player.mfile.data()));
-	
-	if (el("up").checked)			player.mfile.transpose(12);
-	if (el("down").checked)		player.mfile.transpose(-12);
+  {
+  var orig = JSON.parse(JSON.stringify(player.mfile.data()));
+  
+  if (el("up").checked)      player.mfile.transpose(12);
+  if (el("down").checked)    player.mfile.transpose(-12);
 
-	if (el("double").checked)	player.mfile.setTempo(player.mfile.getTempo() / 2);
-	if (el("half").checked)		player.mfile.setTempo(player.mfile.getTempo() * 2);
+  if (el("double").checked)  player.mfile.setTempo(player.mfile.getTempo() / 2);
+  if (el("half").checked)    player.mfile.setTempo(player.mfile.getTempo() * 2);
 
-	if (el("solo").checked)		player.mfile.soloTrack(el("soloTrackNum").value);
-	if (el("delete").checked)		player.mfile.deleteTrack(el("delTrackNum").value);
-	
-	if (el("insert").checked)
-		{
-		player.mfile.insertTextMsg(2, "0 On ch=2 n=60 v=100");
-		player.mfile.insertTextMsg(2, "120 On ch=2 n=62 v=100");
-		player.mfile.insertTextMsg(2, "240 On ch=2 n=64 v=100");
-		}
+  if (el("solo").checked)    player.mfile.soloTrack(el("soloTrackNum").value);
+  if (el("delete").checked)    player.mfile.deleteTrack(el("delTrackNum").value);
+  
+  if (el("insert").checked)
+    {
+    player.mfile.insertTextMsg(2, "0 On ch=2 n=60 v=100");
+    player.mfile.insertTextMsg(2, "120 On ch=2 n=62 v=100");
+    player.mfile.insertTextMsg(2, "240 On ch=2 n=64 v=100");
+    }
 
-	if (el("show").checked) el("output").innerHTML = "<pre>"
-		+ player.mfile.exportText()
-				.replace(/</g, "&lt;")
-				.replace(/>/g, "&gt;")
-		+ "</pre>";
-	player.play();
-	
-	player.mfile.loadData(orig);
-	}
-	
+  if (el("show").checked) el("output").innerHTML = "<pre>"
+    + player.mfile.exportText()
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+    + "</pre>";
+  player.play();
+  
+  player.mfile.loadData(orig);
+  }
+  
 
 
 </script>
@@ -62,89 +62,89 @@ function play()
 
 <body onLoad="init();">
 
-	<div class="status">Status: <span id="status">...</span></div>
-	
-	<table class=layout width=100%>
-		<tr>
-			<td id="col1">
-				<table>
-					<tr><th>Current tune</th></tr>
-					<tr class="line">
-						<td>
-							Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
-							Events: <span id="currentEvents">?</span>
-						</td>
-					</tr>
-					<tr class="line">
-						<td>
-							<input type="button" value="Start" id="start">
-							<input type="button" value="Stop" id="stop">
-							&nbsp;&nbsp;&nbsp;
-							<a id="dl" href="#">Download</a>
-							<br>
-							<br>
-							Name: <input type="text" id="name" size=12 value="-untitled-">
-							<input type="button" value="Save" id="save">
-						</td>
-					</tr>
-				</table>
-			
-				<div class="demo">
-					<input id="up" type="checkbox">transpose up (1 octave)
-					<input id="down" type="checkbox">transpose down (1 octave)
-					<br><br>
-					<input id="double" type="checkbox">double tempo
-					<input id="half" type="checkbox">half tempo
-					<br><br>
-					<input id="delete" type="checkbox">delete track
-					<select id="delTrackNum"><option value="0">0</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					</select>
-					<input id="solo" type="checkbox">solo track
-					<select id="soloTrackNum"><option value="0">0</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					</select>
-					<br><br>
-					<input id="insert" type="checkbox">insert MIDI messages (3 notes at start)
-					<br><br>
-					<input id="show" type="checkbox">show MIDI result as Text
-					<br><br>
-					<input type="button" value="Modify and play" onClick="makeTry(play);">
-				</div>	
-							
-			</td>
-			
-			<td id="col2">
-				<table>
-					  <tr><th colspan=3>Saved tunes</th></tr>
-					 <tbody id="saved"></tbody>
-				</table>				
-			</td>
-			
-			<td id="col3">
-			See also:
-				 <ul id="dir"></ul>
-			</td>
-			
-		</tr>
-	</table>
-	
-	<div class="demo">
-		<div id="output"></div>
-	</div>	
-		
+  <div class="status">Status: <span id="status">...</span></div>
+  
+  <table class=layout width=100%>
+    <tr>
+      <td id="col1">
+        <table>
+          <tr><th>Current tune</th></tr>
+          <tr class="line">
+            <td>
+              Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
+              Events: <span id="currentEvents">?</span>
+            </td>
+          </tr>
+          <tr class="line">
+            <td>
+              <input type="button" value="Start" id="start">
+              <input type="button" value="Stop" id="stop">
+              &nbsp;&nbsp;&nbsp;
+              <a id="dl" href="#">Download</a>
+              <br>
+              <br>
+              Name: <input type="text" id="name" size=12 value="-untitled-">
+              <input type="button" value="Save" id="save">
+            </td>
+          </tr>
+        </table>
+      
+        <div class="demo">
+          <input id="up" type="checkbox">transpose up (1 octave)
+          <input id="down" type="checkbox">transpose down (1 octave)
+          <br><br>
+          <input id="double" type="checkbox">double tempo
+          <input id="half" type="checkbox">half tempo
+          <br><br>
+          <input id="delete" type="checkbox">delete track
+          <select id="delTrackNum"><option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          </select>
+          <input id="solo" type="checkbox">solo track
+          <select id="soloTrackNum"><option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          </select>
+          <br><br>
+          <input id="insert" type="checkbox">insert MIDI messages (3 notes at start)
+          <br><br>
+          <input id="show" type="checkbox">show MIDI result as Text
+          <br><br>
+          <input type="button" value="Modify and play" onClick="makeTry(play);">
+        </div>  
+              
+      </td>
+      
+      <td id="col2">
+        <table>
+            <tr><th colspan=3>Saved tunes</th></tr>
+           <tbody id="saved"></tbody>
+        </table>        
+      </td>
+      
+      <td id="col3">
+      See also:
+         <ul id="dir"></ul>
+      </td>
+      
+    </tr>
+  </table>
+  
+  <div class="demo">
+    <div id="output"></div>
+  </div>  
+    
 
 </body>
 </html>

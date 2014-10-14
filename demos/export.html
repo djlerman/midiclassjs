@@ -26,13 +26,13 @@ var player;
 
 
 function show(as)
-	{
-	el("output").innerHTML = "<pre>"
-			+ player.mfile["export" + as]()
-				.replace(/</g, "&lt;")
-				.replace(/>/g, "&gt;")
-			+ "</pre>";
-	}
+  {
+  el("output").innerHTML = "<pre>"
+      + player.mfile["export" + as]()
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+      + "</pre>";
+  }
 
 
 </script>
@@ -41,59 +41,59 @@ function show(as)
 
 <body onLoad="init();">
 
-	<div class="status">Status: <span id="status">...</span></div>
-	
-	<table class=layout width=100%>
-		<tr>
-			<td id="col1">
-				<table>
-					<tr><th>Current tune</th></tr>
-					<tr class="line">
-						<td>
-							Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
-							Events: <span id="currentEvents">?</span>
-						</td>
-					</tr>
-					<tr class="line">
-						<td>
-							<input type="button" value="Start" id="start">
-							<input type="button" value="Stop" id="stop">
-							&nbsp;&nbsp;&nbsp;
-							<a id="dl" href="#">Download</a>
-							<br>
-							<br>
-							Name: <input type="text" id="name" size=12 value="-untitled-">
-							<input type="button" value="Save" id="save">
-						</td>
-					</tr>
-				</table>
-			
-			<div class="demo">
-				<input type="button" value="Show as text" onClick="makeTry(show, 'Text');">
-				<input type="button" value="Show as XML" onClick="makeTry(show, 'XML');">
-			</div>	
-							
-			</td>
-			
-			<td id="col2">
-				<table>
-					  <tr><th colspan=3>Saved tunes</th></tr>
-					 <tbody id="saved"></tbody>
-				</table>				
-			</td>
-			
-			<td id="col3">
-			See also:
-				 <ul id="dir"></ul>
-			</td>
-			
-		</tr>
-	</table>
-	
-	<div class="demo">
-		<div id="output"></div>
-	</div>	
-	
+  <div class="status">Status: <span id="status">...</span></div>
+  
+  <table class=layout width=100%>
+    <tr>
+      <td id="col1">
+        <table>
+          <tr><th>Current tune</th></tr>
+          <tr class="line">
+            <td>
+              Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
+              Events: <span id="currentEvents">?</span>
+            </td>
+          </tr>
+          <tr class="line">
+            <td>
+              <input type="button" value="Start" id="start">
+              <input type="button" value="Stop" id="stop">
+              &nbsp;&nbsp;&nbsp;
+              <a id="dl" href="#">Download</a>
+              <br>
+              <br>
+              Name: <input type="text" id="name" size=12 value="-untitled-">
+              <input type="button" value="Save" id="save">
+            </td>
+          </tr>
+        </table>
+      
+      <div class="demo">
+        <input type="button" value="Show as text" onClick="makeTry(show, 'Text');">
+        <input type="button" value="Show as XML" onClick="makeTry(show, 'XML');">
+      </div>  
+              
+      </td>
+      
+      <td id="col2">
+        <table>
+            <tr><th colspan=3>Saved tunes</th></tr>
+           <tbody id="saved"></tbody>
+        </table>        
+      </td>
+      
+      <td id="col3">
+      See also:
+         <ul id="dir"></ul>
+      </td>
+      
+    </tr>
+  </table>
+  
+  <div class="demo">
+    <div id="output"></div>
+  </div>  
+  
 
 </body>
 </html>
