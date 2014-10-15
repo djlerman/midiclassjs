@@ -1,10 +1,16 @@
 fixes:
 	- remove direct dependence on jasmid library (brittle / old)
 api:
+	general:
+		midi.js documentation for future development:
+			- MIDI.Player
+	
 	construction:
 	- MIDI.File
 	import methods:
 		- MIDI.File#importBinary importBinary()
+			- async download of file (Using MIDI.js's DOMLoader) @done(2014-10-15)
+			- interpret string as binary text
 		- MIDI.File#importText importText(text)
 		- MIDI.File#importXML importXML(xmlString)
 	export methods:
