@@ -202,8 +202,8 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
 
   function parseEvent(track, bytes) {
     var evt = {
-      timestamp: parseVariableInteger(bytes)
-      status: parseInteger(bytes, 1);
+      timestamp: parseVariableInteger(bytes),
+      status: parseInteger(bytes, 1)
     };
     
     parseMessage(track, evt, bytes);
@@ -519,11 +519,7 @@ window.MIDITools.Data = (function(MT) {
     kind: 'meta',
     type: 'sequenceTrackName',
     name: 'Sequence/Track Name',
-    length: 2,
-    parameters: [{
-      name: 'number',
-      bytes: 2
-    }],
+    length: 'variable',
     formats: {
       binary: 0x03,
     }
