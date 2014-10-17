@@ -4,10 +4,11 @@ QUnit.test("library load", function(assert) {
 
 QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
   MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
-    console.log(m);
+    //console.log(m);
     assert.equal(m.type, 1);
     assert.equal(m.ticksPerBeat, 128);
     assert.equal(m.tracks.length, 1);
+    window.s = m;
     QUnit.start();
   }, function (err) {
     QUnit.start();
@@ -69,4 +70,19 @@ QUnit.asyncTest("import Type-0 MIDI with track length > file size", function(ass
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Format.TrackLength);
     });
+});
+
+QUnit.asyncTest("events of simple Type-1 MIDI", function(assert) {
+  MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
+    console.log(m);
+    assert.equal(m.tracks.length, 1);
+    assert.equal(m.tracks[0].events.length, 5);
+    console.log(m.tracks[0].events);
+    QUnit.start();
+  }, function (err) {
+    QUnit.start();
+    // debugger;
+    assert.ok(false, 'Import should not result in error');
+    console.log(err);
+  });
 });
