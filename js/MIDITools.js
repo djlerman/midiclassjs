@@ -184,7 +184,7 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
   function parseTrackEvents(track, bytes) {
     while (true) {
       var evt = parseEvent(track, bytes);
-      if (bytes.length === 0 || evt.message.type === 'End of Track') {
+      if (bytes.length === 0 || evt.message.type === 'endOfTrack') {
         break;
       }
     }
@@ -212,29 +212,25 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
   }
 
   function parseMessage(track, evt, bytes, checkedPrevious) {
-    var msg;
     if (evt.status === 0xFF) {
-      msg = parseMetaMessage(evt.status, bytes);
+      evt.message = parseMetaMessage(evt.status, bytes);
     } else if ((evt.status === 0xF0 || evt.status === 0xF7)) {
-      msg = parseSysExMessage(evt.status, bytes);
+      evt.message = parseSysExMessage(evt.status, bytes);
     } else if (isChannelEvent(evt.status)) {
-      msg = parseChannelMessage(evt.status, bytes);
+      evt.message = parseChannelMessage(evt.status, bytes);
     } else if (!checkedPrevious) {
       evt.status = track.events[track.events.length - 1].status;
       bytes.unshift(status);
-      msg = parseMessage(track, evt, bytes, true);
+      parseMessage(track, evt, bytes, true);
     } else {
       throw new Error('Cannot find this message');
     }
-    
-    evt.message = msg;
   }
 
   function parseChannelMessage(status, bytes) {
     var type = (status & 0xF0) >> 4;
     var channel = (status & 0x0F) >> 4;
     var spec = MT.Data.binaryMap[type];
-
     var msg = {
       kind: spec.kind,
       type: spec.type,
@@ -520,6 +516,7 @@ window.MIDITools.Data = (function(MT) {
     type: 'sequenceTrackName',
     name: 'Sequence/Track Name',
     length: 'variable',
+    valueType: 'string',
     formats: {
       binary: 0x03,
     }
