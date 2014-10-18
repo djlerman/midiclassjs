@@ -1,18 +1,14 @@
-
 {
-    "tags": {
-        "allowUnknownTags": true
-    	},
+    "opts": {
+        "destination": "./docs/api"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
     "source": {
-        "includePattern": ".+\\.js(doc)?$",
-        "excludePattern": "(^|\\/|\\\\)_"
-    	},
-    "plugins": [],
-    "templates": {
-        "cleverLinks": false,
-        "monospaceLinks": false
-    	}
-    	
-	
+        "include": [
+            "js/MIDITools.js"
+        ],
+        "encoding": "utf8"
+    }
 }
-
