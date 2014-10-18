@@ -20,7 +20,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    */
 
   MIDIFile.prototype.play = function() {};
-
   MIDIFile.prototype.getEventsByType = function(type, trackNumber) {
     var track = this.tracks[trackNumber || 0];
     if (!track) return undefined;
@@ -41,9 +40,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   return MIDIFile;
 }(MIDI, window.MIDITools));
 
-/*
- *
- */
 window.MIDITools.Parsers = {};
 
 window.MIDITools.Parsers.binary = (function(MIDI, MT) {
@@ -121,7 +117,6 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
     if (bytes.length < MIN_HEADER_LENGTH) {
       throw MT.Errors.Format.FileSize;
     }
-
     parseStringConstant(bytes, HEADER_PRELUDE, MT.Errors.Format.HeaderPrelude);
   }
 
@@ -205,22 +200,23 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
       timestamp: parseVariableInteger(bytes),
       status: parseInteger(bytes, 1)
     };
-    
+
     parseMessage(track, evt, bytes);
     track.events.push(evt);
     return evt;
   }
 
   function parseMessage(track, evt, bytes, checkedPrevious) {
-    if (evt.status === 0xFF) {
+    if (isMetaEvent(evt.status)) {
       evt.message = parseMetaMessage(evt.status, bytes);
     } else if ((evt.status === 0xF0 || evt.status === 0xF7)) {
       evt.message = parseSysExMessage(evt.status, bytes);
     } else if (isChannelEvent(evt.status)) {
       evt.message = parseChannelMessage(evt.status, bytes);
     } else if (!checkedPrevious) {
+      evt.runningStatus = true;
       evt.status = track.events[track.events.length - 1].status;
-      bytes.unshift(status);
+      bytes.unshift(evt.status);
       parseMessage(track, evt, bytes, true);
     } else {
       throw new Error('Cannot find this message');
@@ -234,12 +230,17 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
     var msg = {
       kind: spec.kind,
       type: spec.type,
-      channel: channel
+      channel: channel,
+      parameters: {}
     };
 
-    spec.parameters.forEach(function(name) {
-      msg[name] = parseInteger(bytes, 1);
+    var paramCount = 0;
+    // todo: document that the parameters are available by name or index
+    spec.parameters.forEach(function(name, index) {
+      msg.parameters[name] = parseInteger(bytes, 1);
+      msg.parameters[index] = msg.parameters[name];
     });
+
     return msg;
   }
 
@@ -314,11 +315,6 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
     if (value !== constant) {
       throw err;
     }
-
-    // remove header bytes
-    for (var i = 0; i < length; i += 1) {
-      bytes.shift();
-    }
   }
 
   function parseVariableInteger(bytes) {
@@ -343,7 +339,6 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
       var value = bytes.shift();
       result += (value << shiftAmount);
     }
-
     return result;
   }
 
@@ -352,7 +347,7 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
       return (0x00FF & ch.charCodeAt(0));
     });
   }
-  
+
   return importBinary;
 
 }(MIDI, MIDITools));
@@ -364,14 +359,201 @@ window.MIDITools.Parsers.binary = (function(MIDI, MT) {
 window.MIDITools.Generators = {};
 window.MIDITools.Generators.Binary = (function(MIDI, MT) {
   'use strict';
-  function exportBinary(m) {
-    return generateFileHeader(m);
+
+  // ======================
+  // = BEGIN BinaryBuffer =
+  // ======================
+
+  // used to simplify binary operations
+  function BinaryBuffer(n) {
+    this.rep = new Uint8Array(n);
   }
+
+  BinaryBuffer.prototype.append = function(bb) {
+    var bbPosition = this.rep.length;
+    var result = new Uint8Array(this.rep.length + bb.rep.length);
+
+    result.set(this.rep);
+    result.set(bb.rep, bbPosition);
+
+    this.rep = result;
+    return this;
+  };
+
+  BinaryBuffer.prototype.length = function() {
+    return this.rep.byteLength;
+  };
+
+  BinaryBuffer.prototype.appendInteger = function(n, bytes) {
+    var intBuf = new BinaryBuffer(bytes);
+    var result = n;
+    for (var i = (bytes - 1); i >= 0; i -= 1) {
+      var shiftAmount = 8 * (i);
+      var byteValue = (result >> shiftAmount);
+      result -= (byteValue * Math.pow(2, shiftAmount));
+      intBuf.set(bytes - i - 1, byteValue);
+    }
+    return this.append(intBuf);
+  };
   
-  function generateFileHeader(m) {
-    return (Array.prototype.map.call('MTrk', function(ch) { return ch.charCodeAt(0) }));
+
+  BinaryBuffer.prototype.appendInt8 = function(n) {
+    return this.appendInteger(n, 1);
+  };
+
+  BinaryBuffer.prototype.appendInt16 = function(n) {
+    return this.appendInteger(n, 2);
+  };
+
+  BinaryBuffer.prototype.appendInt32 = function(n) {
+    return this.appendInteger(n, 4);
+  };
+
+  BinaryBuffer.prototype.appendString = function(str) {
+    this.append(stringToBuffer(str));
+    return this;
+  };
+  
+  BinaryBuffer.prototype.appendVariableInteger = function(n) {
+    var r = n;
+    while (r >= 0x80) {
+      var thisByte = r >> 7;
+      r -= (thisByte * 0x80);
+      thisByte = 0x80 | thisByte;
+      this.appendInt8(thisByte);
+    }
+    this.appendInt8(r);
+  };
+
+  BinaryBuffer.prototype.set = function(i, val) {
+    this.rep[i] = val;
+    return this;
+  };
+
+  BinaryBuffer.prototype.get = function(i) {
+    return this.rep[i];
+  };
+
+  BinaryBuffer.prototype.size = function() {
+    return this.rep.length;
+  };
+
+  function stringToBuffer(str) {
+    var arr = new Uint8Array(str.length);
+    for (var i = 0, n = str.length; i < n; i += 1) {
+      arr[i] = str.charCodeAt(i);
+    }
+    var buf = new BinaryBuffer();
+    buf.rep = arr;
+    return buf;
   }
-    
+
+  // ====================
+  // = END BinaryBuffer =
+  // ====================
+  function exportBinary(m) {
+    var b = new BinaryBuffer();
+    var header = generateFileHeader(m, b);
+    var tracks = generateTracks(m);
+    b.append(header).append(tracks);
+    return b.rep;
+  }
+
+  function generateFileHeader(m) {
+    var header = new BinaryBuffer();
+    header.appendString('MThd') /* TODO: use constant */
+      .appendInt32(6) /* header size: TODO: ever anything but 6? */
+      .appendInt16(m.type) /* type */
+      .appendInt16(m.tracks.length) /* num tracks */
+      .appendInt16(m.ticksPerBeat); /* ticks per beat */
+    return header;
+  }
+
+  function generateTracks(m) {
+    var buffer = new BinaryBuffer();
+    m.tracks.forEach(function(track) {
+      buffer.appendString('MTrk');
+      var evts = generateEvents(track);
+      buffer.appendInt32(evts.length());
+      buffer.append(evts);
+    });
+    return buffer;
+  }
+
+  function generateEvents(track) {
+    var buffer = new BinaryBuffer();
+    track.events.forEach(function(event) {
+      generateEvent(buffer, event);
+    });
+    return buffer;
+  }
+
+  function generateEvent(buffer, event) {
+    buffer.appendVariableInteger(event.timestamp);
+    switch (event.message.kind) {
+      case 'channel': {
+        generateChannelMessage(buffer, event.message);
+        break;
+      }
+      case 'meta': {
+        generateMetaMessage(buffer, event.message);
+        break;
+      }
+      case 'sysex': {
+        generateSysexMessage(buffer, event.message);
+        break;
+      }
+      default: {
+        throw new Error('unrecognized event type'); // TODO: Formalize
+      }
+    }
+  }
+
+  function generateChannelMessage(buffer, msg) {
+    var statusByte = (MT.Data.typeToBinary[msg.type] << 4) | msg.channel;
+    buffer.appendInt8(statusByte);
+    buffer.appendInt8(msg.parameters[0]);
+    if (msg.parameters[1] !== undefined) {
+      buffer.appendInt8(msg.parameters[1]);
+    }
+  }
+
+  function generateMetaMessage(buffer, msg) {
+    buffer.appendInt8(0xFF);
+    buffer.appendInt8(MT.Data.typeToBinary[msg.type]);
+    var info = MT.Data.typeMap[msg.type];
+    if (info.length === 'variable') {
+      buffer.appendVariableInteger(msg.parameters.value.length);
+    } else {
+      buffer.appendVariableInteger(info.length);
+    }
+  }
+
+  function generateSysexMessage(buffer, event) {
+
+  }
+
+
+  function generateTrackHeader() {
+    return toBytes('MTrk');
+  }
+
+  function toBytes(str) {
+    var arr = new Uint8Array(new ArrayBuffer(str.length));
+    for (var i = 0, n = str.length; i < n; i += 1) {
+      arr[i] = str.charCodeAt(i);
+    }
+    return arr;
+  }
+
+  function toString(buffer) {
+    var str = '';
+    for (var i = 0; i < buffer.size(); i += 1) {
+      str += String.fromCharCode(buffer.get(i));
+    }
+    return str;
+  }
+
   return {
     generate: exportBinary
   };
@@ -402,10 +584,26 @@ window.MIDITools.Errors = (function(MT) {
   };
 }(MIDITools));
 
+window.MIDITools.Utils = (function(MT) {
+  'use strict';
+
+  function stringToBytes(str) {
+    var bytes = new Uint8Array(str.length);
+    for (var i = 0, n = str.length; i < n; i += 1) {
+      bytes[i] = str.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  return {
+    stringToBytes: stringToBytes
+  };
+
+}(MIDITools));
 window.MIDITools.Data = (function(MT) {
   'use strict';
   var eventMap = {};
-  
+
   eventMap['noteOff'] = {
     kind: 'channel',
     type: 'noteOff',
@@ -626,7 +824,22 @@ window.MIDITools.Data = (function(MT) {
     length: 5,
     parameters: [{
       name: 'hour',
-      bytes: 1
+      bytes: 1,
+      parsers: {
+        binary: function(hourByte, params) {
+          var fpsValues = {
+            0: 24,
+            1: 25,
+            2: 30,
+            3: 30,
+          };
+
+          var fpsBits = paramBytes[0] & 0x60; // ignore MSB, grab next 2
+          var hourBits = paramBytes[0] & 0x1F; // extract least-significant 5 bits
+          params.fps = fpsValues[fpsBits];
+          params.hour = hourBits;
+        }
+      }
     }, {
       name: 'minute',
       bytes: 1
@@ -697,14 +910,18 @@ window.MIDITools.Data = (function(MT) {
   };
 
   var data = {
-    binaryMap: {}
+    binaryMap: {},
+    typeMap: {},
+    typeToBinary: {},
   };
-  
-  Object.keys(eventMap).forEach(function(n) {
-    var val = eventMap[n];
+
+  Object.keys(eventMap).forEach(function(k) {
+    var val = eventMap[k];
     data.binaryMap[val.formats.binary] = val;
+    data.typeMap[k] = val;
+    data.typeToBinary[k] = val.formats.binary;
   });
-  
+
   return data;
 }(window.MIDITools));
 
