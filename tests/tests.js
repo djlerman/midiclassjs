@@ -77,7 +77,7 @@ QUnit.asyncTest("events of simple Type-1 MIDI", function(assert) {
     console.log(m);
     assert.equal(m.tracks.length, 1);
     assert.equal(m.tracks[0].events.length, 5);
-    console.log(m.tracks[0].events);
+    assert.equal(m.tracks[0].events[0].timestamp, 0);
     QUnit.start();
   }, function (err) {
     QUnit.start();
@@ -85,4 +85,22 @@ QUnit.asyncTest("events of simple Type-1 MIDI", function(assert) {
     assert.ok(false, 'Import should not result in error');
     console.log(err);
   });
+});
+
+QUnit.asyncTest("export simple Type-1 MIDI", function(assert) {
+  DOMLoader.sendRequest({url: 'samples/mid/simple1.mid', onload: function(req) {
+    var expected = MIDITools.Utils.stringToBytes(req.responseText);
+    MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
+      var generated = MIDITools.Generators.Binary.generate(m);
+      console.log(generated.length)
+      assert.deepEqual(generated, expected);
+      QUnit.start();
+    }, function (err) {
+      QUnit.start();
+      assert.ok(false, 'Import should not result in error');
+      console.log(err);
+      console.log(err.stack);
+  });
+  }});
+
 });
