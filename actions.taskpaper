@@ -11,10 +11,13 @@ api:
 		- MIDI.File#importBinary importBinary()
 			- async download of file (Using MIDI.js's DOMLoader) @done(2014-10-15)
 			- interpret string as binary text
+			- interpret base64 string (http://gist.github.com/jonleighton/958841)
 		- MIDI.File#importText importText(text)
 		- MIDI.File#importXML importXML(xmlString)
 	export methods:
 		- exportBinary()
+			- export header @done(2014-10-17)
+			- export tracks
 		- exportText(relativeTS)
 		- exportTrackText(trackNumber, relativeTS)
 		- exportXML(relativeTS)
