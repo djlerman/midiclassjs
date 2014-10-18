@@ -2,7 +2,9 @@
 EditablePattern.js
 midi_composer.html
 bak/
+npm-debug.log
 php-version/
+node_modules/
 res/
 # Windows image file caches
 Thumbs.db
