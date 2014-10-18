@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Parsers.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="API.html">
+                API.js
+              </a>
+            
+              
+              <a class="source" href="Data.html">
+                Data.js
+              </a>
+            
+              
+              <a class="source" href="Errors.html">
+                Errors.js
+              </a>
+            
+              
+              <a class="source" href="Generators.html">
+                Generators.js
+              </a>
+            
+              
+              <a class="source" href="MIDIFile.html">
+                MIDIFile.js
+              </a>
+            
+              
+              <a class="source" href="MIDITools.html">
+                MIDITools.js
+              </a>
+            
+              
+              <a class="source" href="Parsers.html">
+                Parsers.js
+              </a>
+            
+              
+              <a class="source" href="Utils.html">
+                Utils.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Parsers.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Parsers.Binary = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
+<span class="hljs-pi">  'use strict'</span>;
+
+  <span class="hljs-keyword">var</span> MIN_HEADER_LENGTH = <span class="hljs-number">14</span>;
+  <span class="hljs-keyword">var</span> HEADER_PRELUDE = <span class="hljs-string">'MThd'</span>;
+  <span class="hljs-keyword">var</span> TRACK_PRELUDE = <span class="hljs-string">'MTrk'</span>;
+
+  <span class="hljs-keyword">var</span> importBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(src, callback, error)</span> </span>{
+    <span class="hljs-keyword">if</span> (!src || !callback) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Both parameters required!'</span>);
+    }
+
+    DOMLoader.sendRequest({
+      url: src,
+      onload: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req)</span> </span>{
+        <span class="hljs-keyword">try</span> {
+          callback(fromBinary(toByteString(req.responseText)));
+        } <span class="hljs-keyword">catch</span> (err) {
+          <span class="hljs-keyword">return</span> error &amp;&amp; error(err);
+        }
+      },
+      onerror: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO: replace with custom error type?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Could not load file'</span>);
+      }
+    });
+  };
+
+
+  <span class="hljs-comment">/*!
+   * @param {Array} bytes - the byte array representing the binary file 
+   * @return {MIDIFile} - the MIDIFile representation of the binary file
+   */</span>
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fromBinary</span><span class="hljs-params">(bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> m = <span class="hljs-keyword">new</span> MT.MIDIFile(<span class="hljs-number">0</span>);
+    parseHeader(m, bytes);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = m.tracks.length; i &lt; n; i += <span class="hljs-number">1</span>) {
+      parseTrack(m.tracks[i], bytes);
+    }
+    <span class="hljs-keyword">return</span> m;
+  }
+
+
+  <span class="hljs-comment">/*!
+   * @post m.type is set to either 0 or 1
+   * @post m.ticksPerBeat is set to the appropriate value
+   * @post m.trackCount set according to header's track count
+   * @post m.tracks contains `m.trackCount` empty tracks
+   */</span>
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseHeader</span><span class="hljs-params">(m, bytes)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="parsing-the-header-chunk">Parsing the Header chunk</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>The format of the header is specified in the
+<a href="../ref/binary.html">Binary format document</a>.    </p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>sanity check: die for files that aren’t big enough
+to even declare a MIDI header</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (bytes.length &lt; MIN_HEADER_LENGTH) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.FileSize;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>sanity check: Any MIDI file must begin with the <code>MTrk</code> constant.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    parseStringConstant(bytes, HEADER_PRELUDE, MT.Errors.Format.HeaderPrelude);
+    <span class="hljs-keyword">var</span> headerSize = parseHeaderSize(bytes);
+    <span class="hljs-keyword">var</span> midiType = parseType(bytes);
+    <span class="hljs-keyword">var</span> trackCount = parseInteger(bytes, <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">var</span> ticksPerBeat = parseHeaderTPB(bytes);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>sanity check: a Type-0 file that declares multiple tracks
+is just asking for trouble; we fail appropriately</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (midiType === <span class="hljs-number">0</span> &amp;&amp; trackCount !== <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.Type0MultiTrack;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Since the header contains globally-useful information,
+we store the results in the <code>event</code> object itself, rather
+than inside the <code>message</code> property</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    m.type = midiType;
+    m.trackCount = trackCount;
+    m.ticksPerBeat = ticksPerBeat;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>initialize an empty <code>track</code> object for each declared track</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; trackCount; i += <span class="hljs-number">1</span>) {
+      m.tracks.push({
+        number: i,
+        events: [],
+        eventTypes: {}
+      });
+    }
+  }
+
+
+  <span class="hljs-comment">/*!
+   * Returns header's file size declaration,
+   * if and only if it agrees with actual file size.
+   * 
+   * @throws MT.Errors.Format.HeaderSize if size declaration and
+   *         file size do not agree
+   */</span>
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseHeaderSize</span><span class="hljs-params">(bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> size = parseInteger(bytes, <span class="hljs-number">4</span>);
+    <span class="hljs-keyword">if</span> (bytes.length &lt; size) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.HeaderSize;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> size;
+    }
+  }
+
+
+  <span class="hljs-comment">/*!
+   * Returns the MIDI file type,
+   * if and only if the type is in {0, 1}.
+   * 
+   * @throws MT.Errors.Format.Type if the type is not 0 or 1
+   */</span>
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseType</span><span class="hljs-params">(bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> type = parseInteger(bytes, <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">if</span> (type !== <span class="hljs-number">0</span> &amp;&amp; type !== <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.Type;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> type;
+    }
+  }
+
+
+  <span class="hljs-comment">/*!
+   * TODO
+   */</span>
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseHeaderTPB</span><span class="hljs-params">(bytes)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>TODO: check type of TPB and parse appropriately</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> parseInteger(bytes, <span class="hljs-number">2</span>);
+  }
+
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseTrack</span><span class="hljs-params">(track, bytes)</span> </span>{
+    parseTrackHeader(track, bytes);
+    parseTrackEvents(track, bytes);
+  }
+
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseTrackHeader</span><span class="hljs-params">(track, bytes)</span> </span>{
+    parseStringConstant(bytes, TRACK_PRELUDE, MT.Errors.Format.TrackPrelude);
+    <span class="hljs-keyword">var</span> size = parseInteger(bytes, <span class="hljs-number">4</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>TODO: check declared size vs final size after events parsed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (bytes.length &lt; size) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.TrackLength;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> size;
+    }
+  }
+  
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseTrackEvents</span><span class="hljs-params">(track, bytes)</span> </span>{
+    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {      
+      <span class="hljs-keyword">var</span> evt = parseEvent(track, bytes);
+
+      <span class="hljs-keyword">if</span> (bytes.length === <span class="hljs-number">0</span> || evt.message.type === <span class="hljs-string">'endOfTrack'</span>) {
+        <span class="hljs-keyword">break</span>;
+      }
+    }
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h2 id="midi-event-message-parsing">MIDI Event / Message Parsing</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">var</span> messageParsers = {
+    <span class="hljs-string">'channel'</span>: parseChannelMessage,
+    <span class="hljs-string">'meta'</span>: parseMetaMessage,
+    <span class="hljs-string">'sysex'</span>: parseSysExMessage
+  };
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseEvent</span><span class="hljs-params">(track, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> evt = {
+      timestamp: parseVariableInteger(bytes),
+      status: parseInteger(bytes, <span class="hljs-number">1</span>)
+    };
+
+    parseMessage(track, evt, bytes);
+    track.events.push(evt);
+    <span class="hljs-keyword">return</span> evt;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMessage</span><span class="hljs-params">(track, evt, bytes, checkedPrevious)</span> </span>{
+    <span class="hljs-keyword">if</span> (isMetaEvent(evt.status)) {
+      evt.message = parseMetaMessage(evt.status, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((evt.status === <span class="hljs-number">0xF0</span> || evt.status === <span class="hljs-number">0xF7</span>)) {
+      evt.message = parseSysExMessage(evt.status, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isChannelEvent(evt.status)) {
+      evt.message = parseChannelMessage(evt.status, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!checkedPrevious) {
+      evt.runningStatus = <span class="hljs-literal">true</span>;
+      evt.status = track.events[track.events.length - <span class="hljs-number">1</span>].status;
+      bytes.unshift(evt.status);
+      parseMessage(track, evt, bytes, <span class="hljs-literal">true</span>);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Cannot find this message'</span>);
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseChannelMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> type = (status &amp; <span class="hljs-number">0xF0</span>) &gt;&gt; <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">var</span> channel = (status &amp; <span class="hljs-number">0x0F</span>) &gt;&gt; <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">var</span> spec = MT.Data.binaryMap[type];
+    <span class="hljs-keyword">var</span> msg = {
+      kind: spec.kind,
+      type: spec.type,
+      channel: channel,
+      parameters: {}
+    };
+
+    <span class="hljs-keyword">var</span> paramCount = <span class="hljs-number">0</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>todo: document that the parameters are available by name or index</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, index)</span> </span>{
+      msg.parameters[name] = parseInteger(bytes, <span class="hljs-number">1</span>);
+      msg.parameters[index] = msg.parameters[name];
+    });
+
+    <span class="hljs-keyword">return</span> msg;
+  }
+
+  <span class="hljs-keyword">var</span> valueParsers = {
+    <span class="hljs-string">'string'</span>: parseString,
+    <span class="hljs-string">'number'</span>: parseInteger
+  };
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMetaMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> type = parseInteger(bytes, <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">var</span> length = parseInteger(bytes, <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">var</span> spec = MT.Data.binaryMap[type];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>TODO: compare length and throw error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> msg = {
+      kind: spec.kind,
+      length: length,
+      type: spec.type
+    };
+    <span class="hljs-keyword">var</span> cutLength = (spec.length === <span class="hljs-string">'variable'</span> ? length : spec.length);
+    msg.parameters = bytes.slice(<span class="hljs-number">0</span>, cutLength);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; cutLength; i += <span class="hljs-number">1</span>) {
+      bytes.shift();
+    }
+    <span class="hljs-keyword">return</span> msg;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseSysExMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> length = parseVariableInteger(bytes);
+
+    <span class="hljs-keyword">var</span> msg = {
+      kind: MT.Data.binaryMap[status].kind,
+      length: length,
+      type: <span class="hljs-string">'unknown'</span> <span class="hljs-comment">// TODO: FIX</span>
+    };
+
+    msg.parameters = bytes.slice(<span class="hljs-number">0</span>, length);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; length; i += <span class="hljs-number">1</span>) {
+      bytes.shift();
+    }
+    <span class="hljs-keyword">return</span> msg;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isChannelEvent</span><span class="hljs-params">(status)</span> </span>{
+    <span class="hljs-keyword">var</span> type = ((status &amp; <span class="hljs-number">0xF0</span>) &gt;&gt; <span class="hljs-number">4</span>);
+    <span class="hljs-keyword">return</span> (<span class="hljs-number">0x8</span> &lt;= type &amp;&amp; type &lt;= <span class="hljs-number">0xE</span>);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isMetaEvent</span><span class="hljs-params">(status)</span> </span>{
+    <span class="hljs-keyword">return</span> (status === <span class="hljs-number">0xFF</span>);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isSysExEvent</span><span class="hljs-params">(status)</span> </span>{
+    <span class="hljs-keyword">return</span> (status === <span class="hljs-number">0xF0</span> || status === <span class="hljs-number">0xF7</span>);
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>=======================</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h1 id="-byte-interpretation-">= Byte Interpretation =</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseString</span><span class="hljs-params">(bytes, limit)</span> </span>{
+    <span class="hljs-keyword">var</span> result = <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; limit; i += <span class="hljs-number">1</span>) {
+      result += (<span class="hljs-built_in">String</span>.fromCharCode(bytes.shift()));
+    }
+    <span class="hljs-keyword">return</span> result;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseStringConstant</span><span class="hljs-params">(bytes, constant, err)</span> </span>{
+    <span class="hljs-keyword">var</span> value = parseString(bytes, constant.length);
+
+    <span class="hljs-keyword">if</span> (value !== constant) {
+      <span class="hljs-keyword">throw</span> err;
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseVariableInteger</span><span class="hljs-params">(bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> b = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">do</span> {
+      b = bytes.shift();
+      <span class="hljs-keyword">if</span> (b &gt;= <span class="hljs-number">0x80</span>) {
+        result += (b &amp; <span class="hljs-number">0x7f</span>);
+        result &lt;&lt;= <span class="hljs-number">7</span>;
+      } <span class="hljs-keyword">else</span> {
+        result += b;
+      }
+    } <span class="hljs-keyword">while</span> (b &gt;= <span class="hljs-number">0x80</span>);
+    <span class="hljs-keyword">return</span> result;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseInteger</span><span class="hljs-params">(bytes, limit)</span> </span>{
+    <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; limit; i += <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">var</span> shiftAmount = <span class="hljs-number">8</span> * (limit - i - <span class="hljs-number">1</span>);
+      <span class="hljs-keyword">var</span> value = bytes.shift();
+      result += (value &lt;&lt; shiftAmount);
+    }
+    <span class="hljs-keyword">return</span> result;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toByteString</span><span class="hljs-params">(str)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.prototype.map.call(str, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ch)</span> </span>{
+      <span class="hljs-keyword">return</span> (<span class="hljs-number">0x00FF</span> &amp; ch.charCodeAt(<span class="hljs-number">0</span>));
+    });
+  }
+
+  <span class="hljs-keyword">return</span> importBinary;
+
+}(MIDITools));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
