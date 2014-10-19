@@ -83,7 +83,6 @@ QUnit.asyncTest("events of simple Type-1 MIDI", function(assert) {
     assert.equal(m.tracks[0].events[0].timestamp, 0);
   }, function (err) {
     QUnit.start();
-    // debugger;
     assert.ok(false, 'Import should not result in error');
     console.log(err);
   });

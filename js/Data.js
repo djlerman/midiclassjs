@@ -1,6 +1,6 @@
 window.MIDITools.Data = (function() {
   'use strict';
-  
+
   var eventMap = {
     noteOff: {
       kind: 'channel',
@@ -19,7 +19,6 @@ window.MIDITools.Data = (function() {
         binary: 0x09
       }
     },
-
     afterTouch: {
       kind: 'channel',
       type: 'afterTouch',
