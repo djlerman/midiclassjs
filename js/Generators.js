@@ -104,13 +104,14 @@ window.MIDITools.Generators.Binary = (function(MIDI, MT) {
     return b.rep;
   }
 
+  // TODO: generate frames instead if that's what they're using?
   function generateFileHeader(m) {
     var header = new BinaryBuffer();
     header.appendString('MThd') /* TODO: use constant */
       .appendInt32(6) /* header size: TODO: ever anything but 6? */
       .appendInt16(m.type) /* type */
       .appendInt16(m.tracks.length) /* num tracks */
-      .appendInt16(m.ticksPerBeat); /* ticks per beat */
+      .appendInt16(m.timing.ticksPerBeat); /* ticks per beat */
     return header;
   }
 

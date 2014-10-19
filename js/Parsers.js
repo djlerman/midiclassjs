@@ -67,7 +67,7 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     var headerSize = parseHeaderSize(bytes);
     var midiType = parseType(bytes);
     var trackCount = parseInteger(bytes, 2);
-    var ticksPerBeat = parseHeaderTPB(bytes);
+    var timing = parseTimeDivision(bytes);
 
     // sanity check: a Type-0 file that declares multiple tracks
     // is just asking for trouble; we fail appropriately
@@ -80,7 +80,7 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     // than inside the `message` property
     m.type = midiType;
     m.trackCount = trackCount;
-    m.ticksPerBeat = ticksPerBeat;
+    m.timing = timing;
 
 
     // initialize an empty `track` object for each declared track
@@ -133,9 +133,29 @@ window.MIDITools.Parsers.Binary = (function(MT) {
    * TODO
    */
 
-  function parseHeaderTPB(bytes) {
+  function parseTimeDivision(bytes) {
     // TODO: check type of TPB and parse appropriately
-    return parseInteger(bytes, 2);
+    var topByte = parseInteger(bytes, 1);
+    var bottomByte = parseInteger(bytes, 1);
+
+    if (topByte & 0x80) {
+      return {
+        'type': 'framesPerSecond',
+        'framesPerSecond': getSMPTE(topByte),
+        'ticksPerFrame': bottomByte
+      };
+    } else {
+      // ticks per beat measure
+      return {
+        'type': 'ticksPerBeat',
+        'ticksPerBeat': parseInteger([topByte, bottomByte], 2)
+      };
+    }
+  }
+  
+  function getSMPTE(byte) {
+    var negated = (byte ^ 0xFF) + 1; // negation in twos-complement
+    return Math.abs(negated);
   }
 
 

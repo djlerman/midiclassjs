@@ -7,7 +7,7 @@ QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
     //console.log(m);
     QUnit.start();
     assert.equal(m.type, 1);
-    assert.equal(m.ticksPerBeat, 128);
+    assert.equal(m.timing.ticksPerBeat, 128);
     assert.equal(m.tracks.length, 1);
     window.s = m;
   }, function (err) {
@@ -61,11 +61,13 @@ QUnit.asyncTest("import Type-0 MIDI with track length > file size", function(ass
     });
 });
 
-QUnit.asyncTest("import Type-0 MIDI with track length > file size", function(assert) {
-  MIDITools.importBinary('samples/mid/err-track-size.mid',
+QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
+  MIDITools.importBinary('samples/mid/import-smpte.mid',
     function(m) {
       QUnit.start();
-      assert.ok(false, "Success callback should not be called on error");
+      assert.ok(m.timing.type = "ticksPerBeat");
+      assert.equal(m.timing.framesPerSecond, 25);
+      assert.equal(m.timing.ticksPerFrame, 40);
     }, function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Format.TrackLength);
@@ -93,7 +95,7 @@ QUnit.asyncTest("export simple Type-1 MIDI", function(assert) {
     MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
       QUnit.start();
       var generated = MIDITools.Generators.Binary.generate(m);
-      console.log(generated.length)
+      console.log(generated.length);
       assert.deepEqual(generated, expected);
     }, function (err) {
       QUnit.start();
