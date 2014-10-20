@@ -43,6 +43,16 @@ module.exports = function(grunt) {
         }
       }
     },
+    markdown: {
+      all: {
+        files: [{
+          expand: true,
+          src: 'docs/ref/*.md',
+          dest: '.',
+          ext: '.html'
+        }]
+      }
+    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
@@ -63,7 +73,7 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      files: ['Gruntfile.js', 'js/*.js', 'test/*.js'],
+      files: ['Gruntfile.js', 'js/*.js', 'tests/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -76,7 +86,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'concat', 'qunit', 'docco', 'jsdoc']
+      tasks: ['jshint', 'concat', 'qunit', 'docco', 'markdown', 'jsdoc']
     }
   });
 
@@ -91,7 +101,8 @@ module.exports = function(grunt) {
       'grunt-contrib-watch',
       'grunt-contrib-concat',
       'grunt-jsdoc',
-      'grunt-docco'
+      'grunt-docco',
+      'grunt-markdown'
     ],
     register: [{
       name: 'test',
