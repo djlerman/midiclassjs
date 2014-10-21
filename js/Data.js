@@ -1,14 +1,23 @@
 window.MIDITools.Data = (function() {
   'use strict';
+  var strings = {
+
+  };
 
   var eventMap = {
     noteOff: {
       kind: 'channel',
       type: 'noteOff',
-      parameters: ['note', 'velocity'],
+      parameters: [{
+        name: 'note',
+        valueType: 'number'
+      }, {
+        name: 'velocity',
+        valueType: 'number'
+      }],
       formats: {
         binary: 0x08,
-        text: '',
+        text: 'Off',
         xml: ''
       }
     },
@@ -16,63 +25,108 @@ window.MIDITools.Data = (function() {
     noteOn: {
       kind: 'channel',
       type: 'noteOn',
-      parameters: ['note', 'velocity'],
+      parameters: [{
+        name: 'note',
+        valueType: 'number'
+      }, {
+        name: 'velocity',
+        valueType: 'number'
+      }],
       formats: {
         binary: 0x09,
-        text: '',
+        text: 'On',
         xml: ''
       }
     },
     afterTouch: {
       kind: 'channel',
       type: 'afterTouch',
-      parameters: ['note', 'amount'],
+      parameters: [{
+        name: 'note',
+        valueType: 'number'
+      }, {
+        name: 'amount',
+        valueType: 'number'
+      }],
       formats: {
-        binary: 0x0A
+        binary: 0x0A,
+        text: 'PoPr',
+        xml: ''
       }
     },
     controlChange: {
       kind: 'channel',
       type: 'controlChange',
-      parameters: ['controller', 'value'],
+      parameters: [{
+        name: 'controller',
+        valueType: 'number'
+      }, {
+        name: 'value',
+        valueType: 'number'
+      }],
       formats: {
-        binary: 0x0B
+        binary: 0x0B,
+        text: 'Par',
+        xml: ''
       }
     },
     programChange: {
       kind: 'channel',
       type: 'programChange',
-      parameters: ['program'],
+      parameters: [{
+        name: 'program',
+        valueType: 'number'
+      }],
       formats: {
-        binary: 0x0C
+        binary: 0x0C,
+        text: 'PrCh',
+        xml: ''
       }
     },
     channelPressure: {
       kind: 'channel',
       type: 'channelPressure',
-      parameters: ['amount'],
+      parameters: [{
+        name: 'amount',
+        valueType: 'number'
+      }],
       formats: {
-        binary: 0x0D
+        binary: 0x0D,
+        text: 'ChPr',
+        xml: ''
       }
     },
     pitchWheel: {
       kind: 'channel',
       type: 'pitchWheel',
-      parameters: ['pitchValue1', 'pitchValue2'],
+      parameters: [{
+        name: 'pitchValue1',
+        valueType: 'number'
+      }, {
+        name: 'pitchValue2',
+        valueType: 'number'
+      }],
       formats: {
-        binary: 0x0E
+        binary: 0x0E,
+        text: 'Pb',
+        xml: ''
       }
     },
     sysEx1: {
       kind: 'sysex',
       formats: {
-        binary: 0xF0
+        binary: 0xF0,
+        text: 'SysEx',
+        xml: ''
       }
     },
     sysEx2: {
       kind: 'sysex',
       formats: {
-        binary: 0xF7
+        binary: 0xF7,
+        text: 'Arb',
+        /* TODO: CHECK */
+        xml: ''
       }
     },
 
@@ -88,7 +142,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x00,
-        text: '',
+        text: 'Seqnr',
         xml: ''
       }
     },
@@ -100,7 +154,7 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       formats: {
         binary: 0x01,
-        text: '',
+        text: 'Meta Text',
         xml: ''
       }
     },
@@ -112,7 +166,7 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       formats: {
         binary: 0x02,
-        text: '',
+        text: 'Meta Copyright',
         xml: ''
       }
     },
@@ -125,7 +179,7 @@ window.MIDITools.Data = (function() {
       valueType: 'string',
       formats: {
         binary: 0x03,
-        text: '',
+        text: 'Meta TrkName',
         xml: ''
       }
     },
@@ -151,7 +205,7 @@ window.MIDITools.Data = (function() {
       valueType: 'string',
       formats: {
         binary: 0x05,
-        text: '',
+        text: 'Meta Lyric',
         xml: ''
       }
     },
@@ -164,7 +218,7 @@ window.MIDITools.Data = (function() {
       valueType: 'string',
       formats: {
         binary: 0x06,
-        text: '',
+        text: 'Meta Marker',
         xml: ''
       }
     },
@@ -177,7 +231,7 @@ window.MIDITools.Data = (function() {
       valueType: 'string',
       formats: {
         binary: 0x07,
-        text: '',
+        text: 'Meta Cue',
         xml: ''
       }
     },
@@ -211,7 +265,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x21,
-        text: '',
+        text: 'Meta 0x21',
         xml: ''
       }
     },
@@ -223,7 +277,9 @@ window.MIDITools.Data = (function() {
       length: 0,
       parameters: [],
       formats: {
-        binary: 0x2F
+        binary: 0x2F,
+        text: 'Meta TrkEnd',
+        xml: ''
       }
     },
 
@@ -239,7 +295,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x51,
-        text: '',
+        text: 'Tempo',
         xml: ''
       }
     },
@@ -286,7 +342,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x54,
-        text: '',
+        text: 'SMPTE',
         xml: ''
       }
     },
@@ -319,7 +375,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x58,
-        text: '',
+        text: 'TimeSig',
         xml: ''
       }
     },
@@ -340,7 +396,7 @@ window.MIDITools.Data = (function() {
       }],
       formats: {
         binary: 0x59,
-        text: '',
+        text: 'KeySig',
         xml: ''
       }
     },
@@ -361,12 +417,14 @@ window.MIDITools.Data = (function() {
     binaryMap: {},
     typeMap: {},
     typeToBinary: {},
-    eventTypes: {}
+    eventTypes: {},
+    textMap: {}
   };
 
   Object.keys(eventMap).forEach(function(k) {
     var val = eventMap[k];
     data.binaryMap[val.formats.binary] = val;
+    data.textMap[val.formats.text] = val;
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
     data.eventTypes[k] = k;

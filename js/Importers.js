@@ -86,13 +86,11 @@ window.MIDITools.Importers.Binary = (function(MT) {
     m._timing = timing;
 
     // initialize an empty `track` object for each declared track
-    for (var i = 0; i < trackCount; i += 1) {
-      m._tracks.push({
-        number: i,
-        events: [],
-        eventTypes: {}
-      });
+    for (var i = 1; i < trackCount; i += 1) {
+      m.addTrack();
+      m.getTrack(i).events.pop();
     }
+    m.getTrack(0).events.pop();
   }
 
 
@@ -192,13 +190,13 @@ window.MIDITools.Importers.Binary = (function(MT) {
 
     while (true) {
       var evt = parseEvent(track, bytes);
-      if (bytes.length === 0 || evt.message.type === 'endOfTrack') {
+      if (bytes.length === 0 || evt.message === 'endOfTrack') {
         break;
       }
     }
 
     // a track must always end with an "end track" event
-    if (track.events[track.events.length - 1].message.type !== 'endOfTrack') {
+    if (track.events[track.events.length - 1].message !== 'endOfTrack') {
       throw MT.Errors.Import.TrackFooter;
     }
   }
@@ -259,25 +257,21 @@ window.MIDITools.Importers.Binary = (function(MT) {
    *         is not recognized and there is no running status
    */
   function parseMessage(track, evt, bytes, checkedPrevious) {
-    switch (true) {
-      case isChannelEvent(evt.status):
-        evt.message = parseChannelMessage(evt.status, bytes);
-        break;
-      case isMetaEvent(evt.status):
-        evt.message = parseMetaMessage(evt.status, bytes);
-        break;
-      case isSysExEvent(evt.status):
-        evt.message = parseSysExMessage(evt.status, bytes);
-        break;
-      case (!checkedPrevious && track.events.length > 0):
-        evt.runningStatus = true;
-        bytes.unshift(evt.status);
-        evt.status = track.events[track.events.length - 1].status;
-        parseMessage(track, evt, bytes, true);
-        break;
-      default:
-        throw MT.Errors.Format.MessageType;
+    if (isChannelEvent(evt.status)) {
+      parseChannelMessage(evt, bytes);
+    } else if (isMetaEvent(evt.status)) {
+      parseMetaMessage(evt, bytes);
+    } else if (isSysExEvent(evt.status)) {
+      parseSysExMessage(evt, bytes);
+    } else if (!checkedPrevious && track.events.length > 0) {
+      evt.runningStatus = true;
+      bytes.unshift(evt.status);
+      evt.status = track.events[track.events.length - 1].status;
+      parseMessage(track, evt, bytes, true);
+    } else {
+      throw MT.Errors.Format.MessageType;
     }
+    return evt;
   }
 
   function isChannelEvent(status) {
@@ -294,29 +288,26 @@ window.MIDITools.Importers.Binary = (function(MT) {
   }
 
   /*!
-   * @post msg.kind = 'channel'
-   * @post 0x8 <= msg.type <= 0xE
-   * @post msg.parameters
+   * @post evt.kind = 'channel'
+   * @post 0x8 <= evt.message <= 0xE
    * @returns msg satisfying the post-conditions above
    */
-  function parseChannelMessage(status, bytes) {
-    var type = (status & 0xF0) >> 4;
-    var channel = (status & 0x0F) >> 4;
+  function parseChannelMessage(evt, bytes) {
+    var type = (evt.status & 0xF0) >> 4;
+    var channel = (evt.status & 0x0F) >> 4;
     var spec = MT.Data.binaryMap[type];
-    var msg = {
-      kind: spec.kind,
-      type: spec.type,
-      channel: channel,
-      parameters: {}
-    };
 
+    evt.kind = spec.kind;
+    evt.message = spec.type;
+    evt.parameters = {};
+    evt.channel = channel;
     // TODO: document that the parameters are available by name or index
-    spec.parameters.forEach(function(name, index) {
-      msg.parameters[name] = parseInteger(bytes, 1);
-      msg.parameters[index] = msg.parameters[name];
+    spec.parameters.forEach(function(p, index) {
+      evt.parameters[p.name] = parseInteger(bytes, 1);
+      evt.parameters[index] = evt.parameters[p.name];
     });
 
-    return msg;
+    return evt;
   }
 
   var valueParsers = {
@@ -324,7 +315,7 @@ window.MIDITools.Importers.Binary = (function(MT) {
     'number': parseInteger
   };
 
-  function parseMetaMessage(status, bytes) {
+  function parseMetaMessage(evt, bytes) {
     var type = parseInteger(bytes, 1);
     var length = parseInteger(bytes, 1);
     var spec = MT.Data.binaryMap[type];
@@ -333,47 +324,44 @@ window.MIDITools.Importers.Binary = (function(MT) {
       throw MT.Errors.Import.MetaType;
     } 
     // TODO: compare length and throw error
-    var msg = {
-      kind: spec.kind,
-      length: length,
-      type: spec.type,
-      parameters: {}
-    };
+
+    evt.kind = spec.kind;
+    evt.message = spec.type;
+    evt.parameters = {};
+
     var cutLength = (spec.length === 'variable' ? length : spec.length);
     if (spec.length === 'variable') {
-      msg.parameters = bytes.slice(0, cutLength);
-      msg.parameters.value = valueParsers[spec.valueType](bytes, length);
+      evt.parameters.value = valueParsers[spec.valueType](bytes, length);
       for (var i = 0; i < cutLength; i += 1) {
         bytes.shift();
       }
     } else {
-      spec.parameters.forEach(function(p) {
+      // TODO: document that the parameters are available by name or index
+      spec.parameters.forEach(function(p, index) {
         if (p.importers && p.importers.binary) {
-          p.importers.binary(parseInteger(bytes, p.length), msg.parameters);
+          p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
         } else {
           var value = valueParsers[p.valueType](bytes, p.length);
-          msg.parameters[p.name] = value;
+          evt.parameters[p.name] = value;
+          evt.parameters[index] = evt.parameters[p.name];
         }
       });
     }
 
-    return msg;      
+    return evt;      
   }
 
-  function parseSysExMessage(status, bytes) {
+  function parseSysExMessage(evt, bytes) {
     var length = parseVariableInteger(bytes);
 
-    var msg = {
-      kind: MT.Data.binaryMap[status].kind,
-      length: length,
-      type: 'unknown' // TODO: FIX
-    };
+    evt.kind = MT.Data.binaryMap[evt.status].kind;
+    evt.message = 'unknown'; // TODO: FIX
 
-    msg.parameters = bytes.slice(0, length);
+    evt.parameters = bytes.slice(0, length);
     for (var i = 0; i < length; i += 1) {
       bytes.shift();
     }
-    return msg;
+    return evt;
   }
 
 

@@ -109,15 +109,15 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     var header = new BinaryBuffer();
     header.appendString('MThd') /* TODO: use constant */
       .appendInt32(6) /* header size: TODO: ever anything but 6? */
-      .appendInt16(m.type) /* type */
-      .appendInt16(m.tracks.length) /* num tracks */
-      .appendInt16(m.timing.ticksPerBeat); /* ticks per beat */
+      .appendInt16(m._type) /* type */
+      .appendInt16(m._tracks.length) /* num tracks */
+      .appendInt16(m.getTiming().ticksPerBeat); /* ticks per beat */
     return header;
   }
 
   function generateTracks(m) {
     var buffer = new BinaryBuffer();
-    m.tracks.forEach(function(track) {
+    m._tracks.forEach(function(track) {
       buffer.appendString('MTrk');
       var evts = generateEvents(track);
       buffer.appendInt32(evts.length());
@@ -136,15 +136,15 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
 
   function generateEvent(buffer, event) {
     buffer.appendVariableInteger(event.timestamp);
-    switch (event.message.kind) {
+    switch (event.kind) {
       case 'channel':
-        generateChannelMessage(buffer, event.message);
+        generateChannelMessage(buffer, event);
         break;
       case 'meta':
-        generateMetaMessage(buffer, event.message);
+        generateMetaMessage(buffer, event);
         break;
       case 'sysex':
-        generateSysexMessage(buffer, event.message);
+        generateSysexMessage(buffer, event);
         break;
       default:
         throw new Error('unrecognized event type'); // TODO: Formalize
@@ -160,12 +160,12 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     }
   }
 
-  function generateMetaMessage(buffer, msg) {
+  function generateMetaMessage(buffer, evt) {
     buffer.appendInt8(0xFF);
-    buffer.appendInt8(MT.Data.typeToBinary[msg.type]);
-    var info = MT.Data.typeMap[msg.type];
+    buffer.appendInt8(MT.Data.typeToBinary[evt.message]);
+    var info = MT.Data.typeMap[evt.message];
     if (info.length === 'variable') {
-      buffer.appendVariableInteger(msg.parameters.value.length);
+      buffer.appendVariableInteger(evt.parameters.value.length);
     } else {
       buffer.appendVariableInteger(info.length);
     }
@@ -196,8 +196,6 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     return str;
   }
 
-  return {
-    generate: exportBinary
-  };
+  return exportBinary;
 
 }(MIDI, window.MIDITools));

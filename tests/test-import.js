@@ -153,11 +153,11 @@ QUnit.asyncTest("channel events of simple Type-1 MIDI", function(assert) {
       
       for (var i = 0, n1 = events.length; i < n1; i++) {
         assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
-        assert.equal(trackEvents[i].message.type, events[i].type, 'msg: ' + i);
+        assert.equal(trackEvents[i].message, events[i].type, 'msg: ' + i);
         var names = Object.keys(events[i].parameters);
         for (var j = 0, n2 = names.length; j < n2; j += 1) {
           var expect = events[i].parameters[name];
-          var actual = trackEvents[i].message.parameters[name];
+          var actual = trackEvents[i].parameters[name];
           assert.equal(expect, actual, 'msg: ' + i + '| param: ' + name);
         }
       }
@@ -276,16 +276,17 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
     var trackEvents = m.getTrack(0).events;
     for (var i = 0, n = events.length; i < n; i++) {
       assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
-      assert.equal(trackEvents[i].message.type, events[i].type, 'msg: ' + i);
+      assert.equal(trackEvents[i].message, events[i].type, 'msg: ' + i);
       var names = Object.keys(events[i].parameters);
       for (var j = 0, n2 = names.length; j < n2; j += 1) {
         var name = names[j];
         var expect = events[i].parameters[name];
-        var actual = trackEvents[i].message.parameters[name];
+        var actual = trackEvents[i].parameters[name];
         assert.equal(actual, expect, 'msg: ' + i + '| param: ' + name);
       }
     }
   }, function(err) {
+    QUnit.start();
     assert.ok(false, 'Import should not result in error');
     console.log(err);
   });
@@ -297,6 +298,7 @@ QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
     var events = m.getEventsByType('setTempo');
     assert.ok(events);
   }, function(err) {
+    QUnit.start();
     assert.ok(false, 'Import should not result in error');
     console.log(err);
   });

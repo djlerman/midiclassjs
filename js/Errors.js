@@ -18,6 +18,9 @@ window.MIDITools.Errors = (function() {
       Type: new Error('File must be either Type-0 or Type-1.'),
       Type0MultiTrack: new Error(
         'File format is Type-0, but declares multiple tracks.')
+    },
+    Text: {
+      MessageType: new Error('Invalid MIDI message type.')
     }
   };
 }());
