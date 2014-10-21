@@ -176,13 +176,15 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
     time: 0x00,
     parameters: {
       numerator: 4,
-      denominator: 4
+      denominator: 4,
+      metronome: 24,
+      thirtySeconds: 8
     }
   }, {
     type: types.setTempo,
     time: 0x00,
     parameters: {
-      microsecondsPerBeat: '120'
+      microsecondsPerBeat: 500000
     }
   }, {
     type: types.programChange,
@@ -193,50 +195,78 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
   }, {
     type: types.programChange,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      program: 46
+    }
   }, {
     type: types.programChange,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      program: 70
+    }
   }, {
     type: types.noteOn,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      note: 48,
+      velocity: 96
+    }
   }, {
     type: types.noteOn,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      note: 60,
+      velocity: 96
+    }
   }, {
     type: types.noteOn,
     time: 0x60,
-    parameters: {}
+    parameters: {
+      note: 67,
+      velocity: 64
+    }
   }, {
     type: types.noteOn,
     time: 0x60,
-    parameters: {}
+    parameters: {
+      note: 76,
+      velocity: 32
+    }
   }, {
     type: types.noteOff,
     time: 0xC0,
-    parameters: {}
+    parameters: {
+      note: 48,
+      velocity: 64
+    }
   }, {
     type: types.noteOff,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      note: 60,
+      velocity: 64
+    }
   }, {
     type: types.noteOff,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      note: 67,
+      velocity: 64
+    }
   }, {
     type: types.noteOff,
     time: 0x00,
-    parameters: {}
+    parameters: {
+      note: 76,
+      velocity: 64
+    }
   }, {
     type: types.endOfTrack,
     time: 0x00,
     parameters: {}
   }];
-  MIDITools.importBinary('samples/mid/events-type0.mid', function(m) {
 
+  MIDITools.importBinary('samples/mid/events-type0.mid', function(m) {
     QUnit.start();
     assert.equal(m.tracks.length, 1);
     assert.equal(m.tracks[0].events.length, events.length);
@@ -258,6 +288,17 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
   });
 });
 
+QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
+  MIDITools.importBinary('samples/mid/import-tempoChange-type0.mid', function(m) {
+    QUnit.start();
+    var events = m.getEventsByType('setTempo');
+    assert.ok(events);
+  }, function(err) {
+    assert.ok(false, 'Import should not result in error');
+    console.log(err);
+  });
+});
+
 QUnit.asyncTest("export simple Type-1 MIDI", function(assert) {
   DOMLoader.sendRequest({
     url: 'samples/mid/simple1.mid',
@@ -271,7 +312,6 @@ QUnit.asyncTest("export simple Type-1 MIDI", function(assert) {
         QUnit.start();
         assert.ok(false, 'Import should not result in error');
         console.log(err);
-        console.log(err.stack);
       });
     }
   });

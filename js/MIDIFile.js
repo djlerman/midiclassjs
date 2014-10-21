@@ -16,6 +16,7 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    * TODO: Add callback functionality
    */
   MIDIFile.prototype.play = function() {};
+  
   MIDIFile.prototype.getEventsByType = function(type, trackNumber) {
     var track = this.tracks[trackNumber || 0];
     if (!track) return undefined;

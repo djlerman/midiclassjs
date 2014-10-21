@@ -83,7 +83,8 @@ window.MIDITools.Data = (function() {
       length: 2,
       parameters: [{
         name: 'number',
-        length: 2
+        length: 2,
+        valueType: 'number'
       }],
       formats: {
         binary: 0x00,
@@ -188,7 +189,8 @@ window.MIDITools.Data = (function() {
       length: 1,
       parameters: [{
         name: 'value',
-        length: 1
+        length: 1,
+        valueType: 'number'
       }],
       formats: {
         binary: 0x20,
@@ -204,7 +206,8 @@ window.MIDITools.Data = (function() {
       length: 1,
       parameters: [{
         name: 'port',
-        length: 1
+        length: 1,
+        valueType: 'number'
       }],
       formats: {
         binary: 0x21,
@@ -300,7 +303,11 @@ window.MIDITools.Data = (function() {
       }, {
         name: 'denominator',
         length: 1,
-        valueType: 'number'
+        importers: {
+          binary: function(denomByte, params) {
+            params.denominator = Math.pow(2, denomByte);
+          }
+        }
       }, {
         name: 'metronome',
         length: 1,
