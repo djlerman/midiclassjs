@@ -2,8 +2,8 @@
  * @namespace MIDITools
  */
 window.MIDITools = {
-  Parsers: {},
-  Generators: {},
+  Importers: {},
+  Exporters: {},
   Utils: {},
   Errors: {}
 };

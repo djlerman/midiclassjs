@@ -1,3 +1,3 @@
 (function(exports, MT) {
-  exports.importBinary = MT.Parsers.Binary;
+  exports.importBinary = MT.Importers.Binary;
 }(window.MIDITools, window.MIDITools));

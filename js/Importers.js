@@ -1,4 +1,4 @@
-window.MIDITools.Parsers.Binary = (function(MT) {
+window.MIDITools.Importers.Binary = (function(MT) {
   'use strict';
 
   var MIN_HEADER_LENGTH = 14;

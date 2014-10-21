@@ -2,7 +2,7 @@
 /**
  * @namespace MIDITools.Generators
  */
-window.MIDITools.Generators.Binary = (function(MIDI, MT) {
+window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
   'use strict';
 
   // ======================
