@@ -7,7 +7,9 @@ window.MIDITools.Data = (function() {
       type: 'noteOff',
       parameters: ['note', 'velocity'],
       formats: {
-        binary: 0x08
+        binary: 0x08,
+        text: '',
+        xml: ''
       }
     },
 
@@ -16,7 +18,9 @@ window.MIDITools.Data = (function() {
       type: 'noteOn',
       parameters: ['note', 'velocity'],
       formats: {
-        binary: 0x09
+        binary: 0x09,
+        text: '',
+        xml: ''
       }
     },
     afterTouch: {
@@ -79,10 +83,12 @@ window.MIDITools.Data = (function() {
       length: 2,
       parameters: [{
         name: 'number',
-        bytes: 2
+        length: 2
       }],
       formats: {
-        binary: 0x00
+        binary: 0x00,
+        text: '',
+        xml: ''
       }
     },
 
@@ -92,7 +98,9 @@ window.MIDITools.Data = (function() {
       name: 'Text',
       length: 'variable',
       formats: {
-        binary: 0x01
+        binary: 0x01,
+        text: '',
+        xml: ''
       }
     },
 
@@ -102,7 +110,9 @@ window.MIDITools.Data = (function() {
       name: 'Copyright Notice',
       length: 'variable',
       formats: {
-        binary: 0x02
+        binary: 0x02,
+        text: '',
+        xml: ''
       }
     },
 
@@ -113,7 +123,9 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       valueType: 'string',
       formats: {
-        binary: 0x03
+        binary: 0x03,
+        text: '',
+        xml: ''
       }
     },
 
@@ -124,7 +136,9 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       valueType: 'string',
       formats: {
-        binary: 0x04
+        binary: 0x04,
+        text: '',
+        xml: ''
       }
     },
 
@@ -135,7 +149,9 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       valueType: 'string',
       formats: {
-        binary: 0x05
+        binary: 0x05,
+        text: '',
+        xml: ''
       }
     },
 
@@ -146,7 +162,9 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       valueType: 'string',
       formats: {
-        binary: 0x06
+        binary: 0x06,
+        text: '',
+        xml: ''
       }
     },
 
@@ -157,7 +175,9 @@ window.MIDITools.Data = (function() {
       length: 'variable',
       valueType: 'string',
       formats: {
-        binary: 0x07
+        binary: 0x07,
+        text: '',
+        xml: ''
       }
     },
 
@@ -168,10 +188,12 @@ window.MIDITools.Data = (function() {
       length: 1,
       parameters: [{
         name: 'value',
-        bytes: 1
+        length: 1
       }],
       formats: {
-        binary: 0x20
+        binary: 0x20,
+        text: '',
+        xml: ''
       }
     },
 
@@ -182,10 +204,12 @@ window.MIDITools.Data = (function() {
       length: 1,
       parameters: [{
         name: 'port',
-        bytes: 1
+        length: 1
       }],
       formats: {
-        binary: 0x21
+        binary: 0x21,
+        text: '',
+        xml: ''
       }
     },
 
@@ -207,10 +231,13 @@ window.MIDITools.Data = (function() {
       length: 3,
       parameters: [{
         name: 'microsecondsPerBeat',
-        bytes: 3
+        length: 3,
+        valueType: 'number'
       }],
       formats: {
-        binary: 0x51
+        binary: 0x51,
+        text: '',
+        xml: ''
       }
     },
 
@@ -221,8 +248,8 @@ window.MIDITools.Data = (function() {
       length: 5,
       parameters: [{
         name: 'hour',
-        bytes: 1,
-        parsers: {
+        length: 1,
+        importers: {
           binary: function(hourByte, params) {
             var fpsValues = {
               0: 24,
@@ -239,19 +266,25 @@ window.MIDITools.Data = (function() {
         }
       }, {
         name: 'minute',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'second',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'frames',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'sub-frames',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }],
       formats: {
-        binary: 0x54
+        binary: 0x54,
+        text: '',
+        xml: ''
       }
     },
 
@@ -262,19 +295,25 @@ window.MIDITools.Data = (function() {
       length: 4,
       parameters: [{
         name: 'numerator',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'denominator',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'metronome',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'thirtySeconds',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }],
       formats: {
-        binary: 0x58
+        binary: 0x58,
+        text: '',
+        xml: ''
       }
     },
 
@@ -285,13 +324,17 @@ window.MIDITools.Data = (function() {
       length: 2,
       parameters: [{
         name: 'key',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }, {
         name: 'scale',
-        bytes: 1
+        length: 1,
+        valueType: 'number'
       }],
       formats: {
-        binary: 0x59
+        binary: 0x59,
+        text: '',
+        xml: ''
       }
     },
 
@@ -310,7 +353,8 @@ window.MIDITools.Data = (function() {
   var data = {
     binaryMap: {},
     typeMap: {},
-    typeToBinary: {}
+    typeToBinary: {},
+    eventTypes: {}
   };
 
   Object.keys(eventMap).forEach(function(k) {
@@ -318,6 +362,8 @@ window.MIDITools.Data = (function() {
     data.binaryMap[val.formats.binary] = val;
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
+    data.eventTypes[k] = k;
+
   });
 
   return data;

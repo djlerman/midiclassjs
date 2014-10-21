@@ -42,6 +42,10 @@ window.MIDITools.Parsers.Binary = (function(MT) {
   }
 
 
+  //
+  // ## Parsing the header chunk
+  //
+
   /*!
    * @post m.type is set to either 0 or 1
    * @post m.trackCount set according to header's track count
@@ -53,19 +57,17 @@ window.MIDITools.Parsers.Binary = (function(MT) {
 
   function parseHeader(m, bytes) {
 
-    // Parsing the Header chunk
-    // ------------------------
     // The format of the header is specified in the
     // [Binary format document](../ref/binary.html).    
 
     // sanity check: die for files that aren't big enough
     // to even declare a MIDI header
     if (bytes.length < MIN_HEADER_LENGTH) {
-      throw MT.Errors.Format.FileSize;
+      throw MT.Errors.Import.FileSize;
     }
 
     // sanity check: Any MIDI file must begin with the `MTrk` constant.
-    parseStringConstant(bytes, HEADER_PRELUDE, MT.Errors.Format.HeaderPrelude);
+    parseStringConstant(bytes, HEADER_PRELUDE, MT.Errors.Import.HeaderPrelude);
     var headerSize = parseHeaderSize(bytes);
     var midiType = parseType(bytes);
     var trackCount = parseInteger(bytes, 2);
@@ -74,7 +76,7 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     // sanity check: a Type-0 file that declares multiple tracks
     // is just asking for trouble; we fail appropriately
     if (midiType === 0 && trackCount !== 1) {
-      throw MT.Errors.Format.Type0MultiTrack;
+      throw MT.Errors.Import.Type0MultiTrack;
     }
 
     // Since the header contains globally-useful information,
@@ -99,14 +101,14 @@ window.MIDITools.Parsers.Binary = (function(MT) {
    * Returns header's file size declaration,
    * if and only if it agrees with actual file size.
    *
-   * @throws MT.Errors.Format.HeaderSize if size declaration and
+   * @throws MT.Errors.Import.HeaderSize if size declaration and
    *         file size do not agree
    */
 
   function parseHeaderSize(bytes) {
     var size = parseInteger(bytes, 4);
     if (bytes.length < size) {
-      throw MT.Errors.Format.HeaderSize;
+      throw MT.Errors.Import.HeaderSize;
     } else {
       return size;
     }
@@ -117,13 +119,13 @@ window.MIDITools.Parsers.Binary = (function(MT) {
    * Returns the MIDI file type,
    * if and only if the type is in {0, 1}.
    *
-   * @throws MT.Errors.Format.Type if the type is not 0 or 1
+   * @throws MT.Errors.Import.Type if the type is not 0 or 1
    */
 
   function parseType(bytes) {
     var type = parseInteger(bytes, 2);
     if (type !== 0 && type !== 1) {
-      throw MT.Errors.Format.Type;
+      throw MT.Errors.Import.Type;
     } else {
       return type;
     }
@@ -164,20 +166,24 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     return Math.abs(negated);
   }
 
+
+  //
+  // ## Parsing the Track chunks
+  //
+
+
   /*!
    * Parses a binary representation of a MIDI track, adding
    * the events and metadata contained within to the `track`
    * parameter.
-   * 
-   * @throws MT.Errors.Format.TrackPrelude
-   * @throws MT.Errors.Format.TrackSize
-   * @throws MT.Errors.Format.TrackFooter
+   *
+   * @throws MT.Errors.Import.TrackPrelude
+   * @throws MT.Errors.Import.TrackSize
+   * @throws MT.Errors.Import.TrackFooter
    */
-  
+
   function parseTrack(track, bytes) {
 
-    // Parsing the Track chunks
-    // ------------------------
     // The complete format is documented in the
     // [binary format document](../ref/binary.html), but
     // a track basically consists of an eight-byte header, followed by
@@ -194,32 +200,51 @@ window.MIDITools.Parsers.Binary = (function(MT) {
 
     // a track must always end with an "end track" event
     if (track.events[track.events.length - 1].message.type !== 'endOfTrack') {
-      throw MT.Errors.Format.TrackFooter;
+      throw MT.Errors.Import.TrackFooter;
     }
   }
 
 
   /*!
-   * @throws {MIDITools.Errors.Format.TrackPrelude} if the track declaration
+   * @throws {MIDITools.Errors.Import.TrackPrelude} if the track declaration
    *         does not appear or is invalid
-   * @throws {MIDITools.Errors.Format.TrackLength} if size declaration
+   * @throws {MIDITools.Errors.Import.TrackLength} if size declaration
    *         is greater than remaining file size
    */
 
   function parseTrackHeader(track, bytes) {
-    parseStringConstant(bytes, TRACK_PRELUDE, MT.Errors.Format.TrackPrelude);
+    parseStringConstant(bytes, TRACK_PRELUDE, MT.Errors.Import.TrackPrelude);
     var size = parseInteger(bytes, 4);
     if (bytes.length < size) {
-      throw MT.Errors.Format.TrackLength;
+      throw MT.Errors.Import.TrackLength;
     } else {
       return size;
     }
   }
 
-  // Event/Message Parsing
-  // ---------------------
 
+  //
+  // ## Event/Message Parsing
+  //
+
+
+  /*!
+   * Adds the next event representation in `bytes` to `track`, and returns
+   * the event parsed.
+   *
+   * @post evt.timestamp = value of variable-length integer starting at bytes[0]
+   * @post evt.status = value of the byte following the variable-length integer
+   * @post evt.message = value according to post-conditions of parseMessage
+   * @return evt which satisfies the post-conditions above
+   */
   function parseEvent(track, bytes) {
+
+    // An event consists of two distinct pieces:
+    // a *delta-time* and a *message*. The delta-time is a
+    // [variable-length integer](../ref/binary.html#varint),
+    // and the message is parsed based on the *status byte*,
+    // the first byte of the message
+
     var evt = {
       timestamp: parseVariableInteger(bytes),
       status: parseInteger(bytes, 1)
@@ -230,23 +255,51 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     return evt;
   }
 
+  /*!
+   * @throws MT.Errors.Format.MessageType if the message type
+   *         is not recognized and there is no running status
+   */
   function parseMessage(track, evt, bytes, checkedPrevious) {
-    if (isMetaEvent(evt.status)) {
-      evt.message = parseMetaMessage(evt.status, bytes);
-    } else if ((evt.status === 0xF0 || evt.status === 0xF7)) {
-      evt.message = parseSysExMessage(evt.status, bytes);
-    } else if (isChannelEvent(evt.status)) {
-      evt.message = parseChannelMessage(evt.status, bytes);
-    } else if (!checkedPrevious) {
-      evt.runningStatus = true;
-      evt.status = track.events[track.events.length - 1].status;
-      bytes.unshift(evt.status);
-      parseMessage(track, evt, bytes, true);
-    } else {
-      throw new Error('Cannot find this message');
+    switch (true) {
+      case isChannelEvent(evt.status):
+        evt.message = parseChannelMessage(evt.status, bytes);
+        break;
+      case isMetaEvent(evt.status):
+        evt.message = parseMetaMessage(evt.status, bytes);
+        break;
+      case isSysExEvent(evt.status):
+        evt.message = parseSysExMessage(evt.status, bytes);
+        break;
+      case (!checkedPrevious && track.events.length > 0):
+        evt.runningStatus = true;
+        bytes.unshift(evt.status);
+        evt.status = track.events[track.events.length - 1].status;
+        parseMessage(track, evt, bytes, true);
+        break;
+      default:
+        throw MT.Errors.Format.MessageType;
     }
   }
 
+  function isChannelEvent(status) {
+    var type = ((status & 0xF0) >> 4);
+    return (0x8 <= type && type <= 0xE);
+  }
+
+  function isMetaEvent(status) {
+    return (status === 0xFF);
+  }
+
+  function isSysExEvent(status) {
+    return (status === 0xF0 || status === 0xF7);
+  }
+
+  /*!
+   * @post msg.kind = 'channel'
+   * @post 0x8 <= msg.type <= 0xE
+   * @post msg.parameters
+   * @returns msg satisfying the post-conditions above
+   */
   function parseChannelMessage(status, bytes) {
     var type = (status & 0xF0) >> 4;
     var channel = (status & 0x0F) >> 4;
@@ -258,8 +311,7 @@ window.MIDITools.Parsers.Binary = (function(MT) {
       parameters: {}
     };
 
-    var paramCount = 0;
-    // todo: document that the parameters are available by name or index
+    // TODO: document that the parameters are available by name or index
     spec.parameters.forEach(function(name, index) {
       msg.parameters[name] = parseInteger(bytes, 1);
       msg.parameters[index] = msg.parameters[name];
@@ -277,18 +329,36 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     var type = parseInteger(bytes, 1);
     var length = parseInteger(bytes, 1);
     var spec = MT.Data.binaryMap[type];
+    
+    if (!spec) {
+      throw MT.Errors.Import.MetaType;
+    } 
     // TODO: compare length and throw error
     var msg = {
       kind: spec.kind,
       length: length,
-      type: spec.type
+      type: spec.type,
+      parameters: {}
     };
     var cutLength = (spec.length === 'variable' ? length : spec.length);
-    msg.parameters = bytes.slice(0, cutLength);
-    for (var i = 0; i < cutLength; i += 1) {
-      bytes.shift();
+    if (spec.length === 'variable') {
+      msg.parameters = bytes.slice(0, cutLength);
+      msg.parameters.value = valueParsers[spec.valueType](bytes, length);
+      for (var i = 0; i < cutLength; i += 1) {
+        bytes.shift();
+      }
+    } else {
+      spec.parameters.forEach(function(p) {
+        if (p.importers && p.importers.binary) {
+          p.importers.binary(parseInteger(bytes, p.length), msg.parameters);
+        } else {
+          var value = valueParsers[p.valueType](bytes, p.length);
+          msg.parameters[p.name] = value;
+        }
+      });
     }
-    return msg;
+
+    return msg;      
   }
 
   function parseSysExMessage(status, bytes) {
@@ -307,21 +377,11 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     return msg;
   }
 
-  function isChannelEvent(status) {
-    var type = ((status & 0xF0) >> 4);
-    return (0x8 <= type && type <= 0xE);
-  }
 
-  function isMetaEvent(status) {
-    return (status === 0xFF);
-  }
+  //
+  // ## Byte Interpretation
+  //
 
-  function isSysExEvent(status) {
-    return (status === 0xF0 || status === 0xF7);
-  }
-
-  // Byte Interpretation
-  // -------------------
 
   function parseString(bytes, limit) {
     var result = '';
