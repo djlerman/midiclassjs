@@ -4,11 +4,9 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    * @class
    * @memberof MIDITools
    */
-  function MIDIFile(ticksPerBeat) {
-    this.type = 0; // TODO: should we just make this type 1?
-    this.ticksPerBeat = ticksPerBeat;
-    this.tracks = [];
-    this.channels = [];
+  function MIDIFile() {
+    this._tracks = [];
+    this._channels = [];
   }
 
   /**
@@ -18,7 +16,7 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   MIDIFile.prototype.play = function() {};
   
   MIDIFile.prototype.getEventsByType = function(type, trackNumber) {
-    var track = this.tracks[trackNumber || 0];
+    var track = this._tracks[trackNumber || 0];
     if (!track) return undefined;
     return track.events.filter(function(evt) {
       return (evt.message.type === type);
@@ -30,9 +28,23 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   };
 
   MIDIFile.prototype.countMessages = function(trackNumber) {
-    var track = this.tracks[trackNumber || 0];
+    var track = this._tracks[trackNumber || 0];
     return track.events.length;
   };
+  
+  MIDIFile.prototype.trackCount = function() {
+    return this._tracks.length;
+  };
+  
+  MIDIFile.prototype.getType = function() {
+    return this._type;
+  };
+  
+  MIDIFile.prototype.getTrack = function(trackNumber) {
+    return this._tracks[trackNumber];
+  };
+  
+  
 
   return MIDIFile;
 }(MIDI, window.MIDITools));

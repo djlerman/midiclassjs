@@ -35,8 +35,8 @@ window.MIDITools.Parsers.Binary = (function(MT) {
   function fromBinary(bytes) {
     var m = new MT.MIDIFile(0);
     parseHeader(m, bytes);
-    for (var i = 0, n = m.tracks.length; i < n; i += 1) {
-      parseTrack(m.tracks[i], bytes);
+    for (var i = 0, n = m._tracks.length; i < n; i += 1) {
+      parseTrack(m._tracks[i], bytes);
     }
     return m;
   }
@@ -47,11 +47,11 @@ window.MIDITools.Parsers.Binary = (function(MT) {
   //
 
   /*!
-   * @post m.type is set to either 0 or 1
-   * @post m.trackCount set according to header's track count
-   * @post m.tracks contains `m.trackCount` empty tracks
-   * @post m.timing.type is one of "framesPerSecond" or "ticksPerBeat"
-   * @post m.timing defines either "ticksPerFrame" or both
+   * @post m._type is set to either 0 or 1
+   * @post m._trackCount set according to header's track count
+   * @post m._tracks contains `m._trackCount` empty tracks
+   * @post m._timing.type is one of "framesPerSecond" or "ticksPerBeat"
+   * @post m._timing defines either "ticksPerFrame" or both
    *       "framesPerSecond" and "ticksPerFrame"
    */
 
@@ -80,15 +80,14 @@ window.MIDITools.Parsers.Binary = (function(MT) {
     }
 
     // Since the header contains globally-useful information,
-    // we store the results in the `event` object itself, rather
-    // than inside the `message` property
-    m.type = midiType;
-    m.trackCount = trackCount;
-    m.timing = timing;
+    // we store the results in the `MIDIFile` object itself
+    m._type = midiType;
+    m._trackCount = trackCount;
+    m._timing = timing;
 
     // initialize an empty `track` object for each declared track
     for (var i = 0; i < trackCount; i += 1) {
-      m.tracks.push({
+      m._tracks.push({
         number: i,
         events: [],
         eventTypes: {}
