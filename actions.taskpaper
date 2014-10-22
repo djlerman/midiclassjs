@@ -1,28 +1,43 @@
 fixes:
-	- remove direct dependence on jasmid library (brittle / old)
+	- remove direct dependence on jasmid library (brittle / old) @done(2014-10-21)
+	- add andrew (and twitter handle) to the acknowledgements
 api:
-	general:
-		midi.js documentation for future development:
-			- MIDI.Player
-	
 	construction:
 	- MIDI.File
 	import methods:
-		- MIDI.File#importBinary importBinary()
+		- importBinary()
 			- async download of file (Using MIDI.js's DOMLoader) @done(2014-10-15)
-			- interpret string as binary text
-			- interpret base64 string (http://gist.github.com/jonleighton/958841)
-		- MIDI.File#importText importText(text)
-		- MIDI.File#importXML importXML(xmlString)
+			- interpret string as binary array @done(2014-10-20)
+			- interpret header @done(2014-10-21)
+			- interpret events
+				- channel events
+				- noteOn @done(2014-10-20)
+					- noteOff @done(2014-10-20)
+					- afterTouch @done(2014-10-21)
+					- controlChange @done(2014-10-21)
+					- programChange @done(2014-10-21)
+					- channelPressure @done(2014-10-21)
+					- pitchWheel
+				- meta events
+				- sysex events @done(2014-10-21)
+		- importText(text)
+			- import events
+				- channel events @done(2014-10-21)
+				- special cases for parameter interpretation
+		- importXML(xmlString)
 	export methods:
 		- exportBinary()
 			- export header @done(2014-10-17)
 			- export tracks
+				- export channel events @done(2014-10-21)
+				- export sysex events
+				- export meta events
+		- exportBase64 @done(2014-10-21)
 		- exportText(relativeTS)
 		- exportTrackText(trackNumber, relativeTS)
 		- exportXML(relativeTS)
 	player:
-		- play(callback)
+		- play(callback) @done(2014-10-21)
 		- stop()
 	info:
 		- getTempo()
@@ -49,3 +64,4 @@ api:
 	MIDI object supplement:
 		- MIDI.drumset
 		- MIDI.drumkitList
+
