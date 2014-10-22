@@ -1,126 +1,96 @@
+body {
+  font-family:arial;
+  font-size:11px;
+  margin:0;
+  padding:0;
+}
 
-body
-  {
-  padding: 0;
-  margin: 0;
-  font-family:arial; font-size:11px;
-  }
-  
-input,
-select,
-option
-  {
-  font-size:11px
-  }
-  
-table
-  {
+input,select,option {
+  font-size:11px;
+}
+
+table {
   border-collapse:collapse;
-  }
-  
-table.layout > tbody > tr > td
-  {
-  padding: 1.3ex;
-  }
-    
-tr
-  {
-  }  
+}
 
-td
-  {
-  vertical-align: top;
-  padding: 0.5ex;
-  margin: 1ex;
-  border: 0;
-  }
+table.layout > tbody > tr > td {
+  padding:1.3ex;
+}
 
-th
-  {
-  color: #fff;
-  background: #333;
-  font-weight: bold;
-  padding: 0.3em 1em;
-  text-align: left;
-  }
+td {
+  vertical-align:top;
+  border:0;
+  margin:1ex;
+  padding:.5ex;
+}
 
-tr.head td
-  {
-  color: #000;
-  background: #bbb;
-  font-weight: normal;
-  padding: 0.3em 0 0.3em 1em;
-  }
+th {
+  color:#fff;
+  background:#333;
+  font-weight:700;
+  text-align:left;
+  padding:.3em 1em;
+}
 
-tr.line td
-  {
-  vertical-align: middle;
-  background: #ddd;
-  padding: 0.2em 1em;
-  }
+tr.head td {
+  color:#000;
+  background:#bbb;
+  font-weight:400;
+  padding:.3em 0 .3em 1em;
+}
 
+tr.line td {
+  vertical-align:middle;
+  background:#ddd;
+  padding:.2em 1em;
+}
 
-tr.track td
-  {
-  vertical-align: middle;
-  background: #dadada;
-  padding: 0;
-  }
-  
+tr.track td {
+  vertical-align:middle;
+  background:#dadada;
+  padding:0;
+}
+
 td.check:nth-child(8n),
 td.check:nth-child(8n-1),
 td.check:nth-child(8n-2),
-td.check:nth-child(8n-3)
-  {
-  vertical-align: middle;
-  background: #eee;
-  padding: 0;
-  }
+td.check:nth-child(8n-3) {
+  vertical-align:middle;
+  background:#eee;
+  padding:0;
+}
 
+td#col1 {
+  width:60em;
+}
 
-td#col1
-  {
-  width: 60em;
-  }  
-td#col2
-  {
-  width: 30em;
-  }  
-td#col3
-  {
-  }  
+td#col2 {
+  width:30em;
+}
 
-  
-div.status
-  {
-  padding: 1ex;
-  background: #777;
-  color: #ccc;
-  }
-div.status span
-  {
-  padding: 1ex;
-  background: #ccc;
-  color: #000;
-  width: 100%;
-  }
+div.status {
+  background:#777;
+  color:#ccc;
+  padding:1ex;
+}
 
-div.demo
-  {
-  margin: 2em 0;
-  border: 1px solid #000000;
-  padding: 1em;
+div.status span {
+  background:#ccc;
+  color:#000;
+  width:100%;
+  padding:1ex;
+}
 
-  }
-  
+div.demo {
+  border:1px solid #000;
+  margin:2em 0;
+  padding:1em;
+}
 
-div.midi-view
-  {
-  padding: 1ex;
-  border: 1px solid #000000;
-  display: none;
-  width: 33em;
-  word-wrap: break-word;
-  }
-
-
+div.midi-view {
+  border:1px solid #000;
+  display:none;
+  width:33em;
+  word-wrap:break-word;
+  padding:1ex;
+}
