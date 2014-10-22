@@ -13,7 +13,6 @@ QUnit.test("export empty Type-0 MIDI", function(assert) {
   var expected = vals.map(function(ch) { return String.fromCharCode(ch); }).join('');
   
   var midi = MIDITools.createMIDI();
-  midi.addTextEvent('Meta TrkEnd', 0);
   var actual = midi.exportBinary();
   assert.deepEqual(actual, expected);
 });

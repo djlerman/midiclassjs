@@ -88,9 +88,7 @@ window.MIDITools.Importers.Binary = (function(MT) {
     // initialize an empty `track` object for each declared track
     for (var i = 1; i < trackCount; i += 1) {
       m.addTrack();
-      m.getTrack(i).events.pop();
     }
-    m.getTrack(0).events.pop();
   }
 
 
@@ -190,14 +188,17 @@ window.MIDITools.Importers.Binary = (function(MT) {
 
     while (true) {
       var evt = parseEvent(track, bytes);
+        track.addEvent(evt);
       if (bytes.length === 0 || evt.message === 'endOfTrack') {
         break;
       }
     }
 
+    track.events.pop(); // remove extra 'endOfTrack' event
     // a track must always end with an "end track" event
     if (track.events[track.events.length - 1].message !== 'endOfTrack') {
       throw MT.Errors.Import.TrackFooter;
+    } else {
     }
   }
 
@@ -248,12 +249,11 @@ window.MIDITools.Importers.Binary = (function(MT) {
     };
 
     parseMessage(track, evt, bytes);
-    track.events.push(evt);
     return evt;
   }
 
   /*!
-   * @throws MT.Errors.Format.MessageType if the message type
+   * @throws MT.Errors.Import.MessageType if the message type
    *         is not recognized and there is no running status
    */
   function parseMessage(track, evt, bytes, checkedPrevious) {
@@ -266,10 +266,10 @@ window.MIDITools.Importers.Binary = (function(MT) {
     } else if (!checkedPrevious && track.events.length > 0) {
       evt.runningStatus = true;
       bytes.unshift(evt.status);
-      evt.status = track.events[track.events.length - 1].status;
+      evt.status = track.events[track.events.length - 2].status;
       parseMessage(track, evt, bytes, true);
     } else {
-      throw MT.Errors.Format.MessageType;
+      throw MT.Errors.Import.MessageType;
     }
     return evt;
   }

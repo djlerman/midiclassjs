@@ -148,8 +148,8 @@ QUnit.asyncTest("channel events of simple Type-1 MIDI", function(assert) {
     function(m) {
       QUnit.start();
       assert.equal(m.trackCount(), 1);
-      assert.equal(m.getTrack(0).events.length, events.length);
-      var trackEvents = m.getTrack(0).events;
+      assert.equal(m.track(0).events.length, events.length);
+      var trackEvents = m.track(0).events;
       
       for (var i = 0, n1 = events.length; i < n1; i++) {
         assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
@@ -272,8 +272,8 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
   MIDITools.importBinary('samples/mid/events-type0.mid', function(m) {
     QUnit.start();
     assert.equal(m.trackCount(), 1);
-    assert.equal(m.getTrack(0).events.length, events.length);
-    var trackEvents = m.getTrack(0).events;
+    assert.equal(m.track(0).events.length, events.length);
+    var trackEvents = m.track(0).events;
     for (var i = 0, n = events.length; i < n; i++) {
       assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
       assert.equal(trackEvents[i].message, events[i].type, 'msg: ' + i);
