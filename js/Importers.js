@@ -420,3 +420,8 @@ window.MIDITools.Importers.Binary = (function(MT) {
   return importBinary;
 
 }(MIDITools));
+
+window.MIDITools.Importers.Text = (function(MT) {
+  'use strict';
+
+}(window.MIDITools));

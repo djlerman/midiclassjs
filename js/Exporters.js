@@ -83,6 +83,10 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     return this.rep.length;
   };
 
+  BinaryBuffer.prototype.toString = function() {
+    return String.fromCharCode.apply(null, this.rep);
+  };
+
   function stringToBuffer(str) {
     var arr = new Uint8Array(str.length);
     for (var i = 0, n = str.length; i < n; i += 1) {
@@ -101,7 +105,7 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     var header = generateFileHeader(m, b);
     var tracks = generateTracks(m);
     b.append(header).append(tracks);
-    return b.rep;
+    return b.toString();
   }
 
   // TODO: generate frames instead if that's what they're using?
@@ -109,8 +113,8 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     var header = new BinaryBuffer();
     header.appendString('MThd') /* TODO: use constant */
       .appendInt32(6) /* header size: TODO: ever anything but 6? */
-      .appendInt16(m._type) /* type */
-      .appendInt16(m._tracks.length) /* num tracks */
+      .appendInt16(m.getType()) /* type */
+      .appendInt16(m.trackCount()) /* num tracks */
       .appendInt16(m.getTiming().ticksPerBeat); /* ticks per beat */
     return header;
   }
@@ -151,12 +155,12 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     }
   }
 
-  function generateChannelMessage(buffer, msg) {
-    var statusByte = (MT.Data.typeToBinary[msg.type] << 4) | msg.channel;
+  function generateChannelMessage(buffer, evt) {
+    var statusByte = (MT.Data.typeToBinary[evt.message] << 4) | evt.channel;
     buffer.appendInt8(statusByte);
-    buffer.appendInt8(msg.parameters[0]);
-    if (msg.parameters[1] !== undefined) {
-      buffer.appendInt8(msg.parameters[1]);
+    buffer.appendInt8(evt.parameters[0]);
+    if (evt.parameters[1] !== undefined) {
+      buffer.appendInt8(evt.parameters[1]);
     }
   }
 

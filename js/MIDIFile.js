@@ -23,14 +23,16 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    * Plays the MIDI sequence currently defined by this instance.
    * TODO: Add callback functionality
    */
-  MIDIFile.prototype.play = function() {};
-  MIDIFile.prototype.addTrack = function() {
-    this._tracks.push({
-      number: this._tracks.length,
-      events: [MT.Utils.textToEvent('Meta TrkEnd')],
-      eventTypes: {}
+  MIDIFile.prototype.play = function() {
+    MIDI.Player.loadFile(this.exportBase64(), function() {
+      MIDI.Player.start();
     });
   };
+
+  MIDIFile.prototype.addTrack = function() {
+    this._tracks.push(new MIDITrack(this._tracks.length));
+  };
+
   MIDIFile.prototype.getEventsByType = function(type, trackNumber) {
     var track = this._tracks[trackNumber || 0];
     if (!track) return undefined;
@@ -76,8 +78,19 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   MIDIFile.prototype.getTrack = function(trackNumber) {
     return this._tracks[trackNumber];
   };
-
-
+  
+  MIDIFile.prototype.addTextEvent = function(text, trackNumber) {
+    var track = this._tracks[trackNumber || 0];
+    track.events.push(MT.Utils.textToEvent(text));
+    
+  };
 
   return MIDIFile;
+  
+  function MIDITrack(n) {
+    this.number = n;
+    this.events = [];
+    this.eventTypes = {};
+  }
+  
 }(MIDI, window.MIDITools));

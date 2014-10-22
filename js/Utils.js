@@ -45,7 +45,6 @@ window.MIDITools.Utils = (function(MT) {
     
     return evt;
   }
-  
   return {
     stringToBytes: stringToBytes,
     textToEvent: textToEvent,
