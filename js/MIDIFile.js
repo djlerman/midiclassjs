@@ -96,14 +96,19 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
 
   MIDIFile.prototype.addTextEvent = function(text, trackNumber) {
     var track = this._tracks[trackNumber || 0];
-    track.events.push(MT.Utils.textToEvent(text));
+    track.addEvent(text);
   };
 
   function MIDITrack(n) {
     this.number = n;
     this.events = [];
     this.eventTypes = {};
-    this.events.push(MT.Utils.textToEvent('Meta TrkEnd'));
+    this.events.push({
+      timestamp: 0x00,
+      kind: 'meta',
+      message: 'endOfTrack',
+      parameters: {},
+    });
   }
 
   MIDITrack.prototype.addEvent = function(evt) {
@@ -120,19 +125,22 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
     var spec = MT.Data.typeMap[msg];
     var evt = {
+      channel: this.number,
       timestamp: delta,
       kind: spec.kind,
       message: spec.type,
       parameters: {}
     };
+    console.log(spec);
     spec.parameters.forEach(function(p, index) {
-      if (parameters[p] === 'undefined') {
+      if (parameters[p.name] === 'undefined') {
         // TODO: Create custom error
         throw new Error('Parameter left undefined');
       }
-      evt.parameters[p] = parameters[p];
+      evt.parameters[p.name] = parameters[p.name];
+      evt.parameters[index] = evt.parameters[p.name];
     });
-    this.track.events.push(evt);
+    this.track.addEvent(evt);
   };
   
   return MIDIFile;
