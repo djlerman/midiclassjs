@@ -173,7 +173,7 @@ which is measured in <em>beats per minute (bpm)</em>.</p>
 <h4 id="frames-per-second">Frames per second</h4>
 <p>The 16 bits of the time division are broken into 2 pieces:</p>
 <ol>
-<li>The top 8 bits define the number of <a href="../MIDI.html#SMPTE" title="SMPTE Definition">SMPTE frames</a>,
+<li>The top 8 bits define the number of [SMPTE frames][SMPTE],
 and must be one of the following values:<ul>
 <li><code>-24</code> (<code>0xE8</code>)</li>
 <li><code>-25</code> (<code>0xE7</code>)</li>
@@ -227,7 +227,11 @@ of the particular message.</li>
 </ul>
 <h4 id="-note-off-">&quot;Note Off&quot;</h4>
 <ul>
-<li>status bits of <code>0x8</code></li>
+<li>status<ul>
+<li>first 4 bits = <code>0x8</code></li>
+<li>next 4 indicate channel</li>
+</ul>
+</li>
 <li>parameters<ul>
 <li><code>note</code></li>
 <li><code>velocity</code></li>
@@ -293,6 +297,8 @@ of the particular message.</li>
 <li><a href="http://en.wikipedia.org/wiki/MIDI_timecode">Wikipedia - MIDI Timecode</a></li>
 <li><a href="http://www.sonicspot.com/guide/midifiles.html">MIDI File Format at &quot;The Sonic Spot&quot;</a></li>
 <li><a href="http://cs.fit.edu/~ryan/cse4051/projects/midi/midi.html">The MIDI File Format at Stanford</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/music21list/f9AboXHW0QE">Google Groups discussion of timing</a>
+[SMPTE]: ../MIDI.html#SMPTE &quot;SMPTE Definition&quot;</li>
 </ul>
 
   </body>

@@ -34,8 +34,13 @@
               </a>
             
               
-              <a class="source" href="Generators.html">
-                Generators.js
+              <a class="source" href="Exporters.html">
+                Exporters.js
+              </a>
+            
+              
+              <a class="source" href="Importers.html">
+                Importers.js
               </a>
             
               
@@ -46,11 +51,6 @@
               
               <a class="source" href="MIDITools.html">
                 MIDITools.js
-              </a>
-            
-              
-              <a class="source" href="Parsers.html">
-                Parsers.js
               </a>
             
               
@@ -81,7 +81,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Utils = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Utils = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
 <span class="hljs-pi">  'use strict'</span>;
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stringToBytes</span><span class="hljs-params">(str)</span> </span>{
@@ -91,11 +91,64 @@
     }
     <span class="hljs-keyword">return</span> bytes;
   }
-  
-  <span class="hljs-keyword">return</span> {
-    stringToBytes: stringToBytes
+  <span class="hljs-keyword">var</span> valueParsers = {
+    <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pieces)</span> </span>{
+      <span class="hljs-keyword">return</span> pieces.shift();
+    },
+    <span class="hljs-string">'number'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pieces)</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(pieces.shift());
+    }
   };
-}());</pre></div></div>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">textToEvent</span><span class="hljs-params">(text)</span> </span>{
+    <span class="hljs-keyword">var</span> pieces = text.split(<span class="hljs-regexp">/\s+/</span>);
+    <span class="hljs-keyword">if</span> (pieces[<span class="hljs-number">0</span>] === <span class="hljs-string">'Meta'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO: check that pieces[1] exists</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      pieces.shift();
+      pieces[<span class="hljs-number">0</span>] = <span class="hljs-string">'Meta'</span> + <span class="hljs-string">' '</span> + pieces[<span class="hljs-number">0</span>];
+    }
+    <span class="hljs-keyword">var</span> spec = MT.Data.textMap[pieces.shift()];
+    <span class="hljs-keyword">if</span> (!spec) {
+      <span class="hljs-keyword">throw</span> MT.Errors.Text.MessageType;
+    }
+    
+    <span class="hljs-keyword">var</span> evt = {
+      kind: spec.kind,
+      message: spec.type,
+      parameters: {}
+    };
+    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
+      <span class="hljs-keyword">if</span> (p.length === <span class="hljs-string">'variable'</span>) {
+        evt.parameters.value = pieces.join(<span class="hljs-string">' '</span>);
+      } <span class="hljs-keyword">if</span> (p.importers &amp;&amp; p.importers.text) {
+        p.importers.text(pieces, evt.parameters);
+      } <span class="hljs-keyword">else</span> {
+        evt.parameters[p.name] = valueParsers[p.valueType](pieces);
+      }
+    });
+    
+    <span class="hljs-keyword">return</span> evt;
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ab2str</span><span class="hljs-params">(buf)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>.fromCharCode.apply(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint16Array</span>(buf));
+  }
+  <span class="hljs-keyword">return</span> {
+    stringToBytes: stringToBytes,
+    textToEvent: textToEvent,
+  };
+}(<span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
             
         </li>
         

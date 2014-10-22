@@ -34,8 +34,13 @@
               </a>
             
               
-              <a class="source" href="Generators.html">
-                Generators.js
+              <a class="source" href="Exporters.html">
+                Exporters.js
+              </a>
+            
+              
+              <a class="source" href="Importers.html">
+                Importers.js
               </a>
             
               
@@ -46,11 +51,6 @@
               
               <a class="source" href="MIDITools.html">
                 MIDITools.js
-              </a>
-            
-              
-              <a class="source" href="Parsers.html">
-                Parsers.js
               </a>
             
               
@@ -83,76 +83,133 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Data = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
 <span class="hljs-pi">  'use strict'</span>;
-  
+  <span class="hljs-keyword">var</span> strings = {
+
+  };
+
   <span class="hljs-keyword">var</span> eventMap = {
     noteOff: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'noteOff'</span>,
-      parameters: [<span class="hljs-string">'note'</span>, <span class="hljs-string">'velocity'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'note'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }, {
+        name: <span class="hljs-string">'velocity'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x08</span>
+        binary: <span class="hljs-number">0x08</span>,
+        text: <span class="hljs-string">'Off'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
     noteOn: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'noteOn'</span>,
-      parameters: [<span class="hljs-string">'note'</span>, <span class="hljs-string">'velocity'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'note'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }, {
+        name: <span class="hljs-string">'velocity'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x09</span>
+        binary: <span class="hljs-number">0x09</span>,
+        text: <span class="hljs-string">'On'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
-
     afterTouch: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'afterTouch'</span>,
-      parameters: [<span class="hljs-string">'note'</span>, <span class="hljs-string">'amount'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'note'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }, {
+        name: <span class="hljs-string">'amount'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x0A</span>
+        binary: <span class="hljs-number">0x0A</span>,
+        text: <span class="hljs-string">'PoPr'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     controlChange: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'controlChange'</span>,
-      parameters: [<span class="hljs-string">'controller'</span>, <span class="hljs-string">'value'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'controller'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }, {
+        name: <span class="hljs-string">'value'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x0B</span>
+        binary: <span class="hljs-number">0x0B</span>,
+        text: <span class="hljs-string">'Par'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     programChange: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'programChange'</span>,
-      parameters: [<span class="hljs-string">'program'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'program'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x0C</span>
+        binary: <span class="hljs-number">0x0C</span>,
+        text: <span class="hljs-string">'PrCh'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     channelPressure: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'channelPressure'</span>,
-      parameters: [<span class="hljs-string">'amount'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'amount'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x0D</span>
+        binary: <span class="hljs-number">0x0D</span>,
+        text: <span class="hljs-string">'ChPr'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     pitchWheel: {
       kind: <span class="hljs-string">'channel'</span>,
       type: <span class="hljs-string">'pitchWheel'</span>,
-      parameters: [<span class="hljs-string">'pitchValue1'</span>, <span class="hljs-string">'pitchValue2'</span>],
+      parameters: [{
+        name: <span class="hljs-string">'pitchValue1'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }, {
+        name: <span class="hljs-string">'pitchValue2'</span>,
+        valueType: <span class="hljs-string">'number'</span>
+      }],
       formats: {
-        binary: <span class="hljs-number">0x0E</span>
+        binary: <span class="hljs-number">0x0E</span>,
+        text: <span class="hljs-string">'Pb'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     sysEx1: {
       kind: <span class="hljs-string">'sysex'</span>,
       formats: {
-        binary: <span class="hljs-number">0xF0</span>
+        binary: <span class="hljs-number">0xF0</span>,
+        text: <span class="hljs-string">'SysEx'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
     sysEx2: {
       kind: <span class="hljs-string">'sysex'</span>,
       formats: {
-        binary: <span class="hljs-number">0xF7</span>
+        binary: <span class="hljs-number">0xF7</span>,
+        text: <span class="hljs-string">'Arb'</span>,
+        <span class="hljs-comment">/* TODO: CHECK */</span>
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -163,10 +220,13 @@
       length: <span class="hljs-number">2</span>,
       parameters: [{
         name: <span class="hljs-string">'number'</span>,
-        bytes: <span class="hljs-number">2</span>
+        length: <span class="hljs-number">2</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x00</span>
+        binary: <span class="hljs-number">0x00</span>,
+        text: <span class="hljs-string">'Seqnr'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -176,7 +236,9 @@
       name: <span class="hljs-string">'Text'</span>,
       length: <span class="hljs-string">'variable'</span>,
       formats: {
-        binary: <span class="hljs-number">0x01</span>
+        binary: <span class="hljs-number">0x01</span>,
+        text: <span class="hljs-string">'Meta Text'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -186,7 +248,9 @@
       name: <span class="hljs-string">'Copyright Notice'</span>,
       length: <span class="hljs-string">'variable'</span>,
       formats: {
-        binary: <span class="hljs-number">0x02</span>
+        binary: <span class="hljs-number">0x02</span>,
+        text: <span class="hljs-string">'Meta Copyright'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -197,7 +261,9 @@
       length: <span class="hljs-string">'variable'</span>,
       valueType: <span class="hljs-string">'string'</span>,
       formats: {
-        binary: <span class="hljs-number">0x03</span>
+        binary: <span class="hljs-number">0x03</span>,
+        text: <span class="hljs-string">'Meta TrkName'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -208,7 +274,9 @@
       length: <span class="hljs-string">'variable'</span>,
       valueType: <span class="hljs-string">'string'</span>,
       formats: {
-        binary: <span class="hljs-number">0x04</span>
+        binary: <span class="hljs-number">0x04</span>,
+        text: <span class="hljs-string">''</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -219,7 +287,9 @@
       length: <span class="hljs-string">'variable'</span>,
       valueType: <span class="hljs-string">'string'</span>,
       formats: {
-        binary: <span class="hljs-number">0x05</span>
+        binary: <span class="hljs-number">0x05</span>,
+        text: <span class="hljs-string">'Meta Lyric'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -230,7 +300,9 @@
       length: <span class="hljs-string">'variable'</span>,
       valueType: <span class="hljs-string">'string'</span>,
       formats: {
-        binary: <span class="hljs-number">0x06</span>
+        binary: <span class="hljs-number">0x06</span>,
+        text: <span class="hljs-string">'Meta Marker'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -241,7 +313,9 @@
       length: <span class="hljs-string">'variable'</span>,
       valueType: <span class="hljs-string">'string'</span>,
       formats: {
-        binary: <span class="hljs-number">0x07</span>
+        binary: <span class="hljs-number">0x07</span>,
+        text: <span class="hljs-string">'Meta Cue'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -252,10 +326,13 @@
       length: <span class="hljs-number">1</span>,
       parameters: [{
         name: <span class="hljs-string">'value'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x20</span>
+        binary: <span class="hljs-number">0x20</span>,
+        text: <span class="hljs-string">''</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -266,10 +343,13 @@
       length: <span class="hljs-number">1</span>,
       parameters: [{
         name: <span class="hljs-string">'port'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x21</span>
+        binary: <span class="hljs-number">0x21</span>,
+        text: <span class="hljs-string">'Meta 0x21'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -280,7 +360,9 @@
       length: <span class="hljs-number">0</span>,
       parameters: [],
       formats: {
-        binary: <span class="hljs-number">0x2F</span>
+        binary: <span class="hljs-number">0x2F</span>,
+        text: <span class="hljs-string">'Meta TrkEnd'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -291,10 +373,13 @@
       length: <span class="hljs-number">3</span>,
       parameters: [{
         name: <span class="hljs-string">'microsecondsPerBeat'</span>,
-        bytes: <span class="hljs-number">3</span>
+        length: <span class="hljs-number">3</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x51</span>
+        binary: <span class="hljs-number">0x51</span>,
+        text: <span class="hljs-string">'Tempo'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -305,8 +390,8 @@
       length: <span class="hljs-number">5</span>,
       parameters: [{
         name: <span class="hljs-string">'hour'</span>,
-        bytes: <span class="hljs-number">1</span>,
-        parsers: {
+        length: <span class="hljs-number">1</span>,
+        importers: {
           binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(hourByte, params)</span> </span>{
             <span class="hljs-keyword">var</span> fpsValues = {
               <span class="hljs-number">0</span>: <span class="hljs-number">24</span>,
@@ -323,19 +408,25 @@
         }
       }, {
         name: <span class="hljs-string">'minute'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'second'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'frames'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'sub-frames'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x54</span>
+        binary: <span class="hljs-number">0x54</span>,
+        text: <span class="hljs-string">'SMPTE'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -346,19 +437,29 @@
       length: <span class="hljs-number">4</span>,
       parameters: [{
         name: <span class="hljs-string">'numerator'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'denominator'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        importers: {
+          binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(denomByte, params)</span> </span>{
+            params.denominator = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, denomByte);
+          }
+        }
       }, {
         name: <span class="hljs-string">'metronome'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'thirtySeconds'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x58</span>
+        binary: <span class="hljs-number">0x58</span>,
+        text: <span class="hljs-string">'TimeSig'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -369,13 +470,17 @@
       length: <span class="hljs-number">2</span>,
       parameters: [{
         name: <span class="hljs-string">'key'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }, {
         name: <span class="hljs-string">'scale'</span>,
-        bytes: <span class="hljs-number">1</span>
+        length: <span class="hljs-number">1</span>,
+        valueType: <span class="hljs-string">'number'</span>
       }],
       formats: {
-        binary: <span class="hljs-number">0x59</span>
+        binary: <span class="hljs-number">0x59</span>,
+        text: <span class="hljs-string">'KeySig'</span>,
+        xml: <span class="hljs-string">''</span>
       }
     },
 
@@ -394,14 +499,19 @@
   <span class="hljs-keyword">var</span> data = {
     binaryMap: {},
     typeMap: {},
-    typeToBinary: {}
+    typeToBinary: {},
+    eventTypes: {},
+    textMap: {}
   };
 
   <span class="hljs-built_in">Object</span>.keys(eventMap).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(k)</span> </span>{
     <span class="hljs-keyword">var</span> val = eventMap[k];
     data.binaryMap[val.formats.binary] = val;
+    data.textMap[val.formats.text] = val;
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
+    data.eventTypes[k] = k;
+
   });
 
   <span class="hljs-keyword">return</span> data;

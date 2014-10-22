@@ -34,8 +34,13 @@
               </a>
             
               
-              <a class="source" href="Generators.html">
-                Generators.js
+              <a class="source" href="Exporters.html">
+                Exporters.js
+              </a>
+            
+              
+              <a class="source" href="Importers.html">
+                Importers.js
               </a>
             
               
@@ -46,11 +51,6 @@
               
               <a class="source" href="MIDITools.html">
                 MIDITools.js
-              </a>
-            
-              
-              <a class="source" href="Parsers.html">
-                Parsers.js
               </a>
             
               
@@ -84,19 +84,26 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Errors = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
 <span class="hljs-pi">  'use strict'</span>;
   <span class="hljs-keyword">return</span> {
-    Format: {
+    Import: {
       FileSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File is too small to be a standard MIDI file.'</span>),
       HeaderPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File did not contain standard MIDI header.'</span>),
       HeaderSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
         <span class="hljs-string">'File size is smaller than its declared header size.'</span>),
+      MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a MIDI message with an unknown type.'</span>),
+      MetaType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a meta message with an unknown subtype.'</span>),
       TrackCount: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File declared a number of tracks outside 0-16.'</span>),
       TrackLength: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
         <span class="hljs-string">'File contains a track declared with the wrong size.'</span>),
       TrackPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
         <span class="hljs-string">'File did not contain standard MIDI track header.'</span>),
+      TrackFooter: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
+        <span class="hljs-string">'File did not contain standard MIDI track footer.'</span>),
       Type: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File must be either Type-0 or Type-1.'</span>),
       Type0MultiTrack: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
         <span class="hljs-string">'File format is Type-0, but declares multiple tracks.'</span>)
+    },
+    Text: {
+      MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Invalid MIDI message type.'</span>)
     }
   };
 }());</pre></div></div>

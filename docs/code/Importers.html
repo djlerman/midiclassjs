@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Parsers.js</title>
+  <title>Importers.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -34,8 +34,13 @@
               </a>
             
               
-              <a class="source" href="Generators.html">
-                Generators.js
+              <a class="source" href="Exporters.html">
+                Exporters.js
+              </a>
+            
+              
+              <a class="source" href="Importers.html">
+                Importers.js
               </a>
             
               
@@ -46,11 +51,6 @@
               
               <a class="source" href="MIDITools.html">
                 MIDITools.js
-              </a>
-            
-              
-              <a class="source" href="Parsers.html">
-                Parsers.js
               </a>
             
               
@@ -66,7 +66,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>Parsers.js</h1>
+                  <h1>Importers.js</h1>
               </div>
           </li>
         
@@ -81,7 +81,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Parsers.Binary = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Importers.Binary = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
 <span class="hljs-pi">  'use strict'</span>;
 
   <span class="hljs-keyword">var</span> MIN_HEADER_LENGTH = <span class="hljs-number">14</span>;
@@ -262,13 +262,11 @@ we store the results in the <code>MIDIFile</code> object itself</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; trackCount; i += <span class="hljs-number">1</span>) {
-      m._tracks.push({
-        number: i,
-        events: [],
-        eventTypes: {}
-      });
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; trackCount; i += <span class="hljs-number">1</span>) {
+      m.addTrack();
+      m.getTrack(i).events.pop();
     }
+    m.getTrack(<span class="hljs-number">0</span>).events.pop();
   }
 
 
@@ -389,7 +387,7 @@ a sequence of events.</p>
 
     <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
       <span class="hljs-keyword">var</span> evt = parseEvent(track, bytes);
-      <span class="hljs-keyword">if</span> (bytes.length === <span class="hljs-number">0</span> || evt.message.type === <span class="hljs-string">'endOfTrack'</span>) {
+      <span class="hljs-keyword">if</span> (bytes.length === <span class="hljs-number">0</span> || evt.message === <span class="hljs-string">'endOfTrack'</span>) {
         <span class="hljs-keyword">break</span>;
       }
     }</pre></div></div>
@@ -407,7 +405,7 @@ a sequence of events.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (track.events[track.events.length - <span class="hljs-number">1</span>].message.type !== <span class="hljs-string">'endOfTrack'</span>) {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (track.events[track.events.length - <span class="hljs-number">1</span>].message !== <span class="hljs-string">'endOfTrack'</span>) {
       <span class="hljs-keyword">throw</span> MT.Errors.Import.TrackFooter;
     }
   }
@@ -489,25 +487,21 @@ the first byte of the message</p>
    *         is not recognized and there is no running status
    */</span>
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMessage</span><span class="hljs-params">(track, evt, bytes, checkedPrevious)</span> </span>{
-    <span class="hljs-keyword">switch</span> (<span class="hljs-literal">true</span>) {
-      <span class="hljs-keyword">case</span> isChannelEvent(evt.status):
-        evt.message = parseChannelMessage(evt.status, bytes);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> isMetaEvent(evt.status):
-        evt.message = parseMetaMessage(evt.status, bytes);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> isSysExEvent(evt.status):
-        evt.message = parseSysExMessage(evt.status, bytes);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> (!checkedPrevious &amp;&amp; track.events.length &gt; <span class="hljs-number">0</span>):
-        evt.runningStatus = <span class="hljs-literal">true</span>;
-        bytes.unshift(evt.status);
-        evt.status = track.events[track.events.length - <span class="hljs-number">1</span>].status;
-        parseMessage(track, evt, bytes, <span class="hljs-literal">true</span>);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">default</span>:
-        <span class="hljs-keyword">throw</span> MT.Errors.Format.MessageType;
+    <span class="hljs-keyword">if</span> (isChannelEvent(evt.status)) {
+      parseChannelMessage(evt, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isMetaEvent(evt.status)) {
+      parseMetaMessage(evt, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isSysExEvent(evt.status)) {
+      parseSysExMessage(evt, bytes);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!checkedPrevious &amp;&amp; track.events.length &gt; <span class="hljs-number">0</span>) {
+      evt.runningStatus = <span class="hljs-literal">true</span>;
+      bytes.unshift(evt.status);
+      evt.status = track.events[track.events.length - <span class="hljs-number">1</span>].status;
+      parseMessage(track, evt, bytes, <span class="hljs-literal">true</span>);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> MT.Errors.Format.MessageType;
     }
+    <span class="hljs-keyword">return</span> evt;
   }
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isChannelEvent</span><span class="hljs-params">(status)</span> </span>{
@@ -524,21 +518,19 @@ the first byte of the message</p>
   }
 
   <span class="hljs-comment">/*!
-   * @post msg.kind = 'channel'
-   * @post 0x8 &lt;= msg.type &lt;= 0xE
-   * @post msg.parameters
+   * @post evt.kind = 'channel'
+   * @post 0x8 &lt;= evt.message &lt;= 0xE
    * @returns msg satisfying the post-conditions above
    */</span>
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseChannelMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
-    <span class="hljs-keyword">var</span> type = (status &amp; <span class="hljs-number">0xF0</span>) &gt;&gt; <span class="hljs-number">4</span>;
-    <span class="hljs-keyword">var</span> channel = (status &amp; <span class="hljs-number">0x0F</span>) &gt;&gt; <span class="hljs-number">4</span>;
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseChannelMessage</span><span class="hljs-params">(evt, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> type = (evt.status &amp; <span class="hljs-number">0xF0</span>) &gt;&gt; <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">var</span> channel = (evt.status &amp; <span class="hljs-number">0x0F</span>) &gt;&gt; <span class="hljs-number">4</span>;
     <span class="hljs-keyword">var</span> spec = MT.Data.binaryMap[type];
-    <span class="hljs-keyword">var</span> msg = {
-      kind: spec.kind,
-      type: spec.type,
-      channel: channel,
-      parameters: {}
-    };</pre></div></div>
+
+    evt.kind = spec.kind;
+    evt.message = spec.type;
+    evt.parameters = {};
+    evt.channel = channel;</pre></div></div>
             
         </li>
         
@@ -553,12 +545,12 @@ the first byte of the message</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, index)</span> </span>{
-      msg.parameters[name] = parseInteger(bytes, <span class="hljs-number">1</span>);
-      msg.parameters[index] = msg.parameters[name];
+            <div class="content"><div class='highlight'><pre>    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
+      evt.parameters[p.name] = parseInteger(bytes, <span class="hljs-number">1</span>);
+      evt.parameters[index] = evt.parameters[p.name];
     });
 
-    <span class="hljs-keyword">return</span> msg;
+    <span class="hljs-keyword">return</span> evt;
   }
 
   <span class="hljs-keyword">var</span> valueParsers = {
@@ -566,7 +558,7 @@ the first byte of the message</p>
     <span class="hljs-string">'number'</span>: parseInteger
   };
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMetaMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMetaMessage</span><span class="hljs-params">(evt, bytes)</span> </span>{
     <span class="hljs-keyword">var</span> type = parseInteger(bytes, <span class="hljs-number">1</span>);
     <span class="hljs-keyword">var</span> length = parseInteger(bytes, <span class="hljs-number">1</span>);
     <span class="hljs-keyword">var</span> spec = MT.Data.binaryMap[type];
@@ -588,48 +580,18 @@ the first byte of the message</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> msg = {
-      kind: spec.kind,
-      length: length,
-      type: spec.type,
-      parameters: {}
-    };
+            <div class="content"><div class='highlight'><pre>
+    evt.kind = spec.kind;
+    evt.message = spec.type;
+    evt.parameters = {};
+
     <span class="hljs-keyword">var</span> cutLength = (spec.length === <span class="hljs-string">'variable'</span> ? length : spec.length);
     <span class="hljs-keyword">if</span> (spec.length === <span class="hljs-string">'variable'</span>) {
-      msg.parameters = bytes.slice(<span class="hljs-number">0</span>, cutLength);
-      msg.parameters.value = valueParsers[spec.valueType](bytes, length);
+      evt.parameters.value = valueParsers[spec.valueType](bytes, length);
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; cutLength; i += <span class="hljs-number">1</span>) {
         bytes.shift();
       }
-    } <span class="hljs-keyword">else</span> {
-      spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
-        <span class="hljs-keyword">if</span> (p.importers &amp;&amp; p.importers.binary) {
-          p.importers.binary(parseInteger(bytes, p.length), msg.parameters);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">var</span> value = valueParsers[p.valueType](bytes, p.length);
-          msg.parameters[p.name] = value;
-        }
-      });
-    }
-
-    <span class="hljs-keyword">return</span> msg;      
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseSysExMessage</span><span class="hljs-params">(status, bytes)</span> </span>{
-    <span class="hljs-keyword">var</span> length = parseVariableInteger(bytes);
-
-    <span class="hljs-keyword">var</span> msg = {
-      kind: MT.Data.binaryMap[status].kind,
-      length: length,
-      type: <span class="hljs-string">'unknown'</span> <span class="hljs-comment">// TODO: FIX</span>
-    };
-
-    msg.parameters = bytes.slice(<span class="hljs-number">0</span>, length);
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; length; i += <span class="hljs-number">1</span>) {
-      bytes.shift();
-    }
-    <span class="hljs-keyword">return</span> msg;
-  }</pre></div></div>
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
             
         </li>
         
@@ -639,6 +601,46 @@ the first byte of the message</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>TODO: document that the parameters are available by name or index</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
+        <span class="hljs-keyword">if</span> (p.importers &amp;&amp; p.importers.binary) {
+          p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">var</span> value = valueParsers[p.valueType](bytes, p.length);
+          evt.parameters[p.name] = value;
+          evt.parameters[index] = evt.parameters[p.name];
+        }
+      });
+    }
+
+    <span class="hljs-keyword">return</span> evt;      
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseSysExMessage</span><span class="hljs-params">(evt, bytes)</span> </span>{
+    <span class="hljs-keyword">var</span> length = parseVariableInteger(bytes);
+
+    evt.kind = MT.Data.binaryMap[evt.status].kind;
+    evt.message = <span class="hljs-string">'unknown'</span>; <span class="hljs-comment">// TODO: FIX</span>
+
+    evt.parameters = bytes.slice(<span class="hljs-number">0</span>, length);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; length; i += <span class="hljs-number">1</span>) {
+      bytes.shift();
+    }
+    <span class="hljs-keyword">return</span> evt;
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h2 id="byte-interpretation">Byte Interpretation</h2>
 
@@ -695,7 +697,12 @@ the first byte of the message</p>
 
   <span class="hljs-keyword">return</span> importBinary;
 
-}(MIDITools));</pre></div></div>
+}(MIDITools));
+
+<span class="hljs-built_in">window</span>.MIDITools.Importers.Text = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
+<span class="hljs-pi">  'use strict'</span>;
+
+}(<span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
             
         </li>
         

@@ -130,6 +130,7 @@ The track header is made up of exactly 8 bytes of data, containing:
 ### Track Footer
 
 TODO
+
 ## Events
 
 The *delta time* is stored as a [variable-length integer](#varint).
@@ -158,7 +159,9 @@ There are 7 channel message types, one for each possible value of `type`
 * "Pitch Wheel" (`0xE`)
 
 #### "Note Off"
-- status bits of `0x8`
+- status
+  - first 4 bits = `0x8`
+  - next 4 indicate channel
 - parameters
   - `note`
   - `velocity`
@@ -207,5 +210,5 @@ There are 7 channel message types, one for each possible value of `type`
 * [Wikipedia - MIDI Timecode](http://en.wikipedia.org/wiki/MIDI_timecode)
 * [MIDI File Format at "The Sonic Spot"](http://www.sonicspot.com/guide/midifiles.html)
 * [The MIDI File Format at Stanford](http://cs.fit.edu/~ryan/cse4051/projects/midi/midi.html)
-
+* [Google Groups discussion of timing](https://groups.google.com/forum/#!topic/music21list/f9AboXHW0QE)
 [SMPTE]: ../MIDI.html#SMPTE "SMPTE Definition"
