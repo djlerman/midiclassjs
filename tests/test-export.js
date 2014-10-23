@@ -9,10 +9,18 @@ QUnit.test("export empty Type-0 MIDI", function(assert) {
     0x00, 0x00, 0x00, 0x04, /* Track length*/
     0x00, 0xFF, 0x2F, 0x00 /* Track footer */
   ];
-  
-  var expected = vals.map(function(ch) { return String.fromCharCode(ch); }).join('');
-  
+
+  var expected = vals.map(function(ch) {
+    return String.fromCharCode(ch);
+  }).join('');
+
   var midi = MIDITools.createMIDI();
+  midi.addTrack();
+  midi.track(0).addEvent({
+    kind: 'meta',
+    message: 'endOfTrack',
+    parameters: []
+  });
   var actual = midi.exportBinary();
   assert.deepEqual(actual, expected);
 });
@@ -30,25 +38,30 @@ QUnit.test("export simple Type-0 MIDI", function(assert) {
     0x60, 0x80, 0x3C, 0x60, /* Stop middle C after 1 beat */
     0x00, 0xFF, 0x2F, 0x00 /* Track footer */
   ];
-  var expected = vals.map(function(ch) { return String.fromCharCode(ch); }).join('');
-  
+  var expected = vals.map(function(ch) {
+    return String.fromCharCode(ch);
+  }).join('');
+
   var midi = MIDITools.createMIDI();
-  midi._tracks[0].events = [{
+  midi.addTrack();
+  midi.track(0).addEvent({
     kind: 'channel',
     channel: 0,
     message: 'noteOn',
     parameters: [0x3C, 0x60]
-  }, {
+  });
+  midi.track(0).addEvent({
     timestamp: 0x60,
     kind: 'channel',
     channel: 0,
     message: 'noteOff',
     parameters: [0x3C, 0x60]
-  }, {
+  });
+  midi.track(0).addEvent({
     kind: 'meta',
     message: 'endOfTrack',
     parameters: []
-  }];
+  });
   var actual = midi.exportBinary();
   assert.deepEqual(actual, expected);
 });

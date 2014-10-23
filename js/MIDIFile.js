@@ -10,7 +10,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     this._timing = {};
     this._type = 0;
     this._tracks = [];
-    this.addTrack();
 
     if (timing) {
       this.setTiming(timing);
@@ -29,36 +28,25 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     });
   };
 
-  MIDIFile.prototype.addTrack = function() {
-    this._tracks.push(new MIDITrack(this._tracks.length));
-  };
-
-  MIDIFile.prototype.getEventsByType = function(type, trackNumber) {
-    var track = this._tracks[trackNumber || 0];
-    // TODO: throw error
-    if (!track) return undefined;
-    return track.events.filter(function(evt) {
-      return (evt.message.type === type);
-    });
-  };
-
-  MIDIFile.prototype.getEventByType = function(type, trackNumber) {
-    return this.getEventsByType(type, trackNumber)[0];
-  };
-
-  MIDIFile.prototype.countMessages = function(trackNumber) {
-    var track = this._tracks[trackNumber || 0];
-    return track.events.length;
-  };
-
-  MIDIFile.prototype.trackCount = function() {
-    return this._tracks.length;
-  };
-
-  MIDIFile.prototype.getType = function() {
+  MIDIFile.prototype.type = function() {
     return this._type;
   };
 
+  MIDIFile.prototype.track = function(trackNumber) {
+    return this._tracks[trackNumber];
+  };
+
+  MIDIFile.prototype.addTrack = function() {
+    if (this._type === 0 && this._tracks.count === 1) {
+      this._type = 1; 
+    }
+    this._tracks.push(new MIDITrack(this._tracks.length));
+  };
+    
+  MIDIFile.prototype.countTracks = function() {
+    return this._tracks.length;
+  };
+  
   MIDIFile.prototype.getTiming = function() {
     // defensive copy
     return JSON.parse(JSON.stringify(this._timing));
@@ -77,72 +65,73 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     }
   };
 
-  MIDIFile.prototype.track = function(trackNumber) {
-    return this._tracks[trackNumber];
-  };
-
-  MIDIFile.prototype.channel = function(n) {
-    if (!this._channels[n]) {
-      var trackCount = this.trackCount();
-      if (trackCount !== Math.pow(2, 16)) {
-        this.addTrack();
-      } else {
-        trackCount -= 1; // reduce index
-      }
-      this._channels[n] = new MIDIChannel(this.track(trackCount), n);
-    }
-    return this._channels[n];
-  };
-
-  MIDIFile.prototype.addTextEvent = function(text, trackNumber) {
-    var track = this._tracks[trackNumber || 0];
-    track.addEvent(text);
-  };
-
   function MIDITrack(n) {
-    this.number = n;
-    this.events = [];
-    this.eventTypes = {};
-    this.events.push({
-      timestamp: 0x00,
-      kind: 'meta',
-      message: 'endOfTrack',
-      parameters: {},
-    });
+    this._number = n;
+    this._events = [];
+    this._eventTypes = {};
   }
+
+  MIDITrack.prototype.event = function(i) {
+    return this._events[i];
+  };
 
   MIDITrack.prototype.addEvent = function(evt) {
-    var end = this.events.pop(); // remove trackEnd event
-    this.events.push(evt);
-    this.events.push(end);
+    this._events.push(evt);
   };
 
-  function MIDIChannel(t, n) {
-    this.track = t;
-    this.number = n;
-  }
+  MIDITrack.prototype.replaceEvent = function(i, evt) {
+    this._events[i] = evt;
+  };
 
-  MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
-    var spec = MT.Data.typeMap[msg];
-    var evt = {
-      channel: this.number,
-      timestamp: delta,
-      kind: spec.kind,
-      message: spec.type,
-      parameters: {}
-    };
-    console.log(spec);
-    spec.parameters.forEach(function(p, index) {
-      if (parameters[p.name] === 'undefined') {
-        // TODO: Create custom error
-        throw new Error('Parameter left undefined');
-      }
-      evt.parameters[p.name] = parameters[p.name];
-      evt.parameters[index] = evt.parameters[p.name];
+  MIDITrack.prototype.countEvents = function(trackNumber) {
+    return this._events.length;
+  };
+
+  MIDITrack.prototype.filterEvents = function(type) {
+    return this._events.filter(function(evt) {
+      return (evt.message.type === type);
     });
-    this.track.addEvent(evt);
   };
-  
+
+  // MIDIFile.prototype.channel = function(n) {
+  //   if (!this._channels[n]) {
+  //     var trackCount = this.trackCount();
+  //     if (trackCount !== Math.pow(2, 16)) {
+  //       this.addTrack();
+  //     } else {
+  //       trackCount -= 1; // reduce index
+  //     }
+  //     this._channels[n] = new MIDIChannel(this.track(trackCount), n);
+  //   }
+  //   return this._channels[n];
+  // };
+  //
+  // function MIDIChannel(t, n) {
+  //   this.track = t;
+  //   this.number = n;
+  // }
+  //
+  // MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
+  //   var spec = MT.Data.typeMap[msg];
+  //   var evt = {
+  //     channel: this.number,
+  //     timestamp: delta,
+  //     kind: spec.kind,
+  //     message: spec.type,
+  //     parameters: {}
+  //   };
+  //
+  //   spec.parameters.forEach(function(p, index) {
+  //     if (parameters[p.name] === 'undefined') {
+  //       // TODO: Create custom error
+  //       throw new Error('Parameter left undefined');
+  //     }
+  //     evt.parameters[p.name] = parameters[p.name];
+  //     evt.parameters[index] = evt.parameters[p.name];
+  //   });
+  //   this.track.addEvent(evt);
+  // };
+  //
   return MIDIFile;
 
 }(MIDI, window.MIDITools));

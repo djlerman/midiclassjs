@@ -35,8 +35,8 @@ window.MIDITools.Importers.Binary = (function(MT) {
   function fromBinary(bytes) {
     var m = new MT.MIDIFile(0);
     parseHeader(m, bytes);
-    for (var i = 0, n = m._tracks.length; i < n; i += 1) {
-      parseTrack(m._tracks[i], bytes);
+    for (var i = 0, n = m.countTracks(); i < n; i += 1) {
+      parseTrack(m.track(i), bytes);
     }
     return m;
   }
@@ -82,11 +82,10 @@ window.MIDITools.Importers.Binary = (function(MT) {
     // Since the header contains globally-useful information,
     // we store the results in the `MIDIFile` object itself
     m._type = midiType;
-    m._trackCount = trackCount;
-    m._timing = timing;
+    m.setTiming(timing);
 
     // initialize an empty `track` object for each declared track
-    for (var i = 1; i < trackCount; i += 1) {
+    for (var i = 0; i < trackCount; i += 1) {
       m.addTrack();
     }
   }
@@ -188,17 +187,14 @@ window.MIDITools.Importers.Binary = (function(MT) {
 
     while (true) {
       var evt = parseEvent(track, bytes);
-        track.addEvent(evt);
+      track.addEvent(evt);
       if (bytes.length === 0 || evt.message === 'endOfTrack') {
         break;
       }
     }
 
-    track.events.pop(); // remove extra 'endOfTrack' event
-    // a track must always end with an "end track" event
-    if (track.events[track.events.length - 1].message !== 'endOfTrack') {
+    if (track.event(track.countEvents() - 1).message !== 'endOfTrack') {
       throw MT.Errors.Import.TrackFooter;
-    } else {
     }
   }
 
@@ -263,10 +259,10 @@ window.MIDITools.Importers.Binary = (function(MT) {
       parseMetaMessage(evt, bytes);
     } else if (isSysExEvent(evt.status)) {
       parseSysExMessage(evt, bytes);
-    } else if (!checkedPrevious && track.events.length > 0) {
+    } else if (!checkedPrevious && track.countEvents() > 0) {
       evt.runningStatus = true;
       bytes.unshift(evt.status);
-      evt.status = track.events[track.events.length - 2].status;
+      evt.status = track.event(track.countEvents() - 1).status;
       parseMessage(track, evt, bytes, true);
     } else {
       throw MT.Errors.Import.MessageType;
@@ -299,8 +295,8 @@ window.MIDITools.Importers.Binary = (function(MT) {
 
     evt.kind = spec.kind;
     evt.message = spec.type;
-    evt.parameters = {};
     evt.channel = channel;
+    evt.parameters = {};
     // TODO: document that the parameters are available by name or index
     spec.parameters.forEach(function(p, index) {
       evt.parameters[p.name] = parseInteger(bytes, 1);

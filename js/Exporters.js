@@ -1,4 +1,3 @@
-
 /**
  * @namespace MIDITools.Generators
  */
@@ -113,28 +112,28 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     var header = new BinaryBuffer();
     header.appendString('MThd') /* TODO: use constant */
       .appendInt32(6) /* header size: TODO: ever anything but 6? */
-      .appendInt16(m.getType()) /* type */
-      .appendInt16(m.trackCount()) /* num tracks */
+      .appendInt16(m.type()) /* type */
+      .appendInt16(m.countTracks()) /* num tracks */
       .appendInt16(m.getTiming().ticksPerBeat); /* ticks per beat */
     return header;
   }
 
   function generateTracks(m) {
     var buffer = new BinaryBuffer();
-    m._tracks.forEach(function(track) {
+    for (var i = 0, n = m.countTracks(); i < n; i += 1) {
       buffer.appendString('MTrk');
-      var evts = generateEvents(track);
+      var evts = generateEvents(m.track(i));
       buffer.appendInt32(evts.length());
       buffer.append(evts);
-    });
+    }
     return buffer;
   }
 
   function generateEvents(track) {
     var buffer = new BinaryBuffer();
-    track.events.forEach(function(event) {
-      generateEvent(buffer, event);
-    });
+    for (var i = 0, n = track.countEvents(); i < n; i += 1) {
+      generateEvent(buffer, track.event(i));
+    }
     return buffer;
   }
 

@@ -8,10 +8,10 @@ QUnit.test("library load", function(assert) {
 QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
   MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
     QUnit.start();
-    assert.equal(m.getType(), 1);
+    assert.equal(m.type(), 1);
     // TODO: re-add
     // assert.equal(m.timing.ticksPerBeat, 128);
-    assert.equal(m.trackCount(), 1);
+    assert.equal(m.countTracks(), 1);
     window.s = m;
   }, function(err) {
     QUnit.start();
@@ -147,17 +147,16 @@ QUnit.asyncTest("channel events of simple Type-1 MIDI", function(assert) {
   MIDITools.importBinary('samples/mid/simple1.mid',
     function(m) {
       QUnit.start();
-      assert.equal(m.trackCount(), 1);
-      assert.equal(m.track(0).events.length, events.length);
-      var trackEvents = m.track(0).events;
-      
+      assert.equal(m.countTracks(), 1);
+      assert.equal(m.track(0).countEvents(), events.length);
+      var track = m.track(0);
       for (var i = 0, n1 = events.length; i < n1; i++) {
-        assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
-        assert.equal(trackEvents[i].message, events[i].type, 'msg: ' + i);
+        assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' + i);
+        assert.equal(track.event(i).message, events[i].type, 'msg: ' + i);
         var names = Object.keys(events[i].parameters);
         for (var j = 0, n2 = names.length; j < n2; j += 1) {
           var expect = events[i].parameters[name];
-          var actual = trackEvents[i].parameters[name];
+          var actual = track.event(i).parameters[name];
           assert.equal(expect, actual, 'msg: ' + i + '| param: ' + name);
         }
       }
@@ -271,17 +270,17 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
 
   MIDITools.importBinary('samples/mid/events-type0.mid', function(m) {
     QUnit.start();
-    assert.equal(m.trackCount(), 1);
-    assert.equal(m.track(0).events.length, events.length);
-    var trackEvents = m.track(0).events;
-    for (var i = 0, n = events.length; i < n; i++) {
-      assert.equal(trackEvents[i].timestamp, events[i].time, 'msg: ' + i);
-      assert.equal(trackEvents[i].message, events[i].type, 'msg: ' + i);
+    assert.equal(m.countTracks(), 1);
+    assert.equal(m.track(0).countEvents(), events.length);
+    for (var i = 0, n = events.length; i < n; i += 1) {
+      var track = m.track(0);
+      assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' + i);
+      assert.equal(track.event(i).message, events[i].type, 'msg: ' + i);
       var names = Object.keys(events[i].parameters);
       for (var j = 0, n2 = names.length; j < n2; j += 1) {
         var name = names[j];
         var expect = events[i].parameters[name];
-        var actual = trackEvents[i].parameters[name];
+        var actual = track.event(i).parameters[name];
         assert.equal(actual, expect, 'msg: ' + i + '| param: ' + name);
       }
     }
@@ -295,7 +294,7 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
 QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
   MIDITools.importBinary('samples/mid/import-tempoChange-type0.mid', function(m) {
     QUnit.start();
-    var events = m.getEventsByType('setTempo');
+    var events = m.track(0).filterEvents('setTempo');
     assert.ok(events);
   }, function(err) {
     QUnit.start();
