@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="MIDISequence.html">
+                MIDISequence.js
+              </a>
+            
+              
               <a class="source" href="MIDITools.html">
                 MIDITools.js
               </a>
@@ -90,6 +95,9 @@
   exports.textToEvent = Tools.Utils.textToEvent;
   Tools.MIDIFile.prototype.exportBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> MIDITools.Exporters.Binary(<span class="hljs-keyword">this</span>);
+  };
+  Tools.MIDIFile.prototype.exportBase64 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'base64,'</span> + btoa(MIDITools.Exporters.Binary(<span class="hljs-keyword">this</span>));
   };
 }(<span class="hljs-built_in">window</span>.MIDITools, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
             

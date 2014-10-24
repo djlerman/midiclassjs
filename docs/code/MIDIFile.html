@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="MIDISequence.html">
+                MIDISequence.js
+              </a>
+            
+              
               <a class="source" href="MIDITools.html">
                 MIDITools.js
               </a>
@@ -89,11 +94,9 @@
    */</span>
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDIFile</span><span class="hljs-params">(timing)</span> </span>{
     <span class="hljs-keyword">this</span>._tracks = [];
-    <span class="hljs-keyword">this</span>._channels = [];
     <span class="hljs-keyword">this</span>._timing = {};
     <span class="hljs-keyword">this</span>._type = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>._tracks = [];
-    <span class="hljs-keyword">this</span>.addTrack();
 
     <span class="hljs-keyword">if</span> (timing) {
       <span class="hljs-keyword">this</span>.setTiming(timing);
@@ -106,35 +109,31 @@
    * Plays the MIDI sequence currently defined by this instance.
    * TODO: Add callback functionality
    */</span>
-  MIDIFile.prototype.play = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{};
-  MIDIFile.prototype.addTrack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">this</span>._tracks.push(<span class="hljs-keyword">new</span> MIDITrack(<span class="hljs-keyword">this</span>._tracks.length));
-  };
-  MIDIFile.prototype.getEventsByType = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type, trackNumber)</span> </span>{
-    <span class="hljs-keyword">var</span> track = <span class="hljs-keyword">this</span>._tracks[trackNumber || <span class="hljs-number">0</span>];
-    <span class="hljs-keyword">if</span> (!track) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
-    <span class="hljs-keyword">return</span> track.events.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
-      <span class="hljs-keyword">return</span> (evt.message.type === type);
+  MIDIFile.prototype.play = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    MIDI.Player.loadFile(<span class="hljs-keyword">this</span>.exportBase64(), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      MIDI.Player.start();
     });
   };
 
-  MIDIFile.prototype.getEventByType = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type, trackNumber)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getEventsByType(type, trackNumber)[<span class="hljs-number">0</span>];
-  };
-
-  MIDIFile.prototype.countMessages = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
-    <span class="hljs-keyword">var</span> track = <span class="hljs-keyword">this</span>._tracks[trackNumber || <span class="hljs-number">0</span>];
-    <span class="hljs-keyword">return</span> track.events.length;
-  };
-
-  MIDIFile.prototype.trackCount = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks.length;
-  };
-
-  MIDIFile.prototype.getType = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  MIDIFile.prototype.type = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._type;
   };
 
+  MIDIFile.prototype.track = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks[trackNumber];
+  };
+
+  MIDIFile.prototype.addTrack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._type === <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>._tracks.count === <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">this</span>._type = <span class="hljs-number">1</span>; 
+    }
+    <span class="hljs-keyword">this</span>._tracks.push(<span class="hljs-keyword">new</span> MIDITrack(<span class="hljs-keyword">this</span>._tracks.length));
+  };
+    
+  MIDIFile.prototype.countTracks = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks.length;
+  };
+  
   MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
@@ -175,27 +174,41 @@
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._timing.framesPerSecond = timing.framesPerSecond;
       <span class="hljs-keyword">this</span>._timing.ticksPerFrame = timing.ticksPerFrame;
+      <span class="hljs-keyword">this</span>._channels = [];
     }
   };
 
-  MIDIFile.prototype.getTrack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks[trackNumber];
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDITrack</span><span class="hljs-params">(n)</span> </span>{
+    <span class="hljs-keyword">this</span>._number = n;
+    <span class="hljs-keyword">this</span>._events = [];
+    <span class="hljs-keyword">this</span>._eventTypes = {};
+  }
+
+  MIDITrack.prototype.event = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events[i];
   };
-  
-  MIDIFile.prototype.addTextEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text, trackNumber)</span> </span>{
-    <span class="hljs-keyword">var</span> track = <span class="hljs-keyword">this</span>._tracks[trackNumber || <span class="hljs-number">0</span>];
-    track.events.push(MT.Utils.textToEvent(text));
-    
+
+  MIDITrack.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
+    evt.kind = MT.Data.typeMap[evt.message].kind;
+    <span class="hljs-keyword">this</span>._events.push(evt);
+  };
+
+  MIDITrack.prototype.replaceEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, evt)</span> </span>{
+    <span class="hljs-keyword">this</span>._events[i] = evt;
+  };
+
+  MIDITrack.prototype.countEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.length;
+  };
+
+  MIDITrack.prototype.filterEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
+      <span class="hljs-keyword">return</span> (evt.message.type === type);
+    });
   };
 
   <span class="hljs-keyword">return</span> MIDIFile;
-  
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDITrack</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">this</span>.number = n;
-    <span class="hljs-keyword">this</span>.events = [];
-    <span class="hljs-keyword">this</span>.eventTypes = {};
-  }
-  
+
 }(MIDI, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
             
         </li>

@@ -292,7 +292,7 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
 });
 
 QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
-  MIDITools.importBinary('samples/mid/import-tempoChange-type0.mid', function(m) {
+  MIDITools.importBinary('samples/mid/setTempo-type0.mid', function(m) {
     QUnit.start();
     var events = m.track(0).filterEvents('setTempo');
     assert.ok(events);

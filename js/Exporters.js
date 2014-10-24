@@ -101,10 +101,12 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
   // = END BinaryBuffer =
   // ====================
   function exportBinary(m) {
+    console.log(m);
     var b = new BinaryBuffer();
     var header = generateFileHeader(m, b);
     var tracks = generateTracks(m);
     b.append(header).append(tracks);
+    console.log(b);
     return b.toString();
   }
 
@@ -189,9 +191,8 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     } else {
       info.parameters.forEach(function(p) {
         if (p.exporters && p.exporters.binary) {
-          p.exporters.binary(p, buffer);
+          p.exporters.binary(evt.parameters[p.name], buffer);
         } else {
-          console.log(evt.parameters[p.name]);
           buffer.appendInteger(evt.parameters[p.name], p.length);
         }
       });

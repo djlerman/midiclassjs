@@ -29,7 +29,7 @@ window.MIDITools.Utils = (function(MT) {
     
     return {
       numerator: num,
-      denominator: Math.round(Math.log(denom)/Math.log(2)),
+      denominator: denom,
       metronome: 24,
       thirtySeconds: 8
     };

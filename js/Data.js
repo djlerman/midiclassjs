@@ -363,6 +363,13 @@ window.MIDITools.Data = (function() {
           binary: function(denomByte, params) {
             params.denominator = Math.pow(2, denomByte);
           }
+        },
+        exporters: {
+          binary: function(denom, bytes) {
+            var denomByte = Math.round(Math.log(denom)/Math.log(2));
+            console.log(Math.log(denom));
+            bytes.appendInt8(denomByte);
+          }
         }
       }, {
         name: 'metronome',

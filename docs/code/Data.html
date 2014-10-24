@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="MIDISequence.html">
+                MIDISequence.js
+              </a>
+            
+              
               <a class="source" href="MIDITools.html">
                 MIDITools.js
               </a>
@@ -445,6 +450,13 @@
         importers: {
           binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(denomByte, params)</span> </span>{
             params.denominator = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, denomByte);
+          }
+        },
+        exporters: {
+          binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(denom, bytes)</span> </span>{
+            <span class="hljs-keyword">var</span> denomByte = <span class="hljs-built_in">Math</span>.round(<span class="hljs-built_in">Math</span>.log(denom)/<span class="hljs-built_in">Math</span>.log(<span class="hljs-number">2</span>));
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Math</span>.log(denom));
+            bytes.appendInt8(denomByte);
           }
         }
       }, {

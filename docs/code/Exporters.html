@@ -49,6 +49,11 @@
               </a>
             
               
+              <a class="source" href="MIDISequence.html">
+                MIDISequence.js
+              </a>
+            
+              
               <a class="source" href="MIDITools.html">
                 MIDITools.js
               </a>
@@ -81,8 +86,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-comment">/**
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
  * @namespace MIDITools.Generators
  */</span>
 <span class="hljs-built_in">window</span>.MIDITools.Exporters.Binary = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MIDI, MT)</span> </span>{
@@ -140,6 +144,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">BinaryBuffer</span><span class="hljs-params">(n)</span> </span>{
+    n = (n ? n : <span class="hljs-number">0</span>) ;
     <span class="hljs-keyword">this</span>.rep = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(n);
   }
 
@@ -212,6 +217,10 @@
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep.length;
   };
 
+  BinaryBuffer.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>.fromCharCode.apply(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.rep);
+  };
+
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stringToBuffer</span><span class="hljs-params">(str)</span> </span>{
     <span class="hljs-keyword">var</span> arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(str.length);
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = str.length; i &lt; n; i += <span class="hljs-number">1</span>) {
@@ -261,11 +270,13 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">exportBinary</span><span class="hljs-params">(m)</span> </span>{
+    <span class="hljs-built_in">console</span>.log(m);
     <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">new</span> BinaryBuffer();
     <span class="hljs-keyword">var</span> header = generateFileHeader(m, b);
     <span class="hljs-keyword">var</span> tracks = generateTracks(m);
     b.append(header).append(tracks);
-    <span class="hljs-keyword">return</span> b.rep;
+    <span class="hljs-built_in">console</span>.log(b);
+    <span class="hljs-keyword">return</span> b.toString();
   }</pre></div></div>
             
         </li>
@@ -285,28 +296,28 @@
     <span class="hljs-keyword">var</span> header = <span class="hljs-keyword">new</span> BinaryBuffer();
     header.appendString(<span class="hljs-string">'MThd'</span>) <span class="hljs-comment">/* TODO: use constant */</span>
       .appendInt32(<span class="hljs-number">6</span>) <span class="hljs-comment">/* header size: TODO: ever anything but 6? */</span>
-      .appendInt16(m.getType()) <span class="hljs-comment">/* type */</span>
-      .appendInt16(m.trackCount()) <span class="hljs-comment">/* num tracks */</span>
+      .appendInt16(m.type()) <span class="hljs-comment">/* type */</span>
+      .appendInt16(m.countTracks()) <span class="hljs-comment">/* num tracks */</span>
       .appendInt16(m.getTiming().ticksPerBeat); <span class="hljs-comment">/* ticks per beat */</span>
     <span class="hljs-keyword">return</span> header;
   }
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateTracks</span><span class="hljs-params">(m)</span> </span>{
     <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
-    m._tracks.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(track)</span> </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = m.countTracks(); i &lt; n; i += <span class="hljs-number">1</span>) {
       buffer.appendString(<span class="hljs-string">'MTrk'</span>);
-      <span class="hljs-keyword">var</span> evts = generateEvents(track);
+      <span class="hljs-keyword">var</span> evts = generateEvents(m.track(i));
       buffer.appendInt32(evts.length());
       buffer.append(evts);
-    });
+    }
     <span class="hljs-keyword">return</span> buffer;
   }
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateEvents</span><span class="hljs-params">(track)</span> </span>{
     <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
-    track.events.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
-      generateEvent(buffer, event);
-    });
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = track.countEvents(); i &lt; n; i += <span class="hljs-number">1</span>) {
+      generateEvent(buffer, track.event(i));
+    }
     <span class="hljs-keyword">return</span> buffer;
   }
 
@@ -336,6 +347,12 @@
     }
   }
 
+  <span class="hljs-keyword">var</span> valueWriters = {
+    <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, buffer)</span> </span>{
+      buffer.appendString(p);
+    }
+  };
+
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateMetaMessage</span><span class="hljs-params">(buffer, evt)</span> </span>{
     buffer.appendInt8(<span class="hljs-number">0xFF</span>);
     buffer.appendInt8(MT.Data.typeToBinary[evt.message]);
@@ -343,7 +360,23 @@
     <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
       buffer.appendVariableInteger(evt.parameters.value.length);
     } <span class="hljs-keyword">else</span> {
-      buffer.appendVariableInteger(info.length);
+      buffer.appendVariableInteger(info.parameters.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+        <span class="hljs-keyword">return</span> p.length;
+      }).reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prev, current)</span> </span>{
+        <span class="hljs-keyword">return</span> prev + current;
+      }, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
+      valueWriters[info.valueType](evt.parameters.value, buffer);
+    } <span class="hljs-keyword">else</span> {
+      info.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+        <span class="hljs-keyword">if</span> (p.exporters &amp;&amp; p.exporters.binary) {
+          p.exporters.binary(evt.parameters[p.name], buffer);
+        } <span class="hljs-keyword">else</span> {
+          buffer.appendInteger(evt.parameters[p.name], p.length);
+        }
+      });
     }
   }
 

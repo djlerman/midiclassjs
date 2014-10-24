@@ -74,7 +74,10 @@ QUnit.test("export setTempo", function(assert) {
     0x00, 0x01, /* 1 track*/
     0x00, 0x60, /* 96 ticks/beat (default if none set)*/
     0x4D, 0x54, 0x72, 0x6B, /* MTrk*/
-    0x00, 0x00, 0x00, 0x0C, /* Track length*/
+    0x00, 0x00, 0x00, 0x1C, /* Track length*/
+    0x00, 0x90, 0x3C, 0x60, /* Play middle C */
+    0x60, 0x80, 0x3C, 0x60, /* Stop middle C after 1 beat */
+    0x00, 0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08, /*time signature*/
     0x00, 0x90, 0x3C, 0x60, /* Play middle C */
     0x60, 0x80, 0x3C, 0x60, /* Stop middle C after 1 beat */
     0x00, 0xFF, 0x2F, 0x00 /* Track footer */
@@ -86,20 +89,37 @@ QUnit.test("export setTempo", function(assert) {
   var midi = MIDITools.createMIDI();
   midi.addTrack();
   midi.track(0).addEvent({
-    kind: 'channel',
     channel: 0,
     message: 'noteOn',
     parameters: [0x3C, 0x60]
   });
   midi.track(0).addEvent({
     timestamp: 0x60,
-    kind: 'channel',
     channel: 0,
     message: 'noteOff',
     parameters: [0x3C, 0x60]
   });
   midi.track(0).addEvent({
-    kind: 'meta',
+    message: 'timeSignature',
+    parameters: {
+      numerator: 4,
+      denominator: 4,
+      metronome: 24,
+      thirtySeconds: 8
+    }
+  });
+  midi.track(0).addEvent({
+    channel: 0,
+    message: 'noteOn',
+    parameters: [0x3C, 0x60]
+  });
+  midi.track(0).addEvent({
+    timestamp: 0x60,
+    channel: 0,
+    message: 'noteOff',
+    parameters: [0x3C, 0x60]
+  });
+  midi.track(0).addEvent({
     message: 'endOfTrack',
     parameters: []
   });

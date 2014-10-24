@@ -14,14 +14,14 @@ window.MIDITools.Builder = (function(imports, exports) {
         microsecondsPerBeat: imports.Utils.bpmToTempo(this._tempo)
       }
     });
-    // this._midi.track(0).addEvent({
-    //   message: 'timeSignature',
-    //   timestamp: 0,
-    //   parameters: imports.Utils.fromTimeSignature('4/4')
-    // });
+    this._midi.track(0).addEvent({
+      message: 'timeSignature',
+      timestamp: 0,
+      parameters: imports.Utils.fromTimeSignature('4/4')
+    });
     this._meta = {
-      tempo: this._midi.track(0).event(0)
-//      timeSignature: this._midi.track(0).event(1)
+      tempo: this._midi.track(0).event(0),
+      timeSignature: this._midi.track(0).event(1)
     };
   }
   
@@ -38,7 +38,10 @@ window.MIDITools.Builder = (function(imports, exports) {
   };
 
   MIDISequence.prototype.getTimeSignature = function() {
-    return this._tempo;
+    return {
+      numerator: this._meta.timeSignature.parameters.numerator,
+      denominator: this._meta.timeSignature.parameters.denominator
+    };
   };
 
   MIDISequence.prototype.setTimeSignature = function(ts) {
