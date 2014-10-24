@@ -425,7 +425,12 @@ window.MIDITools.Data = (function() {
     typeMap: {},
     typeToBinary: {},
     eventTypes: {},
-    textMap: {}
+    textMap: {},
+    GeneralMIDI: {
+      byName: {
+       'synth_drum': 114 
+      }
+    }
   };
 
   Object.keys(eventMap).forEach(function(k) {
@@ -435,8 +440,8 @@ window.MIDITools.Data = (function() {
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
     data.eventTypes[k] = k;
-
   });
+  
 
   return data;
 }());

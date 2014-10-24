@@ -24,7 +24,7 @@ window.MIDITools.Builder = (function(imports, exports) {
       timeSignature: this._midi.track(0).event(1)
     };
   }
-  
+
   MIDISequence.prototype.getTempo = function() {
     return this._tempo;
   };
@@ -34,7 +34,8 @@ window.MIDITools.Builder = (function(imports, exports) {
 
   MIDISequence.prototype.setTempo = function(bpm) {
     this._tempo = bpm;
-    this._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(bpm);
+    this._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(
+      bpm);
   };
 
   MIDISequence.prototype.getTimeSignature = function() {
@@ -49,7 +50,7 @@ window.MIDITools.Builder = (function(imports, exports) {
     this._meta.timeSignature.parameters = imports.Utils.fromTimeSignature(ts);
   };
 
-  
+
   MIDISequence.prototype.channel = function(n) {
     if (!this._channels[n]) {
       var trackCount = this._midi.countTracks();
@@ -73,7 +74,7 @@ window.MIDITools.Builder = (function(imports, exports) {
     }
     return this._midi;
   };
-  
+
   function MIDIChannel(t, n) {
     this._track = t;
     this._number = n;
@@ -85,15 +86,19 @@ window.MIDITools.Builder = (function(imports, exports) {
       }
     });
     this._track.addEvent({
-      timestamp:0,
+      timestamp: 0,
       message: 'instrumentName',
       parameters: {
         value: 'unknown'
       }
     });
+    this.addEvent(0, 'programChange', {
+      program: 1
+    });
     this._nameParam = this._track.event(1).parameters;
+    this._program = this._track.event(2).parameters;
   }
-  
+
   MIDIChannel.prototype.setName = function(name) {
     this._nameParam.value = name;
   };
@@ -102,27 +107,26 @@ window.MIDITools.Builder = (function(imports, exports) {
     return this._nameParam.value;
   };
 
+  MIDIChannel.prototype.setInstrument = function(name) {
+    this._program.program = imports.Data.GeneralMIDI.byName[name];
+  };
+
+  MIDIChannel.prototype.getInstrument = function(bpm) {
+    return this._program.value;
+  };
+
   MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
     var spec = imports.Data.typeMap[msg];
     var evt = {
       timestamp: delta,
       channel: this._number,
       message: spec.type,
-      parameters: {}
+      parameters: parameters
     };
-
-    spec.parameters.forEach(function(p, index) {
-      if (parameters[p.name] === 'undefined') {
-        // TODO: Create custom error
-        throw new Error('Parameter left undefined');
-      }
-      evt.parameters[p.name] = parameters[p.name];
-      evt.parameters[index] = evt.parameters[p.name];
-    });
-
+    
     this._track.addEvent(evt);
   };
-  
+
   exports.MIDISequence = MIDISequence;
 
 }(window.MIDITools, window.MIDITools));

@@ -75,7 +75,22 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   };
 
   MIDITrack.prototype.addEvent = function(evt) {
-    evt.kind = MT.Data.typeMap[evt.message].kind;
+    var spec = MT.Data.typeMap[evt.message];
+    evt.kind = spec.kind;
+    var parameters = evt.parameters;
+    evt.parameters = {};
+    if (spec.length !== 'variable') { 
+      spec.parameters.forEach(function(p, index) {
+        if (parameters[p.name] === 'undefined') {
+          // TODO: Create custom error
+          throw new Error('Parameter left undefined');
+        }
+        evt.parameters[p.name] = parameters[p.name];
+        evt.parameters[index] = evt.parameters[p.name];
+      });
+    } else {
+      evt.parameters.value = parameters.value;
+    }
     this._events.push(evt);
   };
 
@@ -89,7 +104,7 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
 
   MIDITrack.prototype.filterEvents = function(type) {
     return this._events.filter(function(evt) {
-      return (evt.message.type === type);
+      return (evt.message === type);
     });
   };
 

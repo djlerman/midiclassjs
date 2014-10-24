@@ -19,7 +19,7 @@ QUnit.test("export empty Type-0 MIDI", function(assert) {
   midi.track(0).addEvent({
     kind: 'meta',
     message: 'endOfTrack',
-    parameters: []
+    parameters: {}
   });
   var actual = midi.exportBinary();
   assert.deepEqual(actual, expected);
@@ -45,22 +45,26 @@ QUnit.test("export simple Type-0 MIDI", function(assert) {
   var midi = MIDITools.createMIDI();
   midi.addTrack();
   midi.track(0).addEvent({
-    kind: 'channel',
     channel: 0,
     message: 'noteOn',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     timestamp: 0x60,
-    kind: 'channel',
     channel: 0,
     message: 'noteOff',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     kind: 'meta',
     message: 'endOfTrack',
-    parameters: []
+    parameters: {}
   });
   var actual = midi.exportBinary();
   assert.deepEqual(actual, expected);
@@ -91,13 +95,19 @@ QUnit.test("export setTempo", function(assert) {
   midi.track(0).addEvent({
     channel: 0,
     message: 'noteOn',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     timestamp: 0x60,
     channel: 0,
     message: 'noteOff',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     message: 'timeSignature',
@@ -111,13 +121,19 @@ QUnit.test("export setTempo", function(assert) {
   midi.track(0).addEvent({
     channel: 0,
     message: 'noteOn',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     timestamp: 0x60,
     channel: 0,
     message: 'noteOff',
-    parameters: [0x3C, 0x60]
+    parameters: {
+      note: 0x3C,
+      velocity: 0x60
+    }
   });
   midi.track(0).addEvent({
     message: 'endOfTrack',
