@@ -10,6 +10,7 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
 
   // used to simplify binary operations
   function BinaryBuffer(n) {
+    n = (n ? n : 0) ;
     this.rep = new Uint8Array(n);
   }
 
@@ -163,6 +164,12 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     }
   }
 
+  var valueWriters = {
+    'string': function(p, buffer) {
+      buffer.appendString(p);
+    }
+  };
+
   function generateMetaMessage(buffer, evt) {
     buffer.appendInt8(0xFF);
     buffer.appendInt8(MT.Data.typeToBinary[evt.message]);
@@ -170,7 +177,24 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     if (info.length === 'variable') {
       buffer.appendVariableInteger(evt.parameters.value.length);
     } else {
-      buffer.appendVariableInteger(info.length);
+      buffer.appendVariableInteger(info.parameters.map(function(p) {
+        return p.length;
+      }).reduce(function(prev, current) {
+        return prev + current;
+      }, 0));
+    }
+
+    if (info.length === 'variable') {
+      valueWriters[info.valueType](evt.parameters.value, buffer);
+    } else {
+      info.parameters.forEach(function(p) {
+        if (p.exporters && p.exporters.binary) {
+          p.exporters.binary(p, buffer);
+        } else {
+          console.log(evt.parameters[p.name]);
+          buffer.appendInteger(evt.parameters[p.name], p.length);
+        }
+      });
     }
   }
 

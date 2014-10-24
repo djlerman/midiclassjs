@@ -6,7 +6,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    */
   function MIDIFile(timing) {
     this._tracks = [];
-    this._channels = [];
     this._timing = {};
     this._type = 0;
     this._tracks = [];
@@ -76,6 +75,7 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   };
 
   MIDITrack.prototype.addEvent = function(evt) {
+    evt.kind = MT.Data.typeMap[evt.message].kind;
     this._events.push(evt);
   };
 
@@ -93,45 +93,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     });
   };
 
-  // MIDIFile.prototype.channel = function(n) {
-  //   if (!this._channels[n]) {
-  //     var trackCount = this.trackCount();
-  //     if (trackCount !== Math.pow(2, 16)) {
-  //       this.addTrack();
-  //     } else {
-  //       trackCount -= 1; // reduce index
-  //     }
-  //     this._channels[n] = new MIDIChannel(this.track(trackCount), n);
-  //   }
-  //   return this._channels[n];
-  // };
-  //
-  // function MIDIChannel(t, n) {
-  //   this.track = t;
-  //   this.number = n;
-  // }
-  //
-  // MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
-  //   var spec = MT.Data.typeMap[msg];
-  //   var evt = {
-  //     channel: this.number,
-  //     timestamp: delta,
-  //     kind: spec.kind,
-  //     message: spec.type,
-  //     parameters: {}
-  //   };
-  //
-  //   spec.parameters.forEach(function(p, index) {
-  //     if (parameters[p.name] === 'undefined') {
-  //       // TODO: Create custom error
-  //       throw new Error('Parameter left undefined');
-  //     }
-  //     evt.parameters[p.name] = parameters[p.name];
-  //     evt.parameters[index] = evt.parameters[p.name];
-  //   });
-  //   this.track.addEvent(evt);
-  // };
-  //
   return MIDIFile;
 
 }(MIDI, window.MIDITools));

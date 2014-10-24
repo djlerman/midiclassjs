@@ -16,6 +16,25 @@ window.MIDITools.Utils = (function(MT) {
       return parseInt(pieces.shift());
     }
   };
+  
+  function bpmToTempo(bpm) {
+    return Math.round(60000000 / bpm);
+  }
+  
+  function fromTimeSignature(ts) {
+    var pieces = ts.split('/');
+
+    var num = parseInt(pieces[0]);
+    var denom = parseInt(pieces[1]);
+    
+    return {
+      numerator: num,
+      denominator: Math.round(Math.log(denom)/Math.log(2)),
+      metronome: 24,
+      thirtySeconds: 8
+    };
+  }
+  
   function textToEvent(text) {
     var pieces = text.split(/\s+/);
     if (pieces[0] === 'Meta') {
@@ -48,5 +67,7 @@ window.MIDITools.Utils = (function(MT) {
   return {
     stringToBytes: stringToBytes,
     textToEvent: textToEvent,
+    bpmToTempo: bpmToTempo,
+    fromTimeSignature: fromTimeSignature
   };
 }(window.MIDITools));
