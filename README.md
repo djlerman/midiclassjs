@@ -1,3 +1,7 @@
+# API
+MIDISequence - high-level API for working with channels, instruments, etc.
+MIDIFile - low-level API for working with tracks
+
 #javascript version of the _php midi class_ using midi.js#
 
 midi.js home page is at:  http://mudcu.be/midi-js/

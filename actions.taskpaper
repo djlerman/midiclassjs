@@ -1,6 +1,7 @@
 fixes:
 	- remove direct dependence on jasmid library (brittle / old) @done(2014-10-21)
 	- add andrew (and twitter handle) to the acknowledgements
+	- replace DOMLoader with custom async loader
 api:
 	construction:
 	- MIDI.File

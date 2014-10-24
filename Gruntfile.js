@@ -21,7 +21,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['js/MIDITools.js', 'js/MIDIFile.js', 'js/Importers.js',
           'js/Exporters.js', 'js/Utils.js', 'js/Errors.js', 'js/Data.js',
-          'js/API.js'
+          'js/MIDISequence.js', 'js/API.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'
       }
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'concat', 'qunit', 'docco', 'markdown', 'jsdoc']
+      tasks: ['jshint', 'concat', 'docco', 'markdown', 'jsdoc']
     }
   });
 
