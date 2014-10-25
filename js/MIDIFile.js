@@ -1,5 +1,6 @@
 window.MIDITools.MIDIFile = (function(MIDI, MT) {
   'use strict';
+
   /*!
    * @class
    * @memberof MIDITools
@@ -31,15 +32,16 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     return this._type;
   };
 
+
   MIDIFile.prototype.track = function(trackNumber) {
     return this._tracks[trackNumber];
   };
 
   MIDIFile.prototype.addTrack = function() {
-    if (this._type === 0 && this._tracks.count === 1) {
+    if (this._type === 0 && this._tracks.length === 1) {
       this._type = 1; 
     }
-    this._tracks.push(new MIDITrack(this._tracks.length));
+    this._tracks.push(new MIDITools.MIDITrack(this._tracks.length));
   };
     
   MIDIFile.prototype.countTracks = function() {
@@ -64,50 +66,6 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     } else {
       console.log("ERROR"); // TODO: Create error type
     }
-  };
-
-  function MIDITrack(n) {
-    this._number = n;
-    this._events = [];
-    this._eventTypes = {};
-  }
-
-  MIDITrack.prototype.event = function(i) {
-    return this._events[i];
-  };
-
-  MIDITrack.prototype.addEvent = function(evt) {
-    var spec = MT.Data.typeMap[evt.message];
-    evt.kind = spec.kind;
-    var parameters = evt.parameters;
-    evt.parameters = {};
-    if (spec.length !== 'variable') { 
-      spec.parameters.forEach(function(p, index) {
-        if (parameters[p.name] === 'undefined') {
-          // TODO: Create custom error
-          throw new Error('Parameter left undefined');
-        }
-        evt.parameters[p.name] = parameters[p.name];
-        evt.parameters[index] = evt.parameters[p.name];
-      });
-    } else {
-      evt.parameters.value = parameters.value;
-    }
-    this._events.push(evt);
-  };
-
-  MIDITrack.prototype.replaceEvent = function(i, evt) {
-    this._events[i] = evt;
-  };
-
-  MIDITrack.prototype.countEvents = function(trackNumber) {
-    return this._events.length;
-  };
-
-  MIDITrack.prototype.filterEvents = function(type) {
-    return this._events.filter(function(evt) {
-      return (evt.message === type);
-    });
   };
 
   return MIDIFile;

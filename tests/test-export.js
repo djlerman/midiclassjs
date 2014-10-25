@@ -1,3 +1,4 @@
+QUnit.module( "MIDIFile~exportBinary" );
 QUnit.test("export empty Type-0 MIDI", function(assert) {
   var vals = [
     0x4D, 0x54, 0x68, 0x64, /* MThd*/
