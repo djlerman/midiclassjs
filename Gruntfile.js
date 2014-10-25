@@ -19,8 +19,8 @@ module.exports = function(grunt) {
         separator: '\n'
       },
       dist: {
-        src: ['js/MIDITools.js', 'js/MIDIFile.js', 'js/Importers.js',
-          'js/Exporters.js', 'js/Utils.js', 'js/Errors.js', 'js/Data.js',
+        src: ['js/MIDITools.js', 'js/Errors.js', 'js/MIDIFile.js', 'js/Importers.js',
+          'js/Exporters.js', 'js/Utils.js', 'js/Data.js',
           'js/MIDISequence.js', 'js/API.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'

@@ -359,17 +359,13 @@ window.MIDITools.Data = (function() {
       }, {
         name: 'denominator',
         length: 1,
-        importers: {
-          binary: function(denomByte, params) {
-            params.denominator = Math.pow(2, denomByte);
-          }
+        valueType: 'number',
+        decoder: function(value, params) {
+          params.denominator = Math.pow(2, value);
         },
-        exporters: {
-          binary: function(denom, bytes) {
-            var denomByte = Math.round(Math.log(denom)/Math.log(2));
-            console.log(Math.log(denom));
-            bytes.appendInt8(denomByte);
-          }
+        encoder: function(value, params) {
+          var denomByte = Math.round(Math.log(value)/Math.log(2));
+          params.tes.appendInt8(denomByte);
         }
       }, {
         name: 'metronome',

@@ -1,7 +1,7 @@
 /**
  * @namespace MIDITools.Generators
  */
-window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
+(function(MIDI, MT) {
   'use strict';
 
   // ======================
@@ -100,15 +100,14 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
   // ====================
   // = END BinaryBuffer =
   // ====================
-  function exportBinary(m) {
-    console.log(m);
+  MT.MIDIFile.prototype.exportBinary = function() {
     var b = new BinaryBuffer();
-    var header = generateFileHeader(m, b);
-    var tracks = generateTracks(m);
+    var header = generateFileHeader(this, b);
+    var tracks = generateTracks(this); 
     b.append(header).append(tracks);
     console.log(b);
     return b.toString();
-  }
+  };
 
   // TODO: generate frames instead if that's what they're using?
   function generateFileHeader(m) {
@@ -223,7 +222,5 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     }
     return str;
   }
-
-  return exportBinary;
 
 }(MIDI, window.MIDITools));

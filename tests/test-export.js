@@ -113,7 +113,7 @@ QUnit.test("export setTempo", function(assert) {
     message: 'timeSignature',
     parameters: {
       numerator: 4,
-      denominator: 4,
+      denominator: 2,
       metronome: 24,
       thirtySeconds: 8
     }

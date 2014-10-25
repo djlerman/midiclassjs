@@ -1,20 +1,21 @@
-window.MIDITools.Importers.Binary = (function(MT) {
+(function(MT) { 
   'use strict';
 
   var MIN_HEADER_LENGTH = 14;
   var HEADER_PRELUDE = 'MThd';
   var TRACK_PRELUDE = 'MTrk';
 
-  var importBinary = function(src, callback, error) {
+  MT.MIDIFile.prototype.importBinary = function(src, callback, error) {
     if (!src || !callback) {
       throw new Error('Both parameters required!');
     }
 
+    var midi = this;
     DOMLoader.sendRequest({
       url: src,
       onload: function(req) {
         try {
-          callback(fromBinary(toByteString(req.responseText)));
+          callback(fromBinary(midi, toByteString(req.responseText)));
         } catch (err) {
           return error && error(err);
         }
@@ -32,8 +33,7 @@ window.MIDITools.Importers.Binary = (function(MT) {
    * @return {MIDIFile} - the MIDIFile representation of the binary file
    */
 
-  function fromBinary(bytes) {
-    var m = new MT.MIDIFile(0);
+  function fromBinary(m, bytes) {
     parseHeader(m, bytes);
     for (var i = 0, n = m.countTracks(); i < n; i += 1) {
       parseTrack(m.track(i), bytes);
@@ -412,8 +412,6 @@ window.MIDITools.Importers.Binary = (function(MT) {
       return (0x00FF & ch.charCodeAt(0));
     });
   }
-
-  return importBinary;
 
 }(MIDITools));
 

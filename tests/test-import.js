@@ -6,7 +6,7 @@ QUnit.test("library load", function(assert) {
  * Header parsing
  */
 QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
-  MIDITools.importBinary('samples/mid/simple1.mid', function(m) {
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/simple1.mid', function(m) {
     QUnit.start();
     assert.equal(m.type(), 1);
     // TODO: re-add
@@ -20,7 +20,7 @@ QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
 });
 
 QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
-  MIDITools.importBinary('samples/mid/err-prelude.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -31,7 +31,7 @@ QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
 });
 
 QUnit.asyncTest("import MIDI with header size > file size", function(assert) {
-  MIDITools.importBinary('samples/mid/err-header-size.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-header-size.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -42,7 +42,7 @@ QUnit.asyncTest("import MIDI with header size > file size", function(assert) {
 });
 
 QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
-  MIDITools.importBinary('samples/mid/import-smpte.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/import-smpte.mid',
     function(m) {
       QUnit.start();
       expect(0);
@@ -57,7 +57,7 @@ QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
 });
 
 QUnit.asyncTest("import Type-0 MIDI with track count > 1", function(assert) {
-  MIDITools.importBinary('samples/mid/err-type0-multi.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-type0-multi.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -68,7 +68,7 @@ QUnit.asyncTest("import Type-0 MIDI with track count > 1", function(assert) {
 });
 
 QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
-  MIDITools.importBinary('samples/mid/err-prelude.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -82,9 +82,8 @@ QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
  * Track parsing
  */
 
-QUnit.asyncTest("import Type-0 MIDI with invalid track prelude", function(
-  assert) {
-  MIDITools.importBinary('samples/mid/err-track-prelude.mid',
+QUnit.asyncTest("import Type-0 MIDI with invalid track prelude", function(assert) {
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-track-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -94,9 +93,8 @@ QUnit.asyncTest("import Type-0 MIDI with invalid track prelude", function(
     });
 });
 
-QUnit.asyncTest("import Type-0 MIDI with missing track footer", function(
-  assert) {
-  MIDITools.importBinary('samples/mid/err-track-footer.mid',
+QUnit.asyncTest("import Type-0 MIDI with missing track footer", function(assert) {
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-track-footer.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
@@ -144,7 +142,7 @@ QUnit.asyncTest("channel events of simple Type-1 MIDI", function(assert) {
     time: 0x00,
     parameters: {}
   }];
-  MIDITools.importBinary('samples/mid/simple1.mid',
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/simple1.mid',
     function(m) {
       QUnit.start();
       assert.equal(m.countTracks(), 1);
@@ -178,7 +176,7 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
     time: 0x00,
     parameters: {
       numerator: 4,
-      denominator: 4,
+      denominator: 2,
       metronome: 24,
       thirtySeconds: 8
     }
@@ -268,7 +266,7 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
     parameters: {}
   }];
 
-  MIDITools.importBinary('samples/mid/events-type0.mid', function(m) {
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/events-type0.mid', function(m) {
     QUnit.start();
     assert.equal(m.countTracks(), 1);
     assert.equal(m.track(0).countEvents(), events.length);
@@ -292,7 +290,7 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
 });
 
 QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
-  MIDITools.importBinary('samples/mid/setTempo-type0.mid', function(m) {
+  (new MIDITools.MIDIFile()).importBinary('samples/mid/setTempo-type0.mid', function(m) {
     QUnit.start();
     var events = m.track(0).filterEvents('setTempo');
     console.log(m.track(0));
