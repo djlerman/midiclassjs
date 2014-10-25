@@ -137,15 +137,12 @@
 
     if (topByte & 0x80) {
       return {
-        'type': 'framesPerSecond',
         'framesPerSecond': getSMPTE(topByte),
         'ticksPerFrame': bottomByte
       };
+  
     } else { // ticks per beat measure
-      return {
-        'type': 'ticksPerBeat',
-        'ticksPerBeat': parseInteger([topByte, bottomByte], 2)
-      };
+      return parseInteger([topByte, bottomByte], 2);
     }
   }
 

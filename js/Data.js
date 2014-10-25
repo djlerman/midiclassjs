@@ -364,8 +364,8 @@ window.MIDITools.Data = (function() {
           params.denominator = Math.pow(2, value);
         },
         encoder: function(value, params) {
-          var denomByte = Math.round(Math.log(value)/Math.log(2));
-          params.tes.appendInt8(denomByte);
+          var encoded = Math.round(Math.log(value)/Math.log(2));
+          params.denominator = encoded;
         }
       }, {
         name: 'metronome',

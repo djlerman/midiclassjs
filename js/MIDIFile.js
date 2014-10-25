@@ -61,6 +61,8 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
       this._timing.framesPerSecond = timing.framesPerSecond;
       this._timing.ticksPerFrame = timing.ticksPerFrame;
       this._channels = [];
+    } else {
+      console.log("ERROR"); // TODO: Create error type
     }
   };
 

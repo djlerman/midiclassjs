@@ -9,8 +9,7 @@ QUnit.asyncTest("import simple Type-1 MIDI", function(assert) {
   (new MIDITools.MIDIFile()).importBinary('samples/mid/simple1.mid', function(m) {
     QUnit.start();
     assert.equal(m.type(), 1);
-    // TODO: re-add
-    // assert.equal(m.timing.ticksPerBeat, 128);
+    assert.equal(m.getTiming().ticksPerBeat, 128);
     assert.equal(m.countTracks(), 1);
     window.s = m;
   }, function(err) {
@@ -45,11 +44,9 @@ QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
   (new MIDITools.MIDIFile()).importBinary('samples/mid/import-smpte.mid',
     function(m) {
       QUnit.start();
-      expect(0);
-      // TODO: use NEW api
-      //assert.ok(m.timing.type = "ticksPerBeat");
-      //assert.equal(m.timing.framesPerSecond, 25);
-      //assert.equal(m.timing.ticksPerFrame, 40);
+      assert.ok(m.getTiming().type = "ticksPerBeat");
+      assert.equal(m.getTiming().framesPerSecond, 25);
+      assert.equal(m.getTiming().ticksPerFrame, 40);
     }, function(err) {
       QUnit.start();
       assert.ok(false, 'Import should not result in error');
