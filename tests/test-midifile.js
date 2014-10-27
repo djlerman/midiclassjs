@@ -24,28 +24,8 @@ QUnit.test("addTrack - adding second track changes type to 1", function(assert) 
   assert.equal(midi.countTracks(), 2);
 });
 
-QUnit.test("addTrack - adding second track changes type to 1", function(assert) {
+QUnit.test("setTiming - throws error on non-number", function(assert) {
   var midi = new MIDITools.MIDIFile();
   
   midi.addTrack();
-  assert.equal(midi.type(), 0);
-  
-  midi.addTrack();
-  assert.equal(midi.type(), 1, 'type changes to 1 after adding a second track');
-  assert.equal(midi.countTracks(), 2);
 });
-
-
-
-QUnit.test("addTrack - adding second track changes type to 1", function(assert) {
-  var midi = new MIDITools.MIDIFile();
-  
-  midi.addTrack();
-  assert.equal(midi.type(), 0);
-  
-  midi.addTrack();
-  assert.equal(midi.type(), 1, 'type changes to 1 after adding a second track');
-  assert.equal(midi.countTracks(), 2);
-});
-
-

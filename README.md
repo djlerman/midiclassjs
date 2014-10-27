@@ -1,6 +1,12 @@
 # API
-MIDISequence - high-level API for working with channels, instruments, etc.
-MIDIFile - low-level API for working with tracks
+
+* MIDISequence - high-level API for working with channels, instruments, etc.
+* MIDIFile - low-level API for working with tracks
+
+# Contributing
+
+Developers interested in contributing to the project can
+read the library's [design document](docs/ref/design.html).
 
 #javascript version of the _php midi class_ using midi.js#
 
