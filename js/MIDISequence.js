@@ -108,11 +108,14 @@ window.MIDITools.Builder = (function(imports, exports) {
   };
 
   MIDIChannel.prototype.setInstrument = function(name) {
+    console.log(name);
     this._program.program = imports.Data.GeneralMIDI.byName[name];
+    // TODO: Use replace  event
+    console.log(this._program);
   };
 
   MIDIChannel.prototype.getInstrument = function(bpm) {
-    return this._program.value;
+    return this._program.program;
   };
 
   MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
@@ -123,7 +126,7 @@ window.MIDITools.Builder = (function(imports, exports) {
       message: spec.type,
       parameters: parameters
     };
-    
+
     this._track.addEvent(evt);
   };
 

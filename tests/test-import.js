@@ -46,7 +46,7 @@ QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
   (new MIDITools.MIDIFile()).importBinary('samples/mid/import-smpte.mid',
     function(m) {
       QUnit.start();
-      assert.ok(m.getTiming().type = "ticksPerBeat");
+      assert.ok(m.getTiming().type = 'framesPerSecond');
       assert.equal(m.getTiming().framesPerSecond, 25);
       assert.equal(m.getTiming().ticksPerFrame, 40);
     }, function(err) {

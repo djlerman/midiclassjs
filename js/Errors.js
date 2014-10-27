@@ -17,7 +17,10 @@ window.MIDITools.Errors = (function() {
         'File did not contain standard MIDI track footer.'),
       Type: new Error('File must be either Type-0 or Type-1.'),
       Type0MultiTrack: new Error(
-        'File format is Type-0, but declares multiple tracks.')
+        'File format is Type-0, but declares multiple tracks.'),
+    },
+    Parameters: {
+      SetTiming: new Error('setTiming requires a number or a `fps` object.')
     },
     Text: {
       MessageType: new Error('Invalid MIDI message type.')

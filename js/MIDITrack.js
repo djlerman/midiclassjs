@@ -16,7 +16,7 @@ window.MIDITools.MIDITrack = (function(MIDI, MT) {
     evt.kind = spec.kind;
     var parameters = evt.parameters;
     evt.parameters = {};
-    if (spec.length !== 'variable') { 
+    if (spec.length !== 'variable') {
       spec.parameters.forEach(function(p, index) {
         if (parameters[p.name] === 'undefined') {
           // TODO: Create custom error
