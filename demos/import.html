@@ -17,8 +17,7 @@
 var player;
 
 
-function importMidi(as)
-  {
+function importMidi(as) {
   player.mfile["import" + as](el("inputText").value);
     
   var nameEvent = player.mfile.getEventBySubtype(0, "trackName");

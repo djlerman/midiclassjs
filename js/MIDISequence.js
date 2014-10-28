@@ -28,6 +28,7 @@ window.MIDITools.Builder = (function(imports, exports) {
   MIDISequence.prototype.getTempo = function() {
     return this._tempo;
   };
+
   MIDISequence.prototype.ticksPerBeat = function() {
     return this._midi.getTiming().ticksPerBeat;
   };
@@ -110,7 +111,7 @@ window.MIDITools.Builder = (function(imports, exports) {
   MIDIChannel.prototype.setInstrument = function(name) {
     console.log(name);
     this._program.program = imports.Data.GeneralMIDI.byName[name];
-    // TODO: Use replace  event
+    // TODO: Use replace event
     console.log(this._program);
   };
 

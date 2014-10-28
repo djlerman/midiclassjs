@@ -6,6 +6,7 @@
   exports.textToEvent = Tools.Utils.textToEvent;
 
   Tools.MIDIFile.prototype.exportBase64 = function() {
-    return 'base64,' + btoa(MIDITools.Exporters.Binary(this));
+    return 'base64,' + btoa(this.exportBinary());
   };
+
 }(window.MIDITools, window.MIDITools));

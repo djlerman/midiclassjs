@@ -59,6 +59,11 @@
               </a>
             
               
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
               <a class="source" href="Utils.html">
                 Utils.js
               </a>
@@ -105,7 +110,10 @@
         <span class="hljs-string">'File did not contain standard MIDI track footer.'</span>),
       Type: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File must be either Type-0 or Type-1.'</span>),
       Type0MultiTrack: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File format is Type-0, but declares multiple tracks.'</span>)
+        <span class="hljs-string">'File format is Type-0, but declares multiple tracks.'</span>),
+    },
+    Parameters: {
+      SetTiming: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'setTiming requires a number or a `fps` object.'</span>)
     },
     Text: {
       MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Invalid MIDI message type.'</span>)

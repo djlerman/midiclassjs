@@ -1,0 +1,198 @@
+/* http://meyerweb.com/eric/tools/css/reset/ */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Layout
+----------------------------- */
+body {
+  font-family: Lato;
+  font-size:12px;
+  font-weight:300;
+  padding:8px;
+  min-width: 700px;
+}
+
+/* Menu Bar
+----------------------------- */
+.bar {
+  background:#34495E;
+  display:block;
+  height:36px;
+  border:none;
+  padding:0 6px;
+  border-radius: 5px;
+  margin-bottom:20px;
+}
+
+.label {
+  display:inline-block;
+  color:white;
+  font-weight: 400;
+  letter-spacing:0.01em;
+  padding: 0 1em 0 0;
+  text-align:left;
+}
+
+/* Menu Bar Header
+----------------------------- */
+.bar-label.label {
+  margin-top:12px;
+  font-size:12px;
+  height:1em;
+}
+
+
+/* Status Value
+----------------------------- */
+.status {
+  height:36px;
+  display:inline-block;
+}
+
+.status-value {
+  box-sizing:border-box;
+  padding: 0.45em 0.25em;
+  height:36px;
+  background-color:#16A085;
+  border-radius: 6px;
+  color: white;
+  font-size:10px;
+  text-transform: uppercase;
+}
+
+
+/* Demo List
+----------------------------- */
+.demo-list {
+  height:30px;
+  float:right;
+  padding:0;
+  display:inline-block;
+}
+
+
+/* List "activation" button
+----------------------------- */
+
+.demo-list-button {
+  position:relative;
+  float:right;
+  height:24px;
+  margin-top:6px;
+  padding: 0.5em 3em 0.5em 0.5em;
+  
+  border: none;
+  border-radius: 4px;
+  background-color: white;
+  color:#333;
+  cursor: pointer;
+  outline:none;
+}
+
+.arrow {
+  position:absolute;
+  width: 0;
+  height: 0;
+  right:8px;
+  top:8px;
+  border-top: 8px solid;
+  border-right: 6px solid rgba(0, 0, 0, 0);
+  border-left: 6px solid rgba(0, 0, 0, 0);
+}
+
+/* List items
+----------------------------- */
+
+.demo-list-items {
+  display:block;
+  background-color:white;
+  border-radius:4px;
+  z-index: 1000;
+  min-width: 120px;
+  margin-top:40px;
+  background-color: rgb(243, 244, 245);
+  border: none;
+  border-radius: 4px;
+  box-shadow: none;
+  display:none;
+}
+
+.demo-list-item {
+  padding: 0.75em 0 0.75em 0.5em;
+  color: rgb(96, 109, 122);
+  cursor:pointer;
+}
+
+.demo-list-item:hover {
+  background-color:rgba(0,0,0,0.1);
+}
+
+
+/* Sequencer
+----------------------------- */
+
+.sequencer {
+  width:70%;
+  min-width: 490px; /* 70% of body's min-width */
+  min-height:300px;
+
+  background-color:#CCC;
+  border-radius:4px 4px 0 0;
+}
+
+.seq-header {
+  background:#34495E;
+  font-weight:400;
+  padding:0.5em; 6px;
+  border-radius:4px 4px 0 0;
+}
+

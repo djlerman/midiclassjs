@@ -8,8 +8,88 @@ window.MIDITools = {
   Errors: {}
 };
 
+window.MIDITools.Errors = (function() {
+  'use strict';
+  return {
+    Import: {
+      FileSize: new Error('File is too small to be a standard MIDI file.'),
+      HeaderPrelude: new Error('File did not contain standard MIDI header.'),
+      HeaderSize: new Error(
+        'File size is smaller than its declared header size.'),
+      MessageType: new Error('File had a MIDI message with an unknown type.'),
+      MetaType: new Error('File had a meta message with an unknown subtype.'),
+      TrackCount: new Error('File declared a number of tracks outside 0-16.'),
+      TrackLength: new Error(
+        'File contains a track declared with the wrong size.'),
+      TrackPrelude: new Error(
+        'File did not contain standard MIDI track header.'),
+      TrackFooter: new Error(
+        'File did not contain standard MIDI track footer.'),
+      Type: new Error('File must be either Type-0 or Type-1.'),
+      Type0MultiTrack: new Error(
+        'File format is Type-0, but declares multiple tracks.'),
+    },
+    Parameters: {
+      SetTiming: new Error('setTiming requires a number or a `fps` object.')
+    },
+    Text: {
+      MessageType: new Error('Invalid MIDI message type.')
+    }
+  };
+}());
+window.MIDITools.MIDITrack = (function(MIDI, MT) {
+  'use strict';
+
+  function MIDITrack(n) {
+    this._number = n;
+    this._events = [];
+    this._eventTypes = {};
+  }
+
+  MIDITrack.prototype.event = function(i) {
+    return this._events[i];
+  };
+
+  MIDITrack.prototype.addEvent = function(evt) {
+    var spec = MT.Data.typeMap[evt.message];
+    evt.kind = spec.kind;
+    var parameters = evt.parameters;
+    evt.parameters = {};
+    if (spec.length !== 'variable') {
+      spec.parameters.forEach(function(p, index) {
+        if (parameters[p.name] === 'undefined') {
+          // TODO: Create custom error
+          throw new Error('Parameter left undefined');
+        }
+        evt.parameters[p.name] = parameters[p.name];
+        evt.parameters[index] = evt.parameters[p.name];
+      });
+    } else {
+      evt.parameters.value = parameters.value;
+    }
+    this._events.push(evt);
+  };
+
+  MIDITrack.prototype.replaceEvent = function(i, evt) {
+    this._events[i] = evt;
+  };
+
+  MIDITrack.prototype.countEvents = function(trackNumber) {
+    return this._events.length;
+  };
+
+  MIDITrack.prototype.filterEvents = function(type) {
+    return this._events.filter(function(evt) {
+      return (evt.message === type);
+    });
+  };
+
+  return MIDITrack;
+}(MIDI, window.MIDITools));
+
 window.MIDITools.MIDIFile = (function(MIDI, MT) {
   'use strict';
+
   /*!
    * @class
    * @memberof MIDITools
@@ -46,84 +126,63 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   };
 
   MIDIFile.prototype.addTrack = function() {
-    if (this._type === 0 && this._tracks.count === 1) {
-      this._type = 1; 
+    if (this._type === 0 && this._tracks.length === 1) {
+      this._type = 1;
     }
-    this._tracks.push(new MIDITrack(this._tracks.length));
+    this._tracks.push(new MIDITools.MIDITrack(this._tracks.length));
   };
-    
+
   MIDIFile.prototype.countTracks = function() {
     return this._tracks.length;
   };
-  
+
   MIDIFile.prototype.getTiming = function() {
     // defensive copy
     return JSON.parse(JSON.stringify(this._timing));
   };
 
   MIDIFile.prototype.setTiming = function(timing) {
-    if (typeof timing === 'number') {
-      this._timing.type = 'ticksPerBeat';
-      this._timing.ticksPerBeat = timing;
-    } else if (typeof timing === 'object') {
+    var hasFrameParameters = (
+      typeof timing === 'object' &&
+      timing.hasOwnProperty('framesPerSecond') &&
+      timing.hasOwnProperty('ticksPerFrame')
+    );
+
+    if (hasFrameParameters) {
       this._timing.type = 'framesPerSecond';
-      // TODO: Check that keys exist
       this._timing.framesPerSecond = timing.framesPerSecond;
       this._timing.ticksPerFrame = timing.ticksPerFrame;
       this._channels = [];
+    } else if (typeof timing === 'number') {
+      this._timing.type = 'ticksPerBeat';
+      this._timing.ticksPerBeat = timing;
+    } else {
+      throw MT.Errors.Parameters.SetTiming;
     }
-  };
-
-  function MIDITrack(n) {
-    this._number = n;
-    this._events = [];
-    this._eventTypes = {};
-  }
-
-  MIDITrack.prototype.event = function(i) {
-    return this._events[i];
-  };
-
-  MIDITrack.prototype.addEvent = function(evt) {
-    evt.kind = MT.Data.typeMap[evt.message].kind;
-    this._events.push(evt);
-  };
-
-  MIDITrack.prototype.replaceEvent = function(i, evt) {
-    this._events[i] = evt;
-  };
-
-  MIDITrack.prototype.countEvents = function(trackNumber) {
-    return this._events.length;
-  };
-
-  MIDITrack.prototype.filterEvents = function(type) {
-    return this._events.filter(function(evt) {
-      return (evt.message.type === type);
-    });
   };
 
   return MIDIFile;
 
 }(MIDI, window.MIDITools));
 
-window.MIDITools.Importers.Binary = (function(MT) {
+(function(MT) { 
   'use strict';
 
   var MIN_HEADER_LENGTH = 14;
   var HEADER_PRELUDE = 'MThd';
   var TRACK_PRELUDE = 'MTrk';
 
-  var importBinary = function(src, callback, error) {
+  MT.MIDIFile.prototype.importBinary = function(src, callback, error) {
     if (!src || !callback) {
       throw new Error('Both parameters required!');
     }
 
+    var midi = this;
     DOMLoader.sendRequest({
       url: src,
       onload: function(req) {
         try {
-          callback(fromBinary(toByteString(req.responseText)));
+          callback(fromBinary(midi, toByteString(req.responseText)));
         } catch (err) {
           return error && error(err);
         }
@@ -141,8 +200,7 @@ window.MIDITools.Importers.Binary = (function(MT) {
    * @return {MIDIFile} - the MIDIFile representation of the binary file
    */
 
-  function fromBinary(bytes) {
-    var m = new MT.MIDIFile(0);
+  function fromBinary(m, bytes) {
     parseHeader(m, bytes);
     for (var i = 0, n = m.countTracks(); i < n; i += 1) {
       parseTrack(m.track(i), bytes);
@@ -246,15 +304,12 @@ window.MIDITools.Importers.Binary = (function(MT) {
 
     if (topByte & 0x80) {
       return {
-        'type': 'framesPerSecond',
         'framesPerSecond': getSMPTE(topByte),
         'ticksPerFrame': bottomByte
       };
+  
     } else { // ticks per beat measure
-      return {
-        'type': 'ticksPerBeat',
-        'ticksPerBeat': parseInteger([topByte, bottomByte], 2)
-      };
+      return parseInteger([topByte, bottomByte], 2);
     }
   }
 
@@ -522,18 +577,17 @@ window.MIDITools.Importers.Binary = (function(MT) {
     });
   }
 
-  return importBinary;
-
 }(MIDITools));
 
 window.MIDITools.Importers.Text = (function(MT) {
   'use strict';
 
 }(window.MIDITools));
+
 /**
  * @namespace MIDITools.Generators
  */
-window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
+(function(MIDI, MT) {
   'use strict';
 
   // ======================
@@ -632,15 +686,14 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
   // ====================
   // = END BinaryBuffer =
   // ====================
-  function exportBinary(m) {
-    console.log(m);
+  MT.MIDIFile.prototype.exportBinary = function() {
     var b = new BinaryBuffer();
-    var header = generateFileHeader(m, b);
-    var tracks = generateTracks(m);
+    var header = generateFileHeader(this, b);
+    var tracks = generateTracks(this); 
     b.append(header).append(tracks);
     console.log(b);
     return b.toString();
-  }
+  };
 
   // TODO: generate frames instead if that's what they're using?
   function generateFileHeader(m) {
@@ -756,8 +809,6 @@ window.MIDITools.Exporters.Binary = (function(MIDI, MT) {
     return str;
   }
 
-  return exportBinary;
-
 }(MIDI, window.MIDITools));
 
 window.MIDITools.Utils = (function(MT) {
@@ -834,32 +885,6 @@ window.MIDITools.Utils = (function(MT) {
   };
 }(window.MIDITools));
 
-window.MIDITools.Errors = (function() {
-  'use strict';
-  return {
-    Import: {
-      FileSize: new Error('File is too small to be a standard MIDI file.'),
-      HeaderPrelude: new Error('File did not contain standard MIDI header.'),
-      HeaderSize: new Error(
-        'File size is smaller than its declared header size.'),
-      MessageType: new Error('File had a MIDI message with an unknown type.'),
-      MetaType: new Error('File had a meta message with an unknown subtype.'),
-      TrackCount: new Error('File declared a number of tracks outside 0-16.'),
-      TrackLength: new Error(
-        'File contains a track declared with the wrong size.'),
-      TrackPrelude: new Error(
-        'File did not contain standard MIDI track header.'),
-      TrackFooter: new Error(
-        'File did not contain standard MIDI track footer.'),
-      Type: new Error('File must be either Type-0 or Type-1.'),
-      Type0MultiTrack: new Error(
-        'File format is Type-0, but declares multiple tracks.')
-    },
-    Text: {
-      MessageType: new Error('Invalid MIDI message type.')
-    }
-  };
-}());
 window.MIDITools.Data = (function() {
   'use strict';
   var strings = {
@@ -1221,17 +1246,13 @@ window.MIDITools.Data = (function() {
       }, {
         name: 'denominator',
         length: 1,
-        importers: {
-          binary: function(denomByte, params) {
-            params.denominator = Math.pow(2, denomByte);
-          }
+        valueType: 'number',
+        decoder: function(value, params) {
+          params.denominator = Math.pow(2, value);
         },
-        exporters: {
-          binary: function(denom, bytes) {
-            var denomByte = Math.round(Math.log(denom)/Math.log(2));
-            console.log(Math.log(denom));
-            bytes.appendInt8(denomByte);
-          }
+        encoder: function(value, params) {
+          var encoded = Math.round(Math.log(value)/Math.log(2));
+          params.denominator = encoded;
         }
       }, {
         name: 'metronome',
@@ -1287,7 +1308,12 @@ window.MIDITools.Data = (function() {
     typeMap: {},
     typeToBinary: {},
     eventTypes: {},
-    textMap: {}
+    textMap: {},
+    GeneralMIDI: {
+      byName: {
+       'synth_drum': 114 
+      }
+    }
   };
 
   Object.keys(eventMap).forEach(function(k) {
@@ -1297,8 +1323,8 @@ window.MIDITools.Data = (function() {
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
     data.eventTypes[k] = k;
-
   });
+  
 
   return data;
 }());
@@ -1329,17 +1355,19 @@ window.MIDITools.Builder = (function(imports, exports) {
       timeSignature: this._midi.track(0).event(1)
     };
   }
-  
+
   MIDISequence.prototype.getTempo = function() {
     return this._tempo;
   };
+
   MIDISequence.prototype.ticksPerBeat = function() {
     return this._midi.getTiming().ticksPerBeat;
   };
 
   MIDISequence.prototype.setTempo = function(bpm) {
     this._tempo = bpm;
-    this._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(bpm);
+    this._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(
+      bpm);
   };
 
   MIDISequence.prototype.getTimeSignature = function() {
@@ -1354,7 +1382,7 @@ window.MIDITools.Builder = (function(imports, exports) {
     this._meta.timeSignature.parameters = imports.Utils.fromTimeSignature(ts);
   };
 
-  
+
   MIDISequence.prototype.channel = function(n) {
     if (!this._channels[n]) {
       var trackCount = this._midi.countTracks();
@@ -1378,7 +1406,7 @@ window.MIDITools.Builder = (function(imports, exports) {
     }
     return this._midi;
   };
-  
+
   function MIDIChannel(t, n) {
     this._track = t;
     this._number = n;
@@ -1390,15 +1418,19 @@ window.MIDITools.Builder = (function(imports, exports) {
       }
     });
     this._track.addEvent({
-      timestamp:0,
+      timestamp: 0,
       message: 'instrumentName',
       parameters: {
         value: 'unknown'
       }
     });
+    this.addEvent(0, 'programChange', {
+      program: 1
+    });
     this._nameParam = this._track.event(1).parameters;
+    this._program = this._track.event(2).parameters;
   }
-  
+
   MIDIChannel.prototype.setName = function(name) {
     this._nameParam.value = name;
   };
@@ -1407,41 +1439,42 @@ window.MIDITools.Builder = (function(imports, exports) {
     return this._nameParam.value;
   };
 
+  MIDIChannel.prototype.setInstrument = function(name) {
+    console.log(name);
+    this._program.program = imports.Data.GeneralMIDI.byName[name];
+    // TODO: Use replace event
+    console.log(this._program);
+  };
+
+  MIDIChannel.prototype.getInstrument = function(bpm) {
+    return this._program.program;
+  };
+
   MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
     var spec = imports.Data.typeMap[msg];
     var evt = {
       timestamp: delta,
       channel: this._number,
       message: spec.type,
-      parameters: {}
+      parameters: parameters
     };
-
-    spec.parameters.forEach(function(p, index) {
-      if (parameters[p.name] === 'undefined') {
-        // TODO: Create custom error
-        throw new Error('Parameter left undefined');
-      }
-      evt.parameters[p.name] = parameters[p.name];
-      evt.parameters[index] = evt.parameters[p.name];
-    });
 
     this._track.addEvent(evt);
   };
-  
+
   exports.MIDISequence = MIDISequence;
 
 }(window.MIDITools, window.MIDITools));
+
 (function(exports, Tools) {
-  exports.importBinary = Tools.Importers.Binary;
   exports.createMIDI = function() {
     return new Tools.MIDIFile();
   };
   
   exports.textToEvent = Tools.Utils.textToEvent;
-  Tools.MIDIFile.prototype.exportBinary = function() {
-    return MIDITools.Exporters.Binary(this);
-  };
+
   Tools.MIDIFile.prototype.exportBase64 = function() {
-    return 'base64,' + btoa(MIDITools.Exporters.Binary(this));
+    return 'base64,' + btoa(this.exportBinary());
   };
+
 }(window.MIDITools, window.MIDITools));

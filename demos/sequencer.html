@@ -1,423 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MIDI.File demos: Sequencer</title>
+<title>MIDITools Demos - Sequencer</title>
 
-<script src="../js/Window/DOMLoader.XMLHttp.js"></script>
-<script src="../js/Window/DOMLoader.script.js"></script>
-<script src="../js/MIDI/AudioDetect.js"></script>
-<script src="../js/MIDI/LoadPlugin.js"></script>
-<script src="../js/MIDI/Plugin.js"></script>
-<script src="../js/MIDI/Player.js"></script>
-<script src="../inc/jasmid/stream.js"></script>
-<script src="../inc/jasmid/midifile.js"></script>
-<script src="../inc/jasmid/replayer.js"></script>
-<script src="../inc/base64binary.js"></script>
+<script src="../lib/MIDI.js/MIDI.js"></script>
+<script src="../lib/MIDI.js/inc/jasmid/stream.js"></script>
+<script src="../lib/MIDI.js/inc/jasmid/midifile.js"></script>
+<script src="../lib/MIDI.js/inc/jasmid/replayer.js"></script>
+<script src="../lib/MIDI.js/inc/base64binary.js"></script>
 
-<script src="../js/MIDI/File.js"></script>
-<script src="common.js"></script>
+<script src="../dist/midiclassjs.js"></script>
 
-
-<link rel="stylesheet" type="text/css" href="common.css" />
-
-<script type="text/javascript">
-
-
-var player;
-
-function init1()
-  {
-  init();
-  pattern = EditablePattern(
-      el("tracks"),
-      el("beatsPerMeasure"),
-      el("reps"),
-      el("nooff"),
-      editorChange
-      );
-  
-  player.onLoad = function ()
-    {
-//    makeTry(pattern.loadMidi, player.mfile);
-  pattern.loadMidi(player.mfile);
-    pattern.show();
-    showOutput();
-    };
-    
-  player.onEnd = function ()
-    {
-    if (!el("noloop").checked) player.play();
-    }
-  
-  pattern.show();
-  }
-
-
-function editorChange()
-  {
-  player.mfile.loadData(pattern.midi().data());
-  player.show();
-  showOutput();
-  }
-  
-function showOutput()
-  {
-  var s = "";
-  if (el("showTxt").checked) s += "<hr><pre>" + player.mfile.exportText()
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        + "</pre>";
-  if (el("showXml").checked) s += "<hr><pre>" + player.mfile.exportXML()
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        + "</pre>";
-  el("output").innerHTML = s;  
-  }
-
-
-</script>
-
-<script type="text/javascript">
-
-function EditablePattern(tracksTable, bpmInput, repsInput, nooffInput, onChange)
-  {
-  var ready = false;
-  var data = false;
-  init();
-  
-  function init()
-    {
-    data =
-      {
-      bpm: 150,
-      reps: 4,
-      groups:
-        {
-/** /
-        "Drum tracks": {fields: ["on", "drum", "drum kit", "vol", "pattern"], tracks:
-          [
-          {on: false, note: 35, ch: 10, inst: 1, vol: 127, pat: "----------------"},
-          {on: false, note: 35, ch: 10, inst: 1, vol: 127, pat: "----------------"},
-          {on: false, note: 35, ch: 10, inst: 1, vol: 127, pat: "----------------"},
-          {on: false, note: 35, ch: 10, inst: 1, vol: 127, pat: "----------------"},
-          ]},
-/**/        
-        "Instrument tracks": {fields: ["on", "instrument", "note", "vol", "pattern"], tracks:
-          [
-          {on: false, inst: 0, ch: 5, note: 35, vol: 127, pat: "----------------"},
-          {on: false, inst: 0, ch: 6, note: 35, vol: 127, pat: "----------------"},
-          {on: false, inst: 0, ch: 7, note: 35, vol: 127, pat: "----------------"},
-          {on: false, inst: 0, ch: 8, note: 35, vol: 127, pat: "----------------"},
-          ]}
-        }
-      };
-    }
-
-  bpmInput.onchange =
-  repsInput.onchange =
-  nooffInput.onchange =
-    function ()
-      {
-      if (!ready) return;
-      data.bpm = bpmInput.value | 0 || data.bpm;
-      data.reps = repsInput.value | 0 || data.bpm;
-      changed();
-      };
-  
-  function changed() {ready && onChange && onChange();}
-  
-
-
-  function show()
-    {
-    ready = false;
-    
-    bpmInput.value = data.bpm;
-    repsInput.value = data.reps;
-    
-    var doc = tracksTable.ownerDocument;
-    while (tracksTable.children.length) tracksTable.children[0].remove();
-    
-    for (var gtitle in data.groups)
-      {
-  //
-  // Header
-      var tr = doc.createElement("tr");
-      var td = doc.createElement("th");
-      td.colSpan = 20;
-      td.innerHTML = gtitle;
-      tr.appendChild(td);
-      tracksTable.appendChild(tr);
-      
-      (tr = doc.createElement("tr")).className = "head";
-      for (var fi = 0; fi < data.groups[gtitle].fields.length; fi++)
-        {
-        (td = doc.createElement("td")).className = "head";
-        td.innerHTML = data.groups[gtitle].fields[fi];
-        if (td.innerHTML == "pattern") td.colSpan = 16;
-        tr.appendChild(td);
-        }
-      tracksTable.appendChild(tr);
-  //
-  // Tracks
-      for (var ti = 0; ti < data.groups[gtitle].tracks.length; ti++)
-        (function (ti, gtitle)
-          {
-          var tracks = data.groups[gtitle].tracks;
-          (tr = doc.createElement("tr")).className = "track";
-          
-          function makeSelector(tr, opts, field, tag)
-            {
-            var inp = doc.createElement("select");
-            var opt;
-            for (var i in opts)
-              {
-              (opt = doc.createElement("option")).innerHTML = tag(i);
-              opt.value = i;
-              inp.appendChild(opt);
-              }
-            inp.value = tracks[ti][field];
-            inp.onchange = function(event)
-                {
-                tracks[ti][field] = event.target.value | 0;
-                changed();
-                };
-            (td = doc.createElement("td")).appendChild(inp);
-            tr.appendChild(td);
-            }
-          
-          for (var vols = {}, i = 128; i--; ) vols[i] = true;
-          for (var insts = {}, i = 0; i < instruments.length; i++)
-            insts[MIDI.GeneralMIDI.byName[instruments[i]].number] =
-              {
-              title: (MIDI.GeneralMIDI.byName[instruments[i]].number/1000).toFixed(3).split(/[^\d]/)[1] 
-                    + " " + MIDI.GeneralMIDI.byName[instruments[i]].instrument,
-              };
-          
-          
-          for (var fi = 0; fi < data.groups[gtitle].fields.length; fi++)
-            {
-            var inp;
-            var opt;
-            switch (data.groups[gtitle].fields[fi])
-              {
-            case "on":
-              (inp = doc.createElement("input")).type="checkbox";
-              inp.checked = tracks[ti].on;
-              inp.onclick = function(event)
-                  {
-                  tracks[ti].on = event.target.checked;
-                  changed();
-                  };
-              (td = doc.createElement("td")).appendChild(inp);
-              tr.appendChild(td);
-              break;
-              
-            case "drum":
-              makeSelector(tr, MIDI.drumset, "note",
-                  function (i) {return (i/1000).toFixed(3).split(/[^\d]/)[1] + " " + MIDI.drumset[i];});
-              break;
-              
-            case "drum kit":
-              makeSelector(tr, MIDI.drumkitList, "inst",
-                  function (i) {return MIDI.drumkitList[i];});
-              break;
-              
-            case "instrument":
-              makeSelector(tr,
-//                  MIDI.GeneralMIDI.byId, "inst", function (i) {return (i/1000).toFixed(3).split(/[^\d]/)[1] + " " + MIDI.GeneralMIDI.byId[i].instrument;});
-                  insts, "inst", function (i) {return insts[i].title;});
-              
-              break;
-              
-            case "note":
-              makeSelector(tr, MIDI.noteToKey, "note",
-                  function (i) {return MIDI.noteToKey[i];});
-              break;
-              
-            case "vol":
-              makeSelector(tr, vols, "vol", function (i) {return i;});
-              break;
-              
-            case "pattern":
-              for (var si = 0; si < tracks[ti].pat.length; si++)
-                (function (si)
-                  {
-                  (inp = doc.createElement("input")).type="checkbox";
-                  inp.checked = (tracks[ti].pat[si] == "+");
-                  inp.onclick = function(event)
-                    {
-                    var s = tracks[ti].pat;
-                    tracks[ti].pat = s.substring(0, si)
-                        + (event.target.checked? "+": "-")
-                        + s.substring(si + 1);
-                    changed();
-                    };
-                  (td = doc.createElement("td")).appendChild(inp);
-                  td.className = "check";
-                  tr.appendChild(td);
-                  }
-                )(si);
-              break;
-              }
-            }
-          tracksTable.appendChild(tr);
-          }
-        )(ti, gtitle);
-      }
-    
-    ready = true;    
-    }
-
-  
-  function midi()
-    {
-    var mf = new MIDI.File();
-    mf.setBpm(data.bpm);
-        mf.appendTextMsg(0, "0 Meta Text \"data.0={'bpm':" + data.bpm + ",'reps':" + data.reps + "}\"");
-
-    for (var gtitle in data.groups)
-      {
-      var tracks = data.groups[gtitle].tracks;
-      for (var ti = 0; ti < tracks.length; ti++)
-        {
-            mf.appendTextMsg(0, "0 Meta Text \"" + gtitle[0] + "." + ti
-                + "={'on':" + tracks[ti].on + ",'note':" + tracks[ti].note + ",'ch':" + tracks[ti].ch + ",'inst':" + tracks[ti].inst + ",'vol':" + tracks[ti].vol + ",'pat':'" + tracks[ti].pat + "'}\"");
-
-        if (tracks[ti].on)
-          {
-          var tn = mf.addTrack(); 
-              mf.appendTextMsg(tn, "0 PrCh ch=" + tracks[ti].ch + " p=" + tracks[ti].inst);
-              var time = 0;
-          for (var ri = data.reps; ri--; )
-            for (var si = 0; si < tracks[ti].pat.length; si++)
-              {
-              if (tracks[ti].pat[si] == "+")
-                {
-                    mf.insertTextMsg(tn, time + " On ch=" + tracks[ti].ch + " n=" + tracks[ti].note + " v=" + tracks[ti].vol);
-                    if (!nooffInput.checked)
-                      mf.insertTextMsg(tn, (time + 120) + " Off ch=" + tracks[ti].ch + " n=" + tracks[ti].note + " v=0");
-                }
-              time += 120;
-              }
-              mf.insertTextMsg(tn, time + " Meta TrkEnd");
-          }
-        }
-      }
-    return mf;
-    }
-  
-  function loadMidi(mf)
-    {
-    if (!mf.data().tracks.length) throw("No tracks.");
-    var msg;
-    var mm;
-    var input = {data: [], D: [], I: []};
-    for (var mi = mf.data().tracks[0].length; mi--; )
-      if (((msg = mf.data().tracks[0][mi]).subtype == "text")
-          && (mm = msg.text.match(/^(data|D|I)\.([0-9])=(.+)$/)))
-        input[mm[1]][mm[2]] = JSON.parse(mm[3].replace(/\'/g, '"'));
-    
-    if (!input.data.length) throw("No pattern definition found.");
-    init();
-    data.bpm = input.data[0].bpm;
-    data.reps = input.data[0].reps;
-    if (data.groups["Drum tracks"]) data.groups["Drum tracks"].tracks = input.D; 
-    if (data.groups["Instrument tracks"]) data.groups["Instrument tracks"].tracks = input.I; 
-    }
-  
-  
-  return {
-    midi: midi,
-    loadMidi: loadMidi,
-    show: show
-    };
-  }
-
-
-</script>
+<link rel="stylesheet" type="text/css" href="sequencer.css" />
 
 </head>
 
-<body onLoad="init1();">
+<body>
+  <div class="bar">
+    <div class="status">
+      <span class="label bar-label">Status:</span>
+      <span class="status-value">ready</span>
+    </div>
+    <div class="demo-list">
+      <button class="demo-list-button">Demos
+        <span class="arrow"></span>
+      </button>
+      <ul role="menu" class="demo-list-items">
+        <li class="demo-list-item">Sequencer</li>
+        <li class="demo-list-item">Import Tools</li>
+        <li class="demo-list-item">Export Tools</li>
+        <li class="demo-list-item">Analysis Tools</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sequencer">
+    <div class="seq-header">
+      <span class="label">Sequence Channels</span>
+    </div>
+  </div>
+<script>
+var button = document.getElementsByClassName('demo-list-button')[0];
+button.addEventListener('click', function(evt) {
+  var parent = evt.target.parentElement;
+  var menu = parent.getElementsByClassName('demo-list-items')[0];
+  menu.style.display = 'block';
+  window.addEventListener('click', createHideListener(parent, menu), false);
+  evt.preventDefault();
+  evt.cancelBubble = true;
+});
 
-  <div class="status">Status: <span id="status">...</span></div>
-  
-  <table class=layout width=100%>
-    <tr>
-      <td id="col1">
-        <table>
-          <tr>
-            <td colspan=2>
-            <table>
-              <tbody id="tracks"></tbody>
-            </table>
-            </td>
-          </tr>
-          <tr>
-            <td>
-            <br>
-            <input type="text" id="beatsPerMeasure" size=3 value="150"> bpm <br>
-            <input type="text" id="reps" size=3 value="4"> bar repetitions  <br>
-                  <input type="checkbox" id="nooff">omit noteOff messages<br>
-            <br>
-                  <input type="checkbox" id="noloop">don't loop<br>
-                  <input type="checkbox" id="showTxt" onChange="showOutput();" checked>show MIDI result as Text<br>
-                  <input type="checkbox" id="showXml" onChange="showOutput();">show MIDI result as XML<br>
-            
-            
-            </td>
-            
-            <td align="right" style="vertical-align: bottom;">
-            <table>
-              <tr><th>Current tune</th></tr>
-              <tr class="line">
-                <td>
-                  Tracks: <span id="currentTracks">?</span>&nbsp;&nbsp;
-                  Events: <span id="currentEvents">?</span>
-                </td>
-              </tr>
-              <tr class="line">
-                <td>
-                  <input type="button" value="Start" id="start">
-                  <input type="button" value="Stop" id="stop">
-                  &nbsp;&nbsp;&nbsp;
-                  <a id="dl" href="#">Download</a>
-                  <br>
-                  <br>
-                  Name: <input type="text" id="name" size=12 value="-untitled-">
-                  <input type="button" value="Save" id="save">
-                </td>
-              </tr>
-            </table>
-            </td>
-          </tr>
-        </table>
+function createHideListener(enclosing, menu) {
+  var hider = function hider(event) {
+    if (event.currentTarget.parentElement !== enclosing) {
+      menu.style.display = 'none';
+    }
+    window.removeEventListener(hider);
+  }
+  return hider;
+}
 
-      </td>
-      
-      <td id="col2">
-        <table>
-            <tr><th colspan=3>Saved tunes</th></tr>
-           <tbody id="saved"></tbody>
-        </table>        
-      </td>
-      
-      <td id="col3">
-      See also:
-         <ul id="dir"></ul>
-      </td>
-      
-    </tr>
-    
-    <tr>
-      <td colspan=3>
-        <div id="output"></div>
-      </td>
-    </tr>
-  </table>
-  
-  
+</script>
 
 </body>
 </html>

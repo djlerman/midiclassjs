@@ -59,6 +59,11 @@
               </a>
             
               
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
               <a class="source" href="Utils.html">
                 Utils.js
               </a>
@@ -447,17 +452,13 @@
       }, {
         name: <span class="hljs-string">'denominator'</span>,
         length: <span class="hljs-number">1</span>,
-        importers: {
-          binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(denomByte, params)</span> </span>{
-            params.denominator = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, denomByte);
-          }
+        valueType: <span class="hljs-string">'number'</span>,
+        decoder: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, params)</span> </span>{
+          params.denominator = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, value);
         },
-        exporters: {
-          binary: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(denom, bytes)</span> </span>{
-            <span class="hljs-keyword">var</span> denomByte = <span class="hljs-built_in">Math</span>.round(<span class="hljs-built_in">Math</span>.log(denom)/<span class="hljs-built_in">Math</span>.log(<span class="hljs-number">2</span>));
-            <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Math</span>.log(denom));
-            bytes.appendInt8(denomByte);
-          }
+        encoder: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, params)</span> </span>{
+          <span class="hljs-keyword">var</span> encoded = <span class="hljs-built_in">Math</span>.round(<span class="hljs-built_in">Math</span>.log(value)/<span class="hljs-built_in">Math</span>.log(<span class="hljs-number">2</span>));
+          params.denominator = encoded;
         }
       }, {
         name: <span class="hljs-string">'metronome'</span>,
@@ -513,7 +514,12 @@
     typeMap: {},
     typeToBinary: {},
     eventTypes: {},
-    textMap: {}
+    textMap: {},
+    GeneralMIDI: {
+      byName: {
+       <span class="hljs-string">'synth_drum'</span>: <span class="hljs-number">114</span> 
+      }
+    }
   };
 
   <span class="hljs-built_in">Object</span>.keys(eventMap).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(k)</span> </span>{
@@ -523,8 +529,8 @@
     data.typeMap[k] = val;
     data.typeToBinary[k] = val.formats.binary;
     data.eventTypes[k] = k;
-
   });
+  
 
   <span class="hljs-keyword">return</span> data;
 }());</pre></div></div>

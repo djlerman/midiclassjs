@@ -59,6 +59,11 @@
               </a>
             
               
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
               <a class="source" href="Utils.html">
                 Utils.js
               </a>
@@ -86,23 +91,24 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Importers.Binary = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MT)</span> </span>{ 
 <span class="hljs-pi">  'use strict'</span>;
 
   <span class="hljs-keyword">var</span> MIN_HEADER_LENGTH = <span class="hljs-number">14</span>;
   <span class="hljs-keyword">var</span> HEADER_PRELUDE = <span class="hljs-string">'MThd'</span>;
   <span class="hljs-keyword">var</span> TRACK_PRELUDE = <span class="hljs-string">'MTrk'</span>;
 
-  <span class="hljs-keyword">var</span> importBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(src, callback, error)</span> </span>{
+  MT.MIDIFile.prototype.importBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(src, callback, error)</span> </span>{
     <span class="hljs-keyword">if</span> (!src || !callback) {
       <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Both parameters required!'</span>);
     }
 
+    <span class="hljs-keyword">var</span> midi = <span class="hljs-keyword">this</span>;
     DOMLoader.sendRequest({
       url: src,
       onload: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req)</span> </span>{
         <span class="hljs-keyword">try</span> {
-          callback(fromBinary(toByteString(req.responseText)));
+          callback(fromBinary(midi, toByteString(req.responseText)));
         } <span class="hljs-keyword">catch</span> (err) {
           <span class="hljs-keyword">return</span> error &amp;&amp; error(err);
         }
@@ -133,8 +139,7 @@
    * @return {MIDIFile} - the MIDIFile representation of the binary file
    */</span>
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fromBinary</span><span class="hljs-params">(bytes)</span> </span>{
-    <span class="hljs-keyword">var</span> m = <span class="hljs-keyword">new</span> MT.MIDIFile(<span class="hljs-number">0</span>);
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fromBinary</span><span class="hljs-params">(m, bytes)</span> </span>{
     parseHeader(m, bytes);
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = m.countTracks(); i &lt; n; i += <span class="hljs-number">1</span>) {
       parseTrack(m.track(i), bytes);
@@ -318,15 +323,12 @@ we store the results in the <code>MIDIFile</code> object itself</p>
 
     <span class="hljs-keyword">if</span> (topByte &amp; <span class="hljs-number">0x80</span>) {
       <span class="hljs-keyword">return</span> {
-        <span class="hljs-string">'type'</span>: <span class="hljs-string">'framesPerSecond'</span>,
         <span class="hljs-string">'framesPerSecond'</span>: getSMPTE(topByte),
         <span class="hljs-string">'ticksPerFrame'</span>: bottomByte
       };
+  
     } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// ticks per beat measure</span>
-      <span class="hljs-keyword">return</span> {
-        <span class="hljs-string">'type'</span>: <span class="hljs-string">'ticksPerBeat'</span>,
-        <span class="hljs-string">'ticksPerBeat'</span>: parseInteger([topByte, bottomByte], <span class="hljs-number">2</span>)
-      };
+      <span class="hljs-keyword">return</span> parseInteger([topByte, bottomByte], <span class="hljs-number">2</span>);
     }
   }
 
@@ -683,8 +685,6 @@ the first byte of the message</p>
       <span class="hljs-keyword">return</span> (<span class="hljs-number">0x00FF</span> &amp; ch.charCodeAt(<span class="hljs-number">0</span>));
     });
   }
-
-  <span class="hljs-keyword">return</span> importBinary;
 
 }(MIDITools));
 

@@ -59,6 +59,11 @@
               </a>
             
               
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
               <a class="source" href="Utils.html">
                 Utils.js
               </a>
@@ -112,17 +117,19 @@
       timeSignature: <span class="hljs-keyword">this</span>._midi.track(<span class="hljs-number">0</span>).event(<span class="hljs-number">1</span>)
     };
   }
-  
+
   MIDISequence.prototype.getTempo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tempo;
   };
+
   MIDISequence.prototype.ticksPerBeat = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._midi.getTiming().ticksPerBeat;
   };
 
   MIDISequence.prototype.setTempo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bpm)</span> </span>{
     <span class="hljs-keyword">this</span>._tempo = bpm;
-    <span class="hljs-keyword">this</span>._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(bpm);
+    <span class="hljs-keyword">this</span>._meta.tempo.parameters.microsecondsPerBeat = imports.Utils.bpmToTempo(
+      bpm);
   };
 
   MIDISequence.prototype.getTimeSignature = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
@@ -137,7 +144,7 @@
     <span class="hljs-keyword">this</span>._meta.timeSignature.parameters = imports.Utils.fromTimeSignature(ts);
   };
 
-  
+
   MIDISequence.prototype.channel = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._channels[n]) {
       <span class="hljs-keyword">var</span> trackCount = <span class="hljs-keyword">this</span>._midi.countTracks();
@@ -161,7 +168,7 @@
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._midi;
   };
-  
+
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDIChannel</span><span class="hljs-params">(t, n)</span> </span>{
     <span class="hljs-keyword">this</span>._track = t;
     <span class="hljs-keyword">this</span>._number = n;
@@ -173,15 +180,19 @@
       }
     });
     <span class="hljs-keyword">this</span>._track.addEvent({
-      timestamp:<span class="hljs-number">0</span>,
+      timestamp: <span class="hljs-number">0</span>,
       message: <span class="hljs-string">'instrumentName'</span>,
       parameters: {
         value: <span class="hljs-string">'unknown'</span>
       }
     });
+    <span class="hljs-keyword">this</span>.addEvent(<span class="hljs-number">0</span>, <span class="hljs-string">'programChange'</span>, {
+      program: <span class="hljs-number">1</span>
+    });
     <span class="hljs-keyword">this</span>._nameParam = <span class="hljs-keyword">this</span>._track.event(<span class="hljs-number">1</span>).parameters;
+    <span class="hljs-keyword">this</span>._program = <span class="hljs-keyword">this</span>._track.event(<span class="hljs-number">2</span>).parameters;
   }
-  
+
   MIDIChannel.prototype.setName = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
     <span class="hljs-keyword">this</span>._nameParam.value = name;
   };
@@ -190,17 +201,9 @@
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._nameParam.value;
   };
 
-  MIDIChannel.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta, msg, parameters)</span> </span>{
-    <span class="hljs-keyword">var</span> spec = imports.Data.typeMap[msg];
-    <span class="hljs-keyword">var</span> evt = {
-      timestamp: delta,
-      channel: <span class="hljs-keyword">this</span>._number,
-      message: spec.type,
-      parameters: {}
-    };
-
-    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
-      <span class="hljs-keyword">if</span> (parameters[p.name] === <span class="hljs-string">'undefined'</span>) {</pre></div></div>
+  MIDIChannel.prototype.setInstrument = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
+    <span class="hljs-built_in">console</span>.log(name);
+    <span class="hljs-keyword">this</span>._program.program = imports.Data.GeneralMIDI.byName[name];</pre></div></div>
             
         </li>
         
@@ -211,19 +214,29 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>TODO: Create custom error</p>
+              <p>TODO: Use replace event</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Parameter left undefined'</span>);
-      }
-      evt.parameters[p.name] = parameters[p.name];
-      evt.parameters[index] = evt.parameters[p.name];
-    });
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>._program);
+  };
+
+  MIDIChannel.prototype.getInstrument = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bpm)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._program.program;
+  };
+
+  MIDIChannel.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta, msg, parameters)</span> </span>{
+    <span class="hljs-keyword">var</span> spec = imports.Data.typeMap[msg];
+    <span class="hljs-keyword">var</span> evt = {
+      timestamp: delta,
+      channel: <span class="hljs-keyword">this</span>._number,
+      message: spec.type,
+      parameters: parameters
+    };
 
     <span class="hljs-keyword">this</span>._track.addEvent(evt);
   };
-  
+
   exports.MIDISequence = MIDISequence;
 
 }(<span class="hljs-built_in">window</span>.MIDITools, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>

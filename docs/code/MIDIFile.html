@@ -59,6 +59,11 @@
               </a>
             
               
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
               <a class="source" href="Utils.html">
                 Utils.js
               </a>
@@ -88,6 +93,7 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.MIDIFile = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MIDI, MT)</span> </span>{
 <span class="hljs-pi">  'use strict'</span>;
+
   <span class="hljs-comment">/*!
    * @class
    * @memberof MIDITools
@@ -124,16 +130,16 @@
   };
 
   MIDIFile.prototype.addTrack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._type === <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>._tracks.count === <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">this</span>._type = <span class="hljs-number">1</span>; 
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._type === <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>._tracks.length === <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">this</span>._type = <span class="hljs-number">1</span>;
     }
-    <span class="hljs-keyword">this</span>._tracks.push(<span class="hljs-keyword">new</span> MIDITrack(<span class="hljs-keyword">this</span>._tracks.length));
+    <span class="hljs-keyword">this</span>._tracks.push(<span class="hljs-keyword">new</span> MIDITools.MIDITrack(<span class="hljs-keyword">this</span>._tracks.length));
   };
-    
+
   MIDIFile.prototype.countTracks = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks.length;
   };
-  
+
   MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
@@ -153,58 +159,23 @@
   };
 
   MIDIFile.prototype.setTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(timing)</span> </span>{
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> timing === <span class="hljs-string">'number'</span>) {
-      <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'ticksPerBeat'</span>;
-      <span class="hljs-keyword">this</span>._timing.ticksPerBeat = timing;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> timing === <span class="hljs-string">'object'</span>) {
-      <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'framesPerSecond'</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>TODO: Check that keys exist</p>
+    <span class="hljs-keyword">var</span> hasFrameParameters = (
+      <span class="hljs-keyword">typeof</span> timing === <span class="hljs-string">'object'</span> &amp;&amp;
+      timing.hasOwnProperty(<span class="hljs-string">'framesPerSecond'</span>) &amp;&amp;
+      timing.hasOwnProperty(<span class="hljs-string">'ticksPerFrame'</span>)
+    );
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._timing.framesPerSecond = timing.framesPerSecond;
+    <span class="hljs-keyword">if</span> (hasFrameParameters) {
+      <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'framesPerSecond'</span>;
+      <span class="hljs-keyword">this</span>._timing.framesPerSecond = timing.framesPerSecond;
       <span class="hljs-keyword">this</span>._timing.ticksPerFrame = timing.ticksPerFrame;
       <span class="hljs-keyword">this</span>._channels = [];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> timing === <span class="hljs-string">'number'</span>) {
+      <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'ticksPerBeat'</span>;
+      <span class="hljs-keyword">this</span>._timing.ticksPerBeat = timing;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> MT.Errors.Parameters.SetTiming;
     }
-  };
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDITrack</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">this</span>._number = n;
-    <span class="hljs-keyword">this</span>._events = [];
-    <span class="hljs-keyword">this</span>._eventTypes = {};
-  }
-
-  MIDITrack.prototype.event = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events[i];
-  };
-
-  MIDITrack.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
-    evt.kind = MT.Data.typeMap[evt.message].kind;
-    <span class="hljs-keyword">this</span>._events.push(evt);
-  };
-
-  MIDITrack.prototype.replaceEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, evt)</span> </span>{
-    <span class="hljs-keyword">this</span>._events[i] = evt;
-  };
-
-  MIDITrack.prototype.countEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.length;
-  };
-
-  MIDITrack.prototype.filterEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
-      <span class="hljs-keyword">return</span> (evt.message.type === type);
-    });
   };
 
   <span class="hljs-keyword">return</span> MIDIFile;
