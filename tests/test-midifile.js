@@ -25,6 +25,16 @@ QUnit.test("addTrack - adding second track changes type to 1", function(assert) 
   assert.equal(midi.countTracks(), 2);
 });
 
+QUnit.test("addTrack - throws error on too many tracks", function(assert) {
+  var midi = new MIDITools.MIDIFile();
+  midi.addTrack();
+  assert.throws(function() {
+    for (var i = 0; i < Math.pow(2, 16)+1; i += 1) {
+      midi.addTrack();
+    }
+  }, MIDITools.Errors.MIDI.TrackOverflow);
+});
+
 QUnit.test("setTiming - throws error on non-number literal", function(assert) {
   var midi = new MIDITools.MIDIFile();
   midi.addTrack();

@@ -5,17 +5,13 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
    * @class
    * @memberof MIDITools
    */
-  function MIDIFile(timing) {
+  function MIDIFile(type) {
     this._tracks = [];
     this._timing = {};
-    this._type = 0;
+    this._type = (type === 0 || type === 1) ? type : 0;
     this._tracks = [];
-
-    if (timing) {
-      this.setTiming(timing);
-    } else {
-      this.setTiming(96);
-    }
+    this.setTiming(96);
+    
   }
 
   /**
@@ -37,9 +33,14 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
   };
 
   MIDIFile.prototype.addTrack = function() {
+    if (this._tracks.length === Math.pow(2, 16)) {
+      throw MT.Errors.MIDI.TrackOverflow;
+    }
+    
     if (this._type === 0 && this._tracks.length === 1) {
       this._type = 1;
     }
+    
     this._tracks.push(new MIDITools.MIDITrack(this._tracks.length));
   };
 

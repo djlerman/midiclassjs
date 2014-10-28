@@ -1,6 +1,9 @@
 window.MIDITools.Errors = (function() {
   'use strict';
   return {
+    MIDI: {
+      TrackOverflow: new Error('addTrack called on MIDIFile with 2^16 tracks.')
+    },
     Import: {
       FileSize: new Error('File is too small to be a standard MIDI file.'),
       HeaderPrelude: new Error('File did not contain standard MIDI header.'),
@@ -8,7 +11,8 @@ window.MIDITools.Errors = (function() {
         'File size is smaller than its declared header size.'),
       MessageType: new Error('File had a MIDI message with an unknown type.'),
       MetaType: new Error('File had a meta message with an unknown subtype.'),
-      TrackCount: new Error('File declared a number of tracks outside 0-16.'),
+      TrackCount: new Error(
+        'File declared a number of tracks outside 0-(2^16).'),
       TrackLength: new Error(
         'File contains a track declared with the wrong size.'),
       TrackPrelude: new Error(
@@ -23,7 +27,7 @@ window.MIDITools.Errors = (function() {
       SetTiming: new Error('setTiming requires a number or a `fps` object.')
     },
     Text: {
-      MessageType: new Error('Invalid MIDI message type.')
-    }
+      MessageType: new Error('Invalid MIDI message type.'),
+    },
   };
 }());
