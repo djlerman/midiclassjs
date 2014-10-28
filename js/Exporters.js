@@ -105,7 +105,6 @@
     var header = generateFileHeader(this, b);
     var tracks = generateTracks(this); 
     b.append(header).append(tracks);
-    console.log(b);
     return b.toString();
   };
 
