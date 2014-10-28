@@ -1,11 +1,11 @@
-(function(MT) { 
+(function(imports, exports) {
   'use strict';
 
   var MIN_HEADER_LENGTH = 14;
   var HEADER_PRELUDE = 'MThd';
   var TRACK_PRELUDE = 'MTrk';
 
-  MT.MIDIFile.prototype.importBinary = function(src, callback, error) {
+  exports.importBinary = function(src, callback, error) {
     if (!src || !callback) {
       throw new Error('Both parameters required!');
     }
@@ -63,11 +63,11 @@
     // sanity check: die for files that aren't big enough
     // to even declare a MIDI header
     if (bytes.length < MIN_HEADER_LENGTH) {
-      throw MT.Errors.Import.FileSize;
+      throw imports.Errors.Import.FileSize;
     }
 
     // sanity check: Any MIDI file must begin with the `MTrk` constant.
-    parseStringConstant(bytes, HEADER_PRELUDE, MT.Errors.Import.HeaderPrelude);
+    parseStringConstant(bytes, HEADER_PRELUDE, imports.Errors.Import.HeaderPrelude);
     var headerSize = parseHeaderSize(bytes);
     var midiType = parseType(bytes);
     var trackCount = parseInteger(bytes, 2);
@@ -76,7 +76,7 @@
     // sanity check: a Type-0 file that declares multiple tracks
     // is just asking for trouble; we fail appropriately
     if (midiType === 0 && trackCount !== 1) {
-      throw MT.Errors.Import.Type0MultiTrack;
+      throw imports.Errors.Import.Type0MultiTrack;
     }
 
     // Since the header contains globally-useful information,
@@ -95,14 +95,14 @@
    * Returns header's file size declaration,
    * if and only if it agrees with actual file size.
    *
-   * @throws MT.Errors.Import.HeaderSize if size declaration and
+   * @throws imports.Errors.Import.HeaderSize if size declaration and
    *         file size do not agree
    */
 
   function parseHeaderSize(bytes) {
     var size = parseInteger(bytes, 4);
     if (bytes.length < size) {
-      throw MT.Errors.Import.HeaderSize;
+      throw imports.Errors.Import.HeaderSize;
     } else {
       return size;
     }
@@ -113,13 +113,13 @@
    * Returns the MIDI file type,
    * if and only if the type is in {0, 1}.
    *
-   * @throws MT.Errors.Import.Type if the type is not 0 or 1
+   * @throws imports.Errors.Import.Type if the type is not 0 or 1
    */
 
   function parseType(bytes) {
     var type = parseInteger(bytes, 2);
     if (type !== 0 && type !== 1) {
-      throw MT.Errors.Import.Type;
+      throw imports.Errors.Import.Type;
     } else {
       return type;
     }
@@ -140,7 +140,7 @@
         'framesPerSecond': getSMPTE(topByte),
         'ticksPerFrame': bottomByte
       };
-  
+
     } else { // ticks per beat measure
       return parseInteger([topByte, bottomByte], 2);
     }
@@ -168,9 +168,9 @@
    * the events and metadata contained within to the `track`
    * parameter.
    *
-   * @throws MT.Errors.Import.TrackPrelude
-   * @throws MT.Errors.Import.TrackSize
-   * @throws MT.Errors.Import.TrackFooter
+   * @throws imports.Errors.Import.TrackPrelude
+   * @throws imports.Errors.Import.TrackSize
+   * @throws imports.Errors.Import.TrackFooter
    */
 
   function parseTrack(track, bytes) {
@@ -191,7 +191,7 @@
     }
 
     if (track.event(track.countEvents() - 1).message !== 'endOfTrack') {
-      throw MT.Errors.Import.TrackFooter;
+      throw imports.Errors.Import.TrackFooter;
     }
   }
 
@@ -204,10 +204,10 @@
    */
 
   function parseTrackHeader(track, bytes) {
-    parseStringConstant(bytes, TRACK_PRELUDE, MT.Errors.Import.TrackPrelude);
+    parseStringConstant(bytes, TRACK_PRELUDE, imports.Errors.Import.TrackPrelude);
     var size = parseInteger(bytes, 4);
     if (bytes.length < size) {
-      throw MT.Errors.Import.TrackLength;
+      throw imports.Errors.Import.TrackLength;
     } else {
       return size;
     }
@@ -246,7 +246,7 @@
   }
 
   /*!
-   * @throws MT.Errors.Import.MessageType if the message type
+   * @throws imports.Errors.Import.MessageType if the message type
    *         is not recognized and there is no running status
    */
   function parseMessage(track, evt, bytes, checkedPrevious) {
@@ -262,7 +262,7 @@
       evt.status = track.event(track.countEvents() - 1).status;
       parseMessage(track, evt, bytes, true);
     } else {
-      throw MT.Errors.Import.MessageType;
+      throw imports.Errors.Import.MessageType;
     }
     return evt;
   }
@@ -288,7 +288,7 @@
   function parseChannelMessage(evt, bytes) {
     var type = (evt.status & 0xF0) >> 4;
     var channel = (evt.status & 0x0F) >> 4;
-    var spec = MT.Data.binaryMap[type];
+    var spec = imports.Data.binaryMap[type];
 
     evt.kind = spec.kind;
     evt.message = spec.type;
@@ -311,11 +311,11 @@
   function parseMetaMessage(evt, bytes) {
     var type = parseInteger(bytes, 1);
     var length = parseInteger(bytes, 1);
-    var spec = MT.Data.binaryMap[type];
-    
+    var spec = imports.Data.binaryMap[type];
+
     if (!spec) {
-      throw MT.Errors.Import.MetaType;
-    } 
+      throw imports.Errors.Import.MetaType;
+    }
     // TODO: compare length and throw error
 
     evt.kind = spec.kind;
@@ -341,13 +341,13 @@
       });
     }
 
-    return evt;      
+    return evt;
   }
 
   function parseSysExMessage(evt, bytes) {
     var length = parseVariableInteger(bytes);
 
-    evt.kind = MT.Data.binaryMap[evt.status].kind;
+    evt.kind = imports.Data.binaryMap[evt.status].kind;
     evt.message = 'unknown'; // TODO: FIX
 
     evt.parameters = bytes.slice(0, length);
@@ -410,9 +410,171 @@
     });
   }
 
-}(MIDITools));
+}(window.MIDITools, window.MIDITools.MIDIFile.prototype));
 
-window.MIDITools.Importers.Text = (function(MT) {
+
+(function(imports, exports) {
   'use strict';
+  var matches = {};
 
-}(window.MIDITools));
+  Object.defineProperty(matches, 'NEWLINE', {
+    value: /[\r\n]+/,
+    writable: false
+  });
+  Object.defineProperty(matches, 'WHITESPACE', {
+    value: /\s+/,
+    writable: false
+  });
+
+  var strings = {
+    'HEADER_PRELUDE': 'MFile',
+    'TRACK_START_MARKER': 'MTrk',
+    'TRACK_END_MARKER': 'TrkEnd'
+  };
+
+  exports.importText = function(text) {
+    var lines = text.split(matches.NEWLINE).map(function(s) {
+      return s.trim();
+    });
+
+    var header = lines.shift();
+    parseHeader(this, header);
+    
+    var trackLines = splitTracks(lines);
+    if (trackLines.length < this.countTracks()) {
+      throw imports.Errors.Import.TracksMissing;
+    }
+    
+    trackLines.forEach(function(tl, index) {
+      parseTrack(this.track(index), tl);
+    }.bind(this));
+  };
+  
+  function parseTrack(track, lines) {
+    var trackHeader = lines.shift();
+    
+    if (trackHeader !== strings.TRACK_START_MARKER) {
+      throw imports.Errors.Import.TrackPrelude;
+    }
+    
+    lines.forEach(function(line) {
+      parseEvent(track, line);
+    });
+  }
+
+  function parseEvent(track, text) {
+    var pieces = text.split(matches.WHITESPACE);
+
+    var delta = parseInt(pieces.shift());
+    if (pieces.length < 1 || isNaN(delta)) {
+      throw imports.Errors.Import.DeltaInvalid;
+    }
+    
+    var type = extractType(pieces);
+    
+    if (!type) {
+      throw imports.Errors.Import.MessageType;
+    }
+    
+    var msg = parseMessage(type, pieces);
+    track.addEvent({
+      timestamp: delta,
+      message: type.message,
+      parameters: msg.parameters
+    });
+  }
+  function parseMessage(spec, pieces) {
+    switch (spec.kind) {
+    case 'channel':
+      return parseChannelMessage(spec, pieces);
+    case 'meta':
+      return parseMetaMessage(spec, pieces);
+    case 'sysex':
+      return parseSysExMessage(spec, pieces);
+    default:
+      throw imports.Errors.Import.MessageType;
+    }
+  }
+  
+  function parseChannelMessage(spec, pieces) {
+    
+  }
+  
+  function parseMetaMessage(spec, pieces) {
+    
+  }
+  
+  function parseSysExMessage(spec, pieces) {
+    
+  }
+  
+  function extractType (pieces) {
+    var typeName = pieces.shift();
+    if (typeName === 'Meta') {
+      typeName += ' ' + pieces.shift();
+    }
+
+    return imports.Data.textMap[typeName];
+  }
+  
+  function splitTracks(lines) {
+    var lastIndex = 0;
+    var result = [];
+    lines.forEach(function(line, index) {
+      if (line === strings.TRACK_END_MARKER) {
+        result.push(lines.slice(lastIndex, index));
+      }
+    });
+    return result;
+  }
+
+  function parseHeader(midi, text) {
+    var pieces = text.split(matches.WHITESPACE);
+    
+    var declaredType = parseInt(pieces[1]);
+    var count = parseInt(pieces[2]);
+
+    if (pieces[0] !== strings.HEADER_PRELUDE) {
+      throw imports.Errors.Import.HeaderPrelude;
+    }
+
+    if (isNaN(declaredType)) {
+      throw imports.Errors.Import.Type;
+    }
+
+    if (isNaN(count) || count < 0) {
+      throw imports.Errors.Import.TrackCount;
+    }
+
+    try {
+      for (var i = 0; i < count; i += 1) {
+        midi.addTrack();
+      }
+    } catch (err) {
+      if (err === imports.Errors.MIDI.TrackOverflow) {
+        throw imports.Errors.Import.TrackCount; 
+      } else {
+        throw err;
+      }
+    }
+
+    if (midi.type() !== declaredType) {
+      if (midi.type() === 0) {
+        // TODO: either change API to have setType() or dont put
+        // this method on the MF instance
+        midi._type = 1;
+      } else {
+        throw imports.Errors.Import.Type0MultiTrack;
+      }
+    }
+
+    // TODO: SMPTE timing
+    //<division> is either a positive number (giving the time resolution in
+    //clicks per quarter note) or a negative number followed by a positive
+    //number (giving SMPTE timing)
+    
+    midi.setTiming(parseInt(pieces[3]));
+  }
+
+
+}(window.MIDITools, window.MIDITools.MIDIFile.prototype));

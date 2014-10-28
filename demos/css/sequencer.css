@@ -57,29 +57,22 @@ body {
   font-family: Lato;
   font-size:12px;
   font-weight:300;
-  padding:8px;
-  min-width: 700px;
 }
 
 /* Menu Bar
 ----------------------------- */
 .bar {
   background:#34495E;
-  display:block;
   height:36px;
   border:none;
-  padding:0 6px;
-  border-radius: 5px;
+  position:relative;
   margin-bottom:20px;
 }
 
 .label {
-  display:inline-block;
   color:white;
   font-weight: 400;
   letter-spacing:0.01em;
-  padding: 0 1em 0 0;
-  text-align:left;
 }
 
 /* Menu Bar Header
@@ -87,23 +80,21 @@ body {
 .bar-label.label {
   margin-top:12px;
   font-size:12px;
-  height:1em;
+  padding-left:0.5em;
+  display:inline-block;
 }
 
 
 /* Status Value
 ----------------------------- */
-.status {
-  height:36px;
-  display:inline-block;
-}
 
 .status-value {
-  box-sizing:border-box;
-  padding: 0.45em 0.25em;
-  height:36px;
+  display:inline-block;
+  margin-top:12px;
+  padding:0.25em 0.5em;
   background-color:#16A085;
   border-radius: 6px;
+  text-align:center;
   color: white;
   font-size:10px;
   text-transform: uppercase;
@@ -113,23 +104,16 @@ body {
 /* Demo List
 ----------------------------- */
 .demo-list {
-  height:30px;
-  float:right;
-  padding:0;
-  display:inline-block;
+  margin: 0 1em;
 }
-
 
 /* List "activation" button
 ----------------------------- */
 
 .demo-list-button {
   position:relative;
-  float:right;
-  height:24px;
   margin-top:6px;
   padding: 0.5em 3em 0.5em 0.5em;
-  
   border: none;
   border-radius: 4px;
   background-color: white;
@@ -142,28 +126,32 @@ body {
   position:absolute;
   width: 0;
   height: 0;
-  right:8px;
-  top:8px;
-  border-top: 8px solid;
-  border-right: 6px solid rgba(0, 0, 0, 0);
-  border-left: 6px solid rgba(0, 0, 0, 0);
+  right:3px;
+  top:10px;
+  border-top: 5px solid;
+  border-right: 4px solid rgba(0, 0, 0, 0);
+  border-left: 4px solid rgba(0, 0, 0, 0);
 }
 
 /* List items
 ----------------------------- */
 
+.demo-list-container {
+  position:relative;
+  margin-top:-22px;
+  height:25px;
+}
+
 .demo-list-items {
-  display:block;
-  background-color:white;
+  display:none;
+  position:absolute;
   border-radius:4px;
   z-index: 1000;
   min-width: 120px;
-  margin-top:40px;
   background-color: rgb(243, 244, 245);
   border: none;
   border-radius: 4px;
   box-shadow: none;
-  display:none;
 }
 
 .demo-list-item {
@@ -180,19 +168,119 @@ body {
 /* Sequencer
 ----------------------------- */
 
-.sequencer {
-  width:70%;
-  min-width: 490px; /* 70% of body's min-width */
-  min-height:300px;
-
-  background-color:#CCC;
+.box {
+  position:relative;
   border-radius:4px 4px 0 0;
+  background-color:#EEE;
 }
 
-.seq-header {
+.sequencer {
+  min-height:300px;
+}
+
+.box-header {
+  position:absolute;
+  top:-18px;
+  left:0em;
+  height:20px;
+  width:100%;
   background:#34495E;
   font-weight:400;
-  padding:0.5em; 6px;
+  line-height:20px;
+  padding-left:0.5em;
   border-radius:4px 4px 0 0;
 }
 
+.box-footer {
+  position:absolute;
+  bottom:-20px;
+  left:0em;
+  height:20px;
+  line-height:20px;
+  background:#34495E;
+  font-weight:400;
+  padding-left:0.5em;
+  border-radius:0 0 4px 4px;
+  width:100%;
+}
+
+input {
+  font-family:Lato;
+  font-weight:300;
+}
+
+.box-footer input {
+  background-color:rgba(255,255,255,0);
+  border:none;
+  border-bottom: solid 1px rgba(255,255,255,0.3);
+  outline:none;
+  text-align:center;
+  color:white;
+}
+
+.bar input:focus {
+  border-bottom: solid 1px rgba(255,255,255,1);
+}
+
+input.submit {
+  border-radius:4px;
+  background:rgba(255, 255, 255, 0.5);
+  margin-right: 0;
+  margin:2px;
+  height:16px;
+  border:none;
+}
+  background-color:rgba(0,0,0,0.3);
+  margin:0;
+}
+tr {
+  text-align:center;
+}
+input.volume {
+  width:100%;
+  margin:0;
+}
+
+.grid_1 input,
+.grid_1 button {
+  width: 90%;
+  font-size:10px;
+}
+
+input.submit:focus {
+  background:rgba(255, 255, 255, 0.8);
+  border:none;
+}
+
+label {
+  text-align:right;
+}
+.saved {
+  min-height:200px;
+  border-radius:4px 4px 0 0;
+}
+.current {
+  padding: 10px 0;
+}
+.current .grid_1,
+.current .grid_2 {
+  text-align:center;
+}
+
+.current .clear {
+  height:20px;
+}
+.current input[type="text"] {
+  width: 90px;
+}
+
+thead {
+  display:block;
+  height:20px;
+  line-height:20px;
+  background-color:rgba(0,0,0,0.25);
+}
+
+tr {
+  text-align:center;
+}
