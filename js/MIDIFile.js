@@ -11,18 +11,7 @@ window.MIDITools.MIDIFile = (function(MIDI, MT) {
     this._type = (type === 0 || type === 1) ? type : 0;
     this._tracks = [];
     this.setTiming(96);
-    
   }
-
-  /**
-   * Plays the MIDI sequence currently defined by this instance.
-   * TODO: Add callback functionality
-   */
-  MIDIFile.prototype.play = function() {
-    MIDI.Player.loadFile(this.exportBase64(), function() {
-      MIDI.Player.start();
-    });
-  };
 
   MIDIFile.prototype.type = function() {
     return this._type;
