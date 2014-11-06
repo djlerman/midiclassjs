@@ -31,7 +31,7 @@
     this._meta = {
       sequenceName: this._midi.track(0).event(0),
       tempo: this._midi.track(0).event(1),
-      timeSignature: this._midi.track(0).event(2),
+      timeSignature: this._midi.track(0).event(2)
     };
   }
 
@@ -46,7 +46,6 @@
         for (var i = 0; i < ch.countEvents(); i += 1) {
           ticks += ch.event(i).timestamp;        
         }
-        console.log(ticks);
         return ticks;
       })
       .reduce(function(previous, current) {
@@ -56,6 +55,10 @@
 
   MIDISequence.prototype.getTempo = function() {
     return this._tempo;
+  };
+
+  MIDISequence.prototype.beatLength = function() {
+    return imports.Utils.bpmToTempo(this._tempo) / 1000;
   };
 
   MIDISequence.prototype.ticksPerBeat = function() {
@@ -110,13 +113,9 @@
   };
 
   MIDISequence.prototype.toFile = function() {
-    for (var i = 0, n = this._midi.countTracks(); i < n; i += 1) {
-      this._midi.track(i).addEvent({
-        message: 'endOfTrack',
-        timestamp: 0,
-        parameters: {}
-      });
-    }
+    this.usedChannels().forEach(function(ch) {
+      ch.addEvent(0, 'endOfTrack', {});
+    });
     return this._midi;
   };
 
@@ -135,11 +134,11 @@
       timestamp: 0,
       message: 'instrumentName',
       parameters: {
-        value: this._number
+        value: 'unknown'
       }
     });
     this.addEvent(0, 'programChange', {
-      program: 1
+      program: 1,
     });
     this._track.addEvent({
       timestamp: 0,
@@ -194,6 +193,11 @@
     // TODO: Translation for parameters, etc.
     return this._track.event(index);
   };
+
+  MIDIChannel.prototype.number = function() {
+    return this._number;
+  };
+
   MIDIChannel.prototype.eventsInBeat = function(beatIndex) {
     // TODO: Translation for parameters, etc.
     var startTick = this._sequence.ticksPerBeat() * beatIndex;
