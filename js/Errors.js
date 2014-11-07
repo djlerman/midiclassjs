@@ -1,34 +1,39 @@
-window.MIDITools.Errors = (function() {
-  'use strict';
-  return {
-    MIDI: {
-      TrackOverflow: new Error(
-        'addTrack called on MIDIFile with 2^16 tracks.')
-    },
-    Import: {
-      DeltaInvalid: new Error('Event contained an invalid delta-time value'),
-      FileSize: new Error('File is too small to be a standard MIDI file.'),
-      HeaderPrelude: new Error('File did not contain standard MIDI header.'),
-      HeaderSize: new Error(
-        'File size is smaller than its declared header size.'),
-      MessageType: new Error('File had a MIDI message with an unknown type.'),
-      MetaType: new Error('File had a meta message with an unknown subtype.'),
-      TrackCount: new Error(
-        'File declared a number of tracks outside 0-(2^16).'),
-      TrackLength: new Error(
-        'File contains a track declared with the wrong size.'),
-      TracksMissing: new Error(
-        'File does not contain as many tracks it declares.'),
-      TrackPrelude: new Error(
-        'File did not contain standard MIDI track header.'),
-      TrackFooter: new Error(
-        'File did not contain standard MIDI track footer.'),
-      Type: new Error('File must be either Type-0 or Type-1.'),
-      Type0MultiTrack: new Error(
-        'File format is Type-0, but declares multiple tracks.'),
-    },
-    Parameters: {
-      SetTiming: new Error('setTiming requires a number or a `fps` object.')
-    }
-  };
-}());
+'use strict';
+
+exports.MIDI = {
+  TrackOverflow: new Error(
+    'addTrack called on MIDIFile with 2^16 tracks.')
+};
+
+exports.Import = {
+  DeltaInvalid: new Error('Event contained an invalid delta-time value'),
+
+  FileSize: new Error('File is too small to be a standard MIDI file.'),
+
+  HeaderPrelude: new Error('File did not contain standard MIDI header.'),
+
+  HeaderSize: new Error('File size is smaller than its declared header size.'),
+
+  MessageType: new Error('File had a MIDI message with an unknown type.'),
+
+  MetaType: new Error('File had a meta message with an unknown subtype.'),
+
+  TrackCount: new Error('File declared a number of tracks outside 0-(2^16).'),
+
+  TrackLength: new Error('File contains a track declared with the wrong size.'),
+
+  TracksMissing: new Error('File does not contain as many tracks it declares.'),
+
+  TrackPrelude: new Error('File did not contain standard MIDI track header.'),
+
+  TrackFooter: new Error('File did not contain standard MIDI track footer.'),
+
+  Type: new Error('File must be either Type-0 or Type-1.'),
+
+  Type0MultiTrack: new Error(
+    'File format is Type-0, but declares multiple tracks.')
+};
+
+exports.Parameters = {
+  SetTiming: new Error('setTiming requires a number or a `fps` object.')
+};

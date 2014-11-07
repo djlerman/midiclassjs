@@ -1,11 +1,11 @@
-QUnit.module( "MIDIFile~importBinary" );
+QUnit.module("MIDIFile~importBinary");
 
 /*
  * Header parsing
  */
 
 QUnit.asyncTest("header of small Type-1 MIDI", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/simple1.mid', function(m) {
+  MIDITools.MIDIFile.importBinary('samples/mid/simple1.mid', function(m) {
     QUnit.start();
     assert.equal(m.type(), 1);
     assert.equal(m.getTiming().ticksPerBeat, 128);
@@ -18,57 +18,62 @@ QUnit.asyncTest("header of small Type-1 MIDI", function(assert) {
 });
 
 QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-prelude.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/err-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.ok(err === MIDITools.Errors.Import.HeaderPrelude);
     });
 });
 
 QUnit.asyncTest("import MIDI with header size > file size", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-header-size.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/err-header-size.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Import.HeaderSize);
     });
 });
 
 QUnit.asyncTest("import Type-0 MIDI with track count > 1", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-type0-multi.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/err-type0-multi.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Import.Type0MultiTrack);
     });
 });
 
 QUnit.asyncTest("import MIDI with invalid prelude", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-prelude.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/err-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.ok(err === MIDITools.Errors.Import.HeaderPrelude);
     });
 });
 
 QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/import-smpte.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/import-smpte.mid',
     function(m) {
       QUnit.start();
       assert.ok(m.getTiming().type = 'framesPerSecond');
       assert.equal(m.getTiming().framesPerSecond, 25);
       assert.equal(m.getTiming().ticksPerFrame, 40);
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.ok(false, 'Import should not result in error');
     });
@@ -78,23 +83,28 @@ QUnit.asyncTest("import MIDI with SMPTE time-divison", function(assert) {
  * Track parsing
  */
 
-QUnit.asyncTest("import Type-0 MIDI with invalid track prelude", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-track-prelude.mid',
+QUnit.asyncTest("import Type-0 MIDI with invalid track prelude", function(
+  assert) {
+  MIDITools.MIDIFile.importBinary(
+    'samples/mid/err-track-prelude.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Import.TrackPrelude);
     });
 });
 
 QUnit.asyncTest("import Type-0 MIDI with missing track footer", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/err-track-footer.mid',
+  MIDITools.MIDIFile.importBinary(
+    'samples/mid/err-track-footer.mid',
     function(m) {
       QUnit.start();
       assert.ok(false, "Success callback should not be called on error");
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Import.TrackFooter);
     });
@@ -138,14 +148,15 @@ QUnit.asyncTest("channel events - Type-1 MIDI", function(assert) {
     time: 0x00,
     parameters: {}
   }];
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/simple1.mid',
+  MIDITools.MIDIFile.importBinary('samples/mid/simple1.mid',
     function(m) {
       QUnit.start();
       assert.equal(m.countTracks(), 1);
       assert.equal(m.track(0).countEvents(), events.length);
       var track = m.track(0);
       for (var i = 0, n1 = events.length; i < n1; i++) {
-        assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' + i);
+        assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' +
+          i);
         assert.equal(track.event(i).message, events[i].type, 'msg: ' + i);
         var names = Object.keys(events[i].parameters);
         for (var j = 0, n2 = names.length; j < n2; j += 1) {
@@ -154,7 +165,8 @@ QUnit.asyncTest("channel events - Type-1 MIDI", function(assert) {
           assert.equal(expect, actual, 'msg: ' + i + '| param: ' + name);
         }
       }
-    }, function(err) {
+    },
+    function(err) {
       QUnit.start();
       assert.equal(err, MIDITools.Errors.Import.TrackFooter);
     });
@@ -262,37 +274,42 @@ QUnit.asyncTest("events of simple Type-0 MIDI", function(assert) {
     parameters: {}
   }];
 
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/events-type0.mid', function(m) {
-    QUnit.start();
-    assert.equal(m.countTracks(), 1);
-    assert.equal(m.track(0).countEvents(), events.length);
-    for (var i = 0, n = events.length; i < n; i += 1) {
-      var track = m.track(0);
-      assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' + i);
-      assert.equal(track.event(i).message, events[i].type, 'msg: ' + i);
-      var names = Object.keys(events[i].parameters);
-      for (var j = 0, n2 = names.length; j < n2; j += 1) {
-        var name = names[j];
-        var expect = events[i].parameters[name];
-        var actual = track.event(i).parameters[name];
-        assert.equal(actual, expect, 'msg: ' + i + '| param: ' + name);
+  MIDITools.MIDIFile.importBinary('samples/mid/events-type0.mid',
+    function(m) {
+      QUnit.start();
+      assert.equal(m.countTracks(), 1);
+      assert.equal(m.track(0).countEvents(), events.length);
+      for (var i = 0, n = events.length; i < n; i += 1) {
+        var track = m.track(0);
+        assert.equal(track.event(i).timestamp, events[i].time, 'msg: ' +
+          i);
+        assert.equal(track.event(i).message, events[i].type, 'msg: ' + i);
+        var names = Object.keys(events[i].parameters);
+        for (var j = 0, n2 = names.length; j < n2; j += 1) {
+          var name = names[j];
+          var expect = events[i].parameters[name];
+          var actual = track.event(i).parameters[name];
+          assert.equal(actual, expect, 'msg: ' + i + '| param: ' + name);
+        }
       }
-    }
-  }, function(err) {
-    QUnit.start();
-    assert.ok(false, 'Import should not result in error');
-    console.log(err);
-  });
+    },
+    function(err) {
+      QUnit.start();
+      assert.ok(false, 'Import should not result in error');
+      console.log(err);
+    });
 });
 
 QUnit.asyncTest("import with setTempo event - type 0", function(assert) {
-  (new MIDITools.MIDIFile()).importBinary('samples/mid/setTempo-type0.mid', function(m) {
-    QUnit.start();
-    var events = m.track(0).filterEvents('setTempo');
-    assert.ok(events.length > 0);
-  }, function(err) {
-    QUnit.start();
-    assert.ok(false, 'Import should not result in error');
-    console.log(err);
-  });
+  MIDITools.MIDIFile.importBinary('samples/mid/setTempo-type0.mid',
+    function(m) {
+      QUnit.start();
+      var events = m.track(0).filterEvents('setTempo');
+      assert.ok(events.length > 0);
+    },
+    function(err) {
+      QUnit.start();
+      assert.ok(false, 'Import should not result in error');
+      console.log(err);
+    });
 });

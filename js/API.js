@@ -1,12 +1,7 @@
-(function(exports, Tools) {
-  exports.createMIDI = function() {
-    return new Tools.MIDIFile();
-  };
-  
-  exports.textToEvent = Tools.Utils.textToEvent;
+exports.MIDIFile = require('./MIDIFile');
+exports.MIDISequence = require('./MIDISequence');
+exports.Errors = require('./Errors');
+exports.Data = require('./Data');
+exports.Utils = require('./Utils');
+window.MIDITools = module.exports;
 
-  Tools.MIDIFile.prototype.exportBase64 = function() {
-    return 'base64,' + btoa(this.exportBinary());
-  };
-
-}(window.MIDITools, window.MIDITools));

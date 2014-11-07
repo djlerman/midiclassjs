@@ -15,7 +15,7 @@ QUnit.test("export empty Type-0 MIDI", function(assert) {
     return String.fromCharCode(ch);
   }).join('');
 
-  var midi = MIDITools.createMIDI();
+  var midi = new MIDITools.MIDIFile();
   midi.addTrack();
   midi.track(0).addEvent({
     kind: 'meta',
@@ -43,7 +43,7 @@ QUnit.test("export simple Type-0 MIDI", function(assert) {
     return String.fromCharCode(ch);
   }).join('');
 
-  var midi = MIDITools.createMIDI();
+  var midi = new MIDITools.MIDIFile();
   midi.addTrack();
   midi.track(0).addEvent({
     channel: 0,
@@ -91,7 +91,7 @@ QUnit.test("export setTempo", function(assert) {
     return String.fromCharCode(ch);
   }).join('');
 
-  var midi = MIDITools.createMIDI();
+  var midi = new MIDITools.MIDIFile();
   midi.addTrack();
   midi.track(0).addEvent({
     channel: 0,

@@ -1,4 +1,4 @@
-QUnit.module("MIDIFile");
+QUnit.module("DIFile");
 QUnit.test("constructor creates default file", function(assert) {
   var midi = new MIDITools.MIDIFile();
   assert.equal(midi.countTracks(), 0);

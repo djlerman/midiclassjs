@@ -1,67 +1,108 @@
-window.MIDITools.MIDIFile = (function(MIDI, MT) {
-  'use strict';
+'use strict';
+/*globals DOMLoader */
 
-  /*!
-   * @class
-   * @memberof MIDITools
-   */
-  function MIDIFile(type) {
-    this._tracks = [];
-    this._timing = {};
-    this._type = (type === 0 || type === 1) ? type : 0;
-    this._tracks = [];
-    this.setTiming(96);
+var MIDITrack = require('./MIDITrack');
+var errors = require('./Errors');
+var importers = require('./Importers');
+var exporters = require('./Exporters');
+/*!
+ * @class
+ * @memberof MIDITools
+ */
+function MIDIFile(type) {
+  this._tracks = [];
+  this._timing = {};
+  this._type = (type === 0 || type === 1) ? type : 0;
+  this._tracks = [];
+  this.setTiming(96);
+}
+
+MIDIFile.prototype.type = function() {
+  return this._type;
+};
+
+MIDIFile.prototype.track = function(trackNumber) {
+  return this._tracks[trackNumber];
+};
+
+MIDIFile.prototype.addTrack = function() {
+  if (this._tracks.length === Math.pow(2, 16)) {
+    throw errors.MIDI.TrackOverflow;
   }
 
-  MIDIFile.prototype.type = function() {
-    return this._type;
-  };
+  if (this._type === 0 && this._tracks.length === 1) {
+    this._type = 1;
+  }
 
-  MIDIFile.prototype.track = function(trackNumber) {
-    return this._tracks[trackNumber];
-  };
+  this._tracks.push(new MIDITrack(this._tracks.length));
+};
 
-  MIDIFile.prototype.addTrack = function() {
-    if (this._tracks.length === Math.pow(2, 16)) {
-      throw MT.Errors.MIDI.TrackOverflow;
+MIDIFile.prototype.countTracks = function() {
+  return this._tracks.length;
+};
+
+MIDIFile.prototype.exportBase64 = function() {
+  return 'base64,' + btoa(this.exportBinary());
+};
+
+MIDIFile.prototype.getTiming = function() {
+  // defensive copy
+  return JSON.parse(JSON.stringify(this._timing));
+};
+
+MIDIFile.prototype.setTiming = function(timing) {
+  var hasFrameParameters = (
+    typeof timing === 'object' &&
+    timing.hasOwnProperty('framesPerSecond') &&
+    timing.hasOwnProperty('ticksPerFrame')
+  );
+
+  if (hasFrameParameters) {
+    this._timing.type = 'framesPerSecond';
+    this._timing.framesPerSecond = timing.framesPerSecond;
+    this._timing.ticksPerFrame = timing.ticksPerFrame;
+    this._channels = [];
+  } else if (typeof timing === 'number') {
+    this._timing.type = 'ticksPerBeat';
+    this._timing.ticksPerBeat = timing;
+  } else {
+    throw errors.Parameters.SetTiming;
+  }
+};
+
+function toByteString(str) {
+  return Array.prototype.map.call(str, function(ch) {
+    return (0x00FF & ch.charCodeAt(0));
+  });
+}
+
+MIDIFile.importBinary = function(src, callback, error) {
+  if (!src || !callback) {
+    throw new Error('Both parameters required!');
+  }
+
+  DOMLoader.sendRequest({
+    url: src,
+    onload: function(req) {
+      try {
+        return callback(importers.binary(new MIDIFile(), toByteString(req.responseText)));
+      } catch (err) {
+        return (error && error(err)) || false;
+      }
+    },
+    onerror: function() {
+      // TODO: replace with custom error type?
+      throw new Error('Could not load file');
     }
-    
-    if (this._type === 0 && this._tracks.length === 1) {
-      this._type = 1;
-    }
-    
-    this._tracks.push(new MIDITools.MIDITrack(this._tracks.length));
-  };
+  });
+};
 
-  MIDIFile.prototype.countTracks = function() {
-    return this._tracks.length;
-  };
 
-  MIDIFile.prototype.getTiming = function() {
-    // defensive copy
-    return JSON.parse(JSON.stringify(this._timing));
-  };
+MIDIFile.importText = function (text) {
+  return importers.text(new MIDIFile(), text);
+};
+MIDIFile.prototype.exportBinary = function () {
+  return exporters.binary(this);
+};
 
-  MIDIFile.prototype.setTiming = function(timing) {
-    var hasFrameParameters = (
-      typeof timing === 'object' &&
-      timing.hasOwnProperty('framesPerSecond') &&
-      timing.hasOwnProperty('ticksPerFrame')
-    );
-
-    if (hasFrameParameters) {
-      this._timing.type = 'framesPerSecond';
-      this._timing.framesPerSecond = timing.framesPerSecond;
-      this._timing.ticksPerFrame = timing.ticksPerFrame;
-      this._channels = [];
-    } else if (typeof timing === 'number') {
-      this._timing.type = 'ticksPerBeat';
-      this._timing.ticksPerBeat = timing;
-    } else {
-      throw MT.Errors.Parameters.SetTiming;
-    }
-  };
-
-  return MIDIFile;
-
-}(MIDI, window.MIDITools));
+module.exports = MIDIFile;
