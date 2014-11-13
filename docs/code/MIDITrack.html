@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Importers.Text.html">
+                Importers.Text.js
+              </a>
+            
+              
               <a class="source" href="Importers.html">
                 Importers.js
               </a>
@@ -91,27 +96,26 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.MIDITrack = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MIDI, MT)</span> </span>{
-<span class="hljs-pi">  'use strict'</span>;
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+<span class="hljs-keyword">var</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Data.js'</span>);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDITrack</span><span class="hljs-params">(n)</span> </span>{
+  <span class="hljs-keyword">this</span>._number = n;
+  <span class="hljs-keyword">this</span>._events = [];
+  <span class="hljs-keyword">this</span>._eventTypes = {};
+}
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDITrack</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">this</span>._number = n;
-    <span class="hljs-keyword">this</span>._events = [];
-    <span class="hljs-keyword">this</span>._eventTypes = {};
-  }
+MIDITrack.prototype.event = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events[i];
+};
 
-  MIDITrack.prototype.event = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events[i];
-  };
-
-  MIDITrack.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
-    <span class="hljs-keyword">var</span> spec = MT.Data.typeMap[evt.message];
-    evt.kind = spec.kind;
-    <span class="hljs-keyword">var</span> parameters = evt.parameters;
-    evt.parameters = {};
-    <span class="hljs-keyword">if</span> (spec.length !== <span class="hljs-string">'variable'</span>) {
-      spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
-        <span class="hljs-keyword">if</span> (parameters[p.name] === <span class="hljs-string">'undefined'</span>) {</pre></div></div>
+MIDITrack.prototype.addEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
+  <span class="hljs-keyword">var</span> spec = data.typeMap[evt.message];
+  evt.kind = spec.kind;
+  <span class="hljs-keyword">var</span> parameters = evt.parameters;
+  evt.parameters = {};
+  <span class="hljs-keyword">if</span> (spec.length !== <span class="hljs-string">'variable'</span>) {
+    spec.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, index)</span> </span>{
+      <span class="hljs-keyword">if</span> (parameters[p.name] === <span class="hljs-string">'undefined'</span>) {</pre></div></div>
             
         </li>
         
@@ -126,33 +130,32 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Parameter left undefined'</span>);
-        }
-        evt.parameters[p.name] = parameters[p.name];
-        evt.parameters[index] = evt.parameters[p.name];
-      });
-    } <span class="hljs-keyword">else</span> {
-      evt.parameters.value = parameters.value;
-    }
-    <span class="hljs-keyword">this</span>._events.push(evt);
-  };
-
-  MIDITrack.prototype.replaceEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, evt)</span> </span>{
-    <span class="hljs-keyword">this</span>._events[i] = evt;
-  };
-
-  MIDITrack.prototype.countEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.length;
-  };
-
-  MIDITrack.prototype.filterEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
-      <span class="hljs-keyword">return</span> (evt.message === type);
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Parameter left undefined'</span>);
+      }
+      evt.parameters[p.name] = parameters[p.name];
+      evt.parameters[index] = evt.parameters[p.name];
     });
-  };
+  } <span class="hljs-keyword">else</span> {
+    evt.parameters.value = parameters.value;
+  }
+  <span class="hljs-keyword">this</span>._events.push(evt);
+};
 
-  <span class="hljs-keyword">return</span> MIDITrack;
-}(MIDI, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
+MIDITrack.prototype.replaceEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, evt)</span> </span>{
+  <span class="hljs-keyword">this</span>._events[i] = evt;
+};
+
+MIDITrack.prototype.countEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(trackNumber)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.length;
+};
+
+MIDITrack.prototype.filterEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(type)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._events.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt)</span> </span>{
+    <span class="hljs-keyword">return</span> (evt.message === type);
+  });
+};
+
+<span class="hljs-built_in">module</span>.exports = MIDITrack;</pre></div></div>
             
         </li>
         

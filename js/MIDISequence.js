@@ -1,8 +1,8 @@
 'use strict';
 var MIDIFile = require('./MIDIFile');
-var errors = require('./Errors');
-var data = require('./Data');
-var utils = require('./Utils');
+var errors = require('./errors');
+var data = require('./data');
+var util = require('./util');
 
 function MIDISequence() {
   this._midi = new MIDIFile();
@@ -23,13 +23,13 @@ function MIDISequence() {
     message: 'setTempo',
     timestamp: 0,
     parameters: {
-      microsecondsPerBeat: utils.bpmToTempo(this._tempo)
+      microsecondsPerBeat: util.bpmToTempo(this._tempo)
     }
   });
   this._midi.track(0).addEvent({
     message: 'timeSignature',
     timestamp: 0,
-    parameters: utils.fromTimeSignature('4/4')
+    parameters: util.fromTimeSignature('4/4')
   });
   this._meta = {
     sequenceName: this._midi.track(0).event(0),
@@ -61,7 +61,7 @@ MIDISequence.prototype.getTempo = function() {
 };
 
 MIDISequence.prototype.beatLength = function() {
-  return utils.bpmToTempo(this._tempo) / 1000;
+  return util.bpmToTempo(this._tempo) / 1000;
 };
 
 MIDISequence.prototype.ticksPerBeat = function() {
@@ -70,7 +70,7 @@ MIDISequence.prototype.ticksPerBeat = function() {
 
 MIDISequence.prototype.setTempo = function(bpm) {
   this._tempo = bpm;
-  this._meta.tempo.parameters.microsecondsPerBeat = utils.bpmToTempo(
+  this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(
     bpm);
 };
 
@@ -83,7 +83,7 @@ MIDISequence.prototype.getTimeSignature = function() {
 
 MIDISequence.prototype.setTimeSignature = function(ts) {
   this._ts = ts;
-  this._meta.timeSignature.parameters = utils.fromTimeSignature(
+  this._meta.timeSignature.parameters = util.fromTimeSignature(
     ts);
 };
 

@@ -2,6 +2,50 @@
 
 * MIDISequence - high-level API for working with channels, instruments, etc.
 * MIDIFile - low-level API for working with tracks
+# MIDI.File
+
+@- importBase64
+@- importBinary
+@- importText
+@- importXML
+@- exportBinary
+@- exportText
+@- exportXML
+@- exportBase64
+- exportTrackText ?
+
+## Playback
+@- play
+@- stop
+
+## Accessors
+@- getTempo()
+@- getBpm() ??
+@- getTimebase()
+@- getMsgCount(track)
+@- getEventBySubtype (trackNumber, subtype)
+@- exportMessageText(trackNum, msgNum)
+
+## Manipulation
+@- reset(timebase)
+@- setTempo(tempo)
+@- setBpm(bpm)
+@- setTimebase(timebase)
+@- deleteTrack(trackNumber)
+@- soloTrack(trackNumber)
+@- appendTextMsg(trackNumber, message)
+@- insertTextMsg(trackNumber, message)
+@- deleteMsg(trackNumber, messageNumber)
+@- transpose(steps)
+@- transposeTrack(trackNumber, steps)
+
+# Miscellaneous 
+- MIDI.drumset ?
+- MIDI.drumkitList ?
+- add andrew (and twitter handle) to the acknowledgements
+- replace DOMLoader with custom async loader
+
+
 
 # Contributing
 

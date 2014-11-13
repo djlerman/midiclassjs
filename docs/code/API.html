@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Importers.Text.html">
+                Importers.Text.js
+              </a>
+            
+              
               <a class="source" href="Importers.html">
                 Importers.js
               </a>
@@ -91,18 +96,12 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(exports, Tools)</span> </span>{
-  exports.createMIDI = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Tools.MIDIFile();
-  };
-  
-  exports.textToEvent = Tools.Utils.textToEvent;
-
-  Tools.MIDIFile.prototype.exportBase64 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-string">'base64,'</span> + btoa(<span class="hljs-keyword">this</span>.exportBinary());
-  };
-
-}(<span class="hljs-built_in">window</span>.MIDITools, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.MIDIFile = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDIFile'</span>);
+exports.MIDISequence = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDISequence'</span>);
+exports.Errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Errors'</span>);
+exports.Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Data'</span>);
+exports.Utils = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Utils'</span>);
+<span class="hljs-built_in">window</span>.MIDITools = <span class="hljs-built_in">module</span>.exports;</pre></div></div>
             
         </li>
         

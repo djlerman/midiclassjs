@@ -14,21 +14,15 @@ module.exports = function(grunt) {
     /*
      * build the MIDITools project
      */
-    concat: {
-      options: {
-        separator: '\n'
-      },
-      dist: {
-        src: ['js/MIDITools.js', 'js/Errors.js', 'js/MIDITrack.js', 'js/MIDIFile.js', 'js/Importers.js',
-          'js/Exporters.js', 'js/Utils.js', 'js/Data.js',
-          'js/MIDISequence.js', 'js/API.js'
-        ],
+    browserify: {
+      js: {
+        src: 'js/index.js',
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
     jsdoc: {
       dist: {
-        src: ['js/*.js', 'test/*.js'],
+        src: ['dist/<%= pkg.name %>.js'],
         options: {
           destination: 'docs/api/',
           configure: 'jsdoc.conf.json'
@@ -75,18 +69,16 @@ module.exports = function(grunt) {
     jshint: {
       files: ['Gruntfile.js', 'js/*.js', 'tests/*.js'],
       options: {
-        // options here to override JSHint defaults
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true,
-          document: true
-        }
+          // options here to override JSHint defaults
+	  browserify: true,
+	  browser: true,
+	  globals: {
+'DOMLoader': false}
       }
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'concat', 'docco', 'markdown', 'jsdoc']
+      tasks: ['jshint', 'browserify', 'docco', 'markdown', 'jsdoc']
     }
   });
 
@@ -99,7 +91,7 @@ module.exports = function(grunt) {
       'grunt-contrib-jshint',
       'grunt-contrib-qunit',
       'grunt-contrib-watch',
-      'grunt-contrib-concat',
+      'grunt-browserify',
       'grunt-jsdoc',
       'grunt-docco',
       'grunt-markdown'
@@ -109,7 +101,7 @@ module.exports = function(grunt) {
       tasks: ['jshint', 'qunit']
     }, {
       name: 'default',
-      tasks: ['jshint', 'qunit', 'concat', 'uglify']
+      tasks: ['jshint', 'browserify']
     }]
   };
 

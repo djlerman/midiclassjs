@@ -1,68 +1,59 @@
 fixes:
-	- remove direct dependence on jasmid library (brittle / old) @done(2014-10-21)
 	- add andrew (and twitter handle) to the acknowledgements
 	- replace DOMLoader with custom async loader
 api:
-	construction:
-	- MIDI.File
-	import methods:
-		- importBinary()
-			- async download of file (Using MIDI.js's DOMLoader) @done(2014-10-15)
-			- interpret string as binary array @done(2014-10-20)
-			- interpret header @done(2014-10-21)
-			- interpret events
-				- channel events
-				- noteOn @done(2014-10-20)
-					- noteOff @done(2014-10-20)
-					- afterTouch @done(2014-10-21)
-					- controlChange @done(2014-10-21)
-					- programChange @done(2014-10-21)
-					- channelPressure @done(2014-10-21)
-					- pitchWheel
-				- meta events
-				- sysex events @done(2014-10-21)
-		- importText(text)
-			- import events
-				- channel events @done(2014-10-21)
-				- special cases for parameter interpretation
-		- importXML(xmlString)
-	export methods:
-		- exportBinary()
-			- export header @done(2014-10-17)
-			- export tracks
-				- export channel events @done(2014-10-21)
-				- export sysex events
-				- export meta events
-		- exportBase64 @done(2014-10-21)
-		- exportText(relativeTS)
-		- exportTrackText(trackNumber, relativeTS)
-		- exportXML(relativeTS)
-	player:
-		- play(callback) @done(2014-10-21)
-		- stop()
-	info:
+	MIDIFile:
+		import/export:
+			- importBinary
+			- importBase64
+			- importText
+			- importXML
+			- exportBinary
+			- exportBase64
+			- exportText
+			- exportXML
+		tracks:
+			- addTrack()
+			- removeTrack()
+			- countTracks()
+			- track(i)
+		events:
+			- filterEvents() /* over all tracks */
+		header info:
+			- getTiming()
+			- type()
+	MIDITrack:
+		- addEvent()
+		- removeEvent(i)
+		- event(i)
+		- countEvents()
+		- filterEvents()
+	MIDISequence:
 		- getTempo()
-		- getBpm()
-		- getTimebase()
-		- getMsgCount(trackNumber)
-		- getEventBySubtype(trackNumber, subtype)
-		- exportMsgText(trackNumber, messageNumber)
-	  Generation / Manipulation:
-		- reset(timebase)
-		- setTempo(tempo)
-		- setBpm(bpm)
-		- setTimebase setTimebase(timebase)
-		- deleteTrack(trackNumber)
-		- soloTrack(trackNumber)
-		- appendTextMsg(trackNumber, message)
-		- insertTextMsg(trackNumber, message)
-		- deleteMsg(trackNumber, messageNumber)
-		- transpose(steps)
-		- transposeTrack(trackNumber, steps)
-	Save / Load:
-		-   data()
-		-   loadData()
-	MIDI object supplement:
+		- setTempo()
+		- soloChannel(i)
+		- transpose(numSteps)
+		- setVolume(level)
+		- getVolume(level)
+		- channel(i)
+		- getTitle()
+		- setTitle(t)
+		- getVolume()
+		- setVolume() /* over all tracks */
+		- exportFile() /* creates COPY first */
+	MIDIChannel:
+		- transpose(numSteps)
+		- setVolume(level)
+		- getVolume(level)
+	Utils:
+		- eventToText(evt)
+		- eventToXML(evt)
+		- textToEvent(txt)
+		- xmlToEvent(xml)
+	MISC: Save / Load (?):
+		- data()
+		- loadData()
+	MISC: MIDI object supplement (?):
 		- MIDI.drumset
 		- MIDI.drumkitList
 

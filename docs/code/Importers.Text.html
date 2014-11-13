@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Importers.Text.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="API.html">
+                API.js
+              </a>
+            
+              
+              <a class="source" href="Data.html">
+                Data.js
+              </a>
+            
+              
+              <a class="source" href="Errors.html">
+                Errors.js
+              </a>
+            
+              
+              <a class="source" href="Exporters.html">
+                Exporters.js
+              </a>
+            
+              
+              <a class="source" href="Importers.Text.html">
+                Importers.Text.js
+              </a>
+            
+              
+              <a class="source" href="Importers.html">
+                Importers.js
+              </a>
+            
+              
+              <a class="source" href="MIDIFile.html">
+                MIDIFile.js
+              </a>
+            
+              
+              <a class="source" href="MIDISequence.html">
+                MIDISequence.js
+              </a>
+            
+              
+              <a class="source" href="MIDITools.html">
+                MIDITools.js
+              </a>
+            
+              
+              <a class="source" href="MIDITrack.html">
+                MIDITrack.js
+              </a>
+            
+              
+              <a class="source" href="Utils.html">
+                Utils.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Importers.Text.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+
+<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Errors'</span>);
+<span class="hljs-keyword">var</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Data'</span>);
+<span class="hljs-keyword">var</span> MIDIFile = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDIFile'</span>);
+
+<span class="hljs-keyword">var</span> matches = {};
+
+<span class="hljs-built_in">Object</span>.defineProperty(matches, <span class="hljs-string">'NEWLINE'</span>, {
+  value: <span class="hljs-regexp">/[\r\n]+/</span>,
+  writable: <span class="hljs-literal">false</span>
+});
+<span class="hljs-built_in">Object</span>.defineProperty(matches, <span class="hljs-string">'WHITESPACE'</span>, {
+  value: <span class="hljs-regexp">/\s+/</span>,
+  writable: <span class="hljs-literal">false</span>
+});
+
+<span class="hljs-keyword">var</span> strings = {
+  <span class="hljs-string">'HEADER_PRELUDE'</span>: <span class="hljs-string">'MFile'</span>,
+  <span class="hljs-string">'TRACK_START_MARKER'</span>: <span class="hljs-string">'MTrk'</span>,
+  <span class="hljs-string">'TRACK_END_MARKER'</span>: <span class="hljs-string">'TrkEnd'</span>
+};
+
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">importText</span><span class="hljs-params">(midi, text)</span> </span>{
+  <span class="hljs-keyword">var</span> lines = text.split(matches.NEWLINE).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+    <span class="hljs-keyword">return</span> s.trim();
+  });
+
+  <span class="hljs-keyword">var</span> header = lines.shift();
+  parseHeader(midi, header);
+
+  <span class="hljs-keyword">var</span> trackLines = splitTracks(lines);
+  <span class="hljs-keyword">if</span> (trackLines.length &lt; midi.countTracks()) {
+    <span class="hljs-keyword">throw</span> errors.Import.TracksMissing;
+  }
+  trackLines.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tl, index)</span> </span>{
+    parseTrack(midi.track(index), tl);
+  }.bind(midi));
+  <span class="hljs-keyword">return</span> midi;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseTrack</span><span class="hljs-params">(track, lines)</span> </span>{
+  <span class="hljs-keyword">var</span> trackHeader = lines.shift();
+
+  <span class="hljs-keyword">if</span> (trackHeader !== strings.TRACK_START_MARKER) {
+    <span class="hljs-keyword">throw</span> errors.Import.TrackPrelude;
+  }
+
+  lines.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(line)</span> </span>{
+    parseEvent(track, line);
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseEvent</span><span class="hljs-params">(track, text)</span> </span>{
+  <span class="hljs-keyword">var</span> pieces = text.split(matches.WHITESPACE);
+
+  <span class="hljs-keyword">var</span> delta = <span class="hljs-built_in">parseInt</span>(pieces.shift());
+  <span class="hljs-keyword">if</span> (pieces.length &lt; <span class="hljs-number">1</span> || <span class="hljs-built_in">isNaN</span>(delta)) {
+    <span class="hljs-keyword">throw</span> errors.Import.DeltaInvalid;
+  }
+
+  <span class="hljs-keyword">var</span> type = extractType(pieces);
+
+  <span class="hljs-keyword">if</span> (type === <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">throw</span> errors.Import.MessageType;
+  }
+
+  <span class="hljs-keyword">var</span> msg = parseMessage(type, pieces);
+
+  track.addEvent({
+    timestamp: delta,
+    message: type.message,
+    parameters: msg.parameters
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMessage</span><span class="hljs-params">(spec, pieces)</span> </span>{
+  <span class="hljs-keyword">switch</span> (spec.kind) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'channel'</span>:
+      <span class="hljs-keyword">return</span> parseChannelMessage(spec, pieces);
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'meta'</span>:
+      <span class="hljs-keyword">return</span> parseMetaMessage(spec, pieces);
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'sysex'</span>:
+      <span class="hljs-keyword">return</span> parseSysExMessage(spec, pieces);
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">throw</span> errors.Import.MessageType;
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseChannelMessage</span><span class="hljs-params">(spec, pieces)</span> </span>{
+  <span class="hljs-keyword">return</span> spec;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMetaMessage</span><span class="hljs-params">(spec, pieces)</span> </span>{
+  <span class="hljs-keyword">return</span> spec;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseSysExMessage</span><span class="hljs-params">(spec, pieces)</span> </span>{
+  <span class="hljs-keyword">return</span> spec;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extractType</span><span class="hljs-params">(pieces)</span> </span>{
+  <span class="hljs-keyword">var</span> typeName = pieces.shift();
+  <span class="hljs-keyword">if</span> (typeName === <span class="hljs-string">'Meta'</span>) {
+    typeName += <span class="hljs-string">' '</span> + pieces.shift();
+  }
+
+  <span class="hljs-keyword">return</span> data.textMap[typeName];
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">splitTracks</span><span class="hljs-params">(lines)</span> </span>{
+  <span class="hljs-keyword">var</span> lastIndex = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> result = [];
+  lines.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(line, index)</span> </span>{
+    <span class="hljs-keyword">if</span> (line === strings.TRACK_END_MARKER) {
+      result.push(lines.slice(lastIndex, index));
+    }
+  });
+  <span class="hljs-keyword">return</span> result;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseHeader</span><span class="hljs-params">(midi, text)</span> </span>{
+  <span class="hljs-keyword">var</span> pieces = text.split(matches.WHITESPACE);
+
+  <span class="hljs-keyword">var</span> declaredType = <span class="hljs-built_in">parseInt</span>(pieces[<span class="hljs-number">1</span>]);
+  <span class="hljs-keyword">var</span> count = <span class="hljs-built_in">parseInt</span>(pieces[<span class="hljs-number">2</span>]);
+
+  <span class="hljs-keyword">if</span> (pieces[<span class="hljs-number">0</span>] !== strings.HEADER_PRELUDE) {
+    <span class="hljs-keyword">throw</span> errors.Import.HeaderPrelude;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(declaredType)) {
+    <span class="hljs-keyword">throw</span> errors.Import.Type;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(count) || count &lt; <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">throw</span> errors.Import.TrackCount;
+  }
+
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; count; i += <span class="hljs-number">1</span>) {
+      midi.addTrack();
+    }
+  } <span class="hljs-keyword">catch</span> (err) {
+    <span class="hljs-keyword">if</span> (err === errors.MIDI.TrackOverflow) {
+      <span class="hljs-keyword">throw</span> errors.Import.TrackCount;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> err;
+    }
+  }
+
+  <span class="hljs-keyword">if</span> (midi.type() !== declaredType) {
+    <span class="hljs-keyword">if</span> (midi.type() === <span class="hljs-number">0</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>TODO: either change API to have setType() or dont put
+this method on the MF instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      midi._type = <span class="hljs-number">1</span>;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> errors.Import.Type0MultiTrack;
+    }
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>TODO: SMPTE timing</p>
+<p><division> is either a positive number (giving the time resolution in
+clicks per quarter note) or a negative number followed by a positive
+number (giving SMPTE timing)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  midi.setTiming(<span class="hljs-built_in">parseInt</span>(pieces[<span class="hljs-number">3</span>]));
+}
+
+
+<span class="hljs-built_in">module</span>.exports = importText;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

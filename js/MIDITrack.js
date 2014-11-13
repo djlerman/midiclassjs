@@ -1,5 +1,5 @@
 'use strict';
-var data = require('./Data.js');
+var data = require('./data');
 function MIDITrack(n) {
   this._number = n;
   this._events = [];

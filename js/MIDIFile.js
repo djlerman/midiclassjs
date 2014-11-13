@@ -1,14 +1,22 @@
 'use strict';
-/*globals DOMLoader */
+
+/*!
+ * Module dependencies
+ */
 
 var MIDITrack = require('./MIDITrack');
-var errors = require('./Errors');
-var importers = require('./Importers');
-var exporters = require('./Exporters');
-/*!
+var errors = require('./errors');
+var importers = require('./importers');
+var exporters = require('./exporters');
+
+
+/**
+ * Creates a new MIDIFile
+ * @classdesc A representation of a standard MIDI file (SMF).
  * @class
  * @memberof MIDITools
  */
+
 function MIDIFile(type) {
   this._tracks = [];
   this._timing = {};
@@ -17,12 +25,18 @@ function MIDIFile(type) {
   this.setTiming(96);
 }
 
+/**
+ * @returns {Number} the type (0 or 1) of the MIDI file
+ */
 MIDIFile.prototype.type = function() {
   return this._type;
 };
 
-MIDIFile.prototype.track = function(trackNumber) {
-  return this._tracks[trackNumber];
+/**
+ * @returns {MIDITools.MIDITrack} the track at index `n`
+ */
+MIDIFile.prototype.track = function(n) {
+  return this._tracks[n];
 };
 
 MIDIFile.prototype.addTrack = function() {

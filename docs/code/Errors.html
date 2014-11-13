@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Importers.Text.html">
+                Importers.Text.js
+              </a>
+            
+              
               <a class="source" href="Importers.html">
                 Importers.js
               </a>
@@ -91,35 +96,45 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.MIDITools.Errors = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-<span class="hljs-pi">  'use strict'</span>;
-  <span class="hljs-keyword">return</span> {
-    Import: {
-      FileSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File is too small to be a standard MIDI file.'</span>),
-      HeaderPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File did not contain standard MIDI header.'</span>),
-      HeaderSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File size is smaller than its declared header size.'</span>),
-      MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a MIDI message with an unknown type.'</span>),
-      MetaType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a meta message with an unknown subtype.'</span>),
-      TrackCount: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File declared a number of tracks outside 0-16.'</span>),
-      TrackLength: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File contains a track declared with the wrong size.'</span>),
-      TrackPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File did not contain standard MIDI track header.'</span>),
-      TrackFooter: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File did not contain standard MIDI track footer.'</span>),
-      Type: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File must be either Type-0 or Type-1.'</span>),
-      Type0MultiTrack: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
-        <span class="hljs-string">'File format is Type-0, but declares multiple tracks.'</span>),
-    },
-    Parameters: {
-      SetTiming: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'setTiming requires a number or a `fps` object.'</span>)
-    },
-    Text: {
-      MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Invalid MIDI message type.'</span>)
-    }
-  };
-}());</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+
+exports.MIDI = {
+  TrackOverflow: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
+    <span class="hljs-string">'addTrack called on MIDIFile with 2^16 tracks.'</span>)
+};
+
+exports.Import = {
+  DeltaInvalid: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Event contained an invalid delta-time value'</span>),
+
+  FileSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File is too small to be a standard MIDI file.'</span>),
+
+  HeaderPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File did not contain standard MIDI header.'</span>),
+
+  HeaderSize: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File size is smaller than its declared header size.'</span>),
+
+  MessageType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a MIDI message with an unknown type.'</span>),
+
+  MetaType: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File had a meta message with an unknown subtype.'</span>),
+
+  TrackCount: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File declared a number of tracks outside 0-(2^16).'</span>),
+
+  TrackLength: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File contains a track declared with the wrong size.'</span>),
+
+  TracksMissing: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File does not contain as many tracks it declares.'</span>),
+
+  TrackPrelude: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File did not contain standard MIDI track header.'</span>),
+
+  TrackFooter: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File did not contain standard MIDI track footer.'</span>),
+
+  Type: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'File must be either Type-0 or Type-1.'</span>),
+
+  Type0MultiTrack: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(
+    <span class="hljs-string">'File format is Type-0, but declares multiple tracks.'</span>)
+};
+
+exports.Parameters = {
+  SetTiming: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'setTiming requires a number or a `fps` object.'</span>)
+};</pre></div></div>
             
         </li>
         

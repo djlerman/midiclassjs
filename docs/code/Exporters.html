@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Importers.Text.html">
+                Importers.Text.js
+              </a>
+            
+              
               <a class="source" href="Importers.html">
                 Importers.js
               </a>
@@ -91,11 +96,11 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
- * @namespace MIDITools.Generators
- */</span>
-(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(MIDI, MT)</span> </span>{
-<span class="hljs-pi">  'use strict'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+
+<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Errors'</span>);
+<span class="hljs-keyword">var</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Data'</span>);
+<span class="hljs-keyword">var</span> MIDIFile = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDIFile'</span>);</pre></div></div>
             
         </li>
         
@@ -148,93 +153,93 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">BinaryBuffer</span><span class="hljs-params">(n)</span> </span>{
-    n = (n ? n : <span class="hljs-number">0</span>) ;
-    <span class="hljs-keyword">this</span>.rep = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(n);
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">BinaryBuffer</span><span class="hljs-params">(n)</span> </span>{
+  n = (n ? n : <span class="hljs-number">0</span>);
+  <span class="hljs-keyword">this</span>.rep = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(n);
+}
+
+BinaryBuffer.prototype.append = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bb)</span> </span>{
+  <span class="hljs-keyword">var</span> bbPosition = <span class="hljs-keyword">this</span>.rep.length;
+  <span class="hljs-keyword">var</span> result = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-keyword">this</span>.rep.length + bb.rep.length);
+
+  result.set(<span class="hljs-keyword">this</span>.rep);
+  result.set(bb.rep, bbPosition);
+
+  <span class="hljs-keyword">this</span>.rep = result;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+BinaryBuffer.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep.byteLength;
+};
+
+BinaryBuffer.prototype.appendInteger = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n, bytes)</span> </span>{
+  <span class="hljs-keyword">var</span> intBuf = <span class="hljs-keyword">new</span> BinaryBuffer(bytes);
+  <span class="hljs-keyword">var</span> result = n;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = (bytes - <span class="hljs-number">1</span>); i &gt;= <span class="hljs-number">0</span>; i -= <span class="hljs-number">1</span>) {
+    <span class="hljs-keyword">var</span> shiftAmount = <span class="hljs-number">8</span> * (i);
+    <span class="hljs-keyword">var</span> byteValue = (result &gt;&gt; shiftAmount);
+    result -= (byteValue * <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, shiftAmount));
+    intBuf.set(bytes - i - <span class="hljs-number">1</span>, byteValue);
   }
-
-  BinaryBuffer.prototype.append = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bb)</span> </span>{
-    <span class="hljs-keyword">var</span> bbPosition = <span class="hljs-keyword">this</span>.rep.length;
-    <span class="hljs-keyword">var</span> result = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-keyword">this</span>.rep.length + bb.rep.length);
-
-    result.set(<span class="hljs-keyword">this</span>.rep);
-    result.set(bb.rep, bbPosition);
-
-    <span class="hljs-keyword">this</span>.rep = result;
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-  };
-
-  BinaryBuffer.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep.byteLength;
-  };
-
-  BinaryBuffer.prototype.appendInteger = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n, bytes)</span> </span>{
-    <span class="hljs-keyword">var</span> intBuf = <span class="hljs-keyword">new</span> BinaryBuffer(bytes);
-    <span class="hljs-keyword">var</span> result = n;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = (bytes - <span class="hljs-number">1</span>); i &gt;= <span class="hljs-number">0</span>; i -= <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">var</span> shiftAmount = <span class="hljs-number">8</span> * (i);
-      <span class="hljs-keyword">var</span> byteValue = (result &gt;&gt; shiftAmount);
-      result -= (byteValue * <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, shiftAmount));
-      intBuf.set(bytes - i - <span class="hljs-number">1</span>, byteValue);
-    }
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.append(intBuf);
-  };
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.append(intBuf);
+};
 
 
-  BinaryBuffer.prototype.appendInt8 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">1</span>);
-  };
+BinaryBuffer.prototype.appendInt8 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">1</span>);
+};
 
-  BinaryBuffer.prototype.appendInt16 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">2</span>);
-  };
+BinaryBuffer.prototype.appendInt16 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">2</span>);
+};
 
-  BinaryBuffer.prototype.appendInt32 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">4</span>);
-  };
+BinaryBuffer.prototype.appendInt32 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.appendInteger(n, <span class="hljs-number">4</span>);
+};
 
-  BinaryBuffer.prototype.appendString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> </span>{
-    <span class="hljs-keyword">this</span>.append(stringToBuffer(str));
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-  };
+BinaryBuffer.prototype.appendString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> </span>{
+  <span class="hljs-keyword">this</span>.append(stringToBuffer(str));
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
 
-  BinaryBuffer.prototype.appendVariableInteger = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
-    <span class="hljs-keyword">var</span> r = n;
-    <span class="hljs-keyword">while</span> (r &gt;= <span class="hljs-number">0x80</span>) {
-      <span class="hljs-keyword">var</span> thisByte = r &gt;&gt; <span class="hljs-number">7</span>;
-      r -= (thisByte * <span class="hljs-number">0x80</span>);
-      thisByte = <span class="hljs-number">0x80</span> | thisByte;
-      <span class="hljs-keyword">this</span>.appendInt8(thisByte);
-    }
-    <span class="hljs-keyword">this</span>.appendInt8(r);
-  };
+BinaryBuffer.prototype.appendVariableInteger = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
+  <span class="hljs-keyword">var</span> r = n;
+  <span class="hljs-keyword">while</span> (r &gt;= <span class="hljs-number">0x80</span>) {
+    <span class="hljs-keyword">var</span> thisByte = r &gt;&gt; <span class="hljs-number">7</span>;
+    r -= (thisByte * <span class="hljs-number">0x80</span>);
+    thisByte = <span class="hljs-number">0x80</span> | thisByte;
+    <span class="hljs-keyword">this</span>.appendInt8(thisByte);
+  }
+  <span class="hljs-keyword">this</span>.appendInt8(r);
+};
 
-  BinaryBuffer.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, val)</span> </span>{
-    <span class="hljs-keyword">this</span>.rep[i] = val;
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-  };
+BinaryBuffer.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, val)</span> </span>{
+  <span class="hljs-keyword">this</span>.rep[i] = val;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
 
-  BinaryBuffer.prototype.get = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep[i];
-  };
+BinaryBuffer.prototype.get = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep[i];
+};
 
-  BinaryBuffer.prototype.size = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep.length;
-  };
+BinaryBuffer.prototype.size = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.rep.length;
+};
 
-  BinaryBuffer.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>.fromCharCode.apply(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.rep);
-  };
+BinaryBuffer.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>.fromCharCode.apply(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.rep);
+};
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stringToBuffer</span><span class="hljs-params">(str)</span> </span>{
-    <span class="hljs-keyword">var</span> arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(str.length);
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = str.length; i &lt; n; i += <span class="hljs-number">1</span>) {
-      arr[i] = str.charCodeAt(i);
-    }
-    <span class="hljs-keyword">var</span> buf = <span class="hljs-keyword">new</span> BinaryBuffer();
-    buf.rep = arr;
-    <span class="hljs-keyword">return</span> buf;
-  }</pre></div></div>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stringToBuffer</span><span class="hljs-params">(str)</span> </span>{
+  <span class="hljs-keyword">var</span> arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(str.length);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = str.length; i &lt; n; i += <span class="hljs-number">1</span>) {
+    arr[i] = str.charCodeAt(i);
+  }
+  <span class="hljs-keyword">var</span> buf = <span class="hljs-keyword">new</span> BinaryBuffer();
+  buf.rep = arr;
+  <span class="hljs-keyword">return</span> buf;
+}</pre></div></div>
             
         </li>
         
@@ -274,14 +279,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>  MT.MIDIFile.prototype.exportBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">new</span> BinaryBuffer();
-    <span class="hljs-keyword">var</span> header = generateFileHeader(<span class="hljs-keyword">this</span>, b);
-    <span class="hljs-keyword">var</span> tracks = generateTracks(<span class="hljs-keyword">this</span>); 
-    b.append(header).append(tracks);
-    <span class="hljs-built_in">console</span>.log(b);
-    <span class="hljs-keyword">return</span> b.toString();
-  };</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">exportBinary</span><span class="hljs-params">(midi)</span> </span>{
+  <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">new</span> BinaryBuffer();
+  <span class="hljs-keyword">var</span> header = generateFileHeader(midi, b);
+  <span class="hljs-keyword">var</span> tracks = generateTracks(midi);
+  b.append(header).append(tracks);
+  <span class="hljs-keyword">return</span> b.toString();
+}</pre></div></div>
             
         </li>
         
@@ -296,120 +300,120 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateFileHeader</span><span class="hljs-params">(m)</span> </span>{
-    <span class="hljs-keyword">var</span> header = <span class="hljs-keyword">new</span> BinaryBuffer();
-    header.appendString(<span class="hljs-string">'MThd'</span>) <span class="hljs-comment">/* TODO: use constant */</span>
-      .appendInt32(<span class="hljs-number">6</span>) <span class="hljs-comment">/* header size: TODO: ever anything but 6? */</span>
-      .appendInt16(m.type()) <span class="hljs-comment">/* type */</span>
-      .appendInt16(m.countTracks()) <span class="hljs-comment">/* num tracks */</span>
-      .appendInt16(m.getTiming().ticksPerBeat); <span class="hljs-comment">/* ticks per beat */</span>
-    <span class="hljs-keyword">return</span> header;
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateFileHeader</span><span class="hljs-params">(m)</span> </span>{
+  <span class="hljs-keyword">var</span> header = <span class="hljs-keyword">new</span> BinaryBuffer();
+  header.appendString(<span class="hljs-string">'MThd'</span>) <span class="hljs-comment">/* TODO: use constant */</span>
+    .appendInt32(<span class="hljs-number">6</span>) <span class="hljs-comment">/* header size: TODO: ever anything but 6? */</span>
+    .appendInt16(m.type()) <span class="hljs-comment">/* type */</span>
+    .appendInt16(m.countTracks()) <span class="hljs-comment">/* num tracks */</span>
+    .appendInt16(m.getTiming().ticksPerBeat); <span class="hljs-comment">/* ticks per beat */</span>
+  <span class="hljs-keyword">return</span> header;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateTracks</span><span class="hljs-params">(m)</span> </span>{
+  <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = m.countTracks(); i &lt; n; i += <span class="hljs-number">1</span>) {
+    buffer.appendString(<span class="hljs-string">'MTrk'</span>);
+    <span class="hljs-keyword">var</span> evts = generateEvents(m.track(i));
+    buffer.appendInt32(evts.length());
+    buffer.append(evts);
+  }
+  <span class="hljs-keyword">return</span> buffer;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateEvents</span><span class="hljs-params">(track)</span> </span>{
+  <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = track.countEvents(); i &lt; n; i += <span class="hljs-number">1</span>) {
+    generateEvent(buffer, track.event(i));
+  }
+  <span class="hljs-keyword">return</span> buffer;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateEvent</span><span class="hljs-params">(buffer, event)</span> </span>{
+  buffer.appendVariableInteger(event.timestamp);
+  <span class="hljs-keyword">switch</span> (event.kind) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'channel'</span>:
+      generateChannelMessage(buffer, event);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'meta'</span>:
+      generateMetaMessage(buffer, event);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'sysex'</span>:
+      generateSysexMessage(buffer, event);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'unrecognized event type'</span>); <span class="hljs-comment">// TODO: Formalize</span>
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateChannelMessage</span><span class="hljs-params">(buffer, evt)</span> </span>{
+  <span class="hljs-keyword">var</span> statusByte = (data.typeToBinary[evt.message] &lt;&lt; <span class="hljs-number">4</span>) | evt.channel;
+  buffer.appendInt8(statusByte);
+  buffer.appendInt8(evt.parameters[<span class="hljs-number">0</span>]);
+  <span class="hljs-keyword">if</span> (evt.parameters[<span class="hljs-number">1</span>] !== <span class="hljs-literal">undefined</span>) {
+    buffer.appendInt8(evt.parameters[<span class="hljs-number">1</span>]);
+  }
+}
+
+<span class="hljs-keyword">var</span> valueWriters = {
+  <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, buffer)</span> </span>{
+    buffer.appendString(p);
+  }
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateMetaMessage</span><span class="hljs-params">(buffer, evt)</span> </span>{
+  buffer.appendInt8(<span class="hljs-number">0xFF</span>);
+  buffer.appendInt8(data.typeToBinary[evt.message]);
+  <span class="hljs-keyword">var</span> info = data.typeMap[evt.message];
+  <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
+    buffer.appendVariableInteger(evt.parameters.value.length);
+  } <span class="hljs-keyword">else</span> {
+    buffer.appendVariableInteger(info.parameters.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+      <span class="hljs-keyword">return</span> p.length;
+    }).reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prev, current)</span> </span>{
+      <span class="hljs-keyword">return</span> prev + current;
+    }, <span class="hljs-number">0</span>));
   }
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateTracks</span><span class="hljs-params">(m)</span> </span>{
-    <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = m.countTracks(); i &lt; n; i += <span class="hljs-number">1</span>) {
-      buffer.appendString(<span class="hljs-string">'MTrk'</span>);
-      <span class="hljs-keyword">var</span> evts = generateEvents(m.track(i));
-      buffer.appendInt32(evts.length());
-      buffer.append(evts);
-    }
-    <span class="hljs-keyword">return</span> buffer;
+  <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
+    valueWriters[info.valueType](evt.parameters.value, buffer);
+  } <span class="hljs-keyword">else</span> {
+    info.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+      <span class="hljs-keyword">if</span> (p.exporters &amp;&amp; p.exporters.binary) {
+        p.exporters.binary(evt.parameters[p.name], buffer);
+      } <span class="hljs-keyword">else</span> {
+        buffer.appendInteger(evt.parameters[p.name], p.length);
+      }
+    });
   }
+}
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateEvents</span><span class="hljs-params">(track)</span> </span>{
-    <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> BinaryBuffer();
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = track.countEvents(); i &lt; n; i += <span class="hljs-number">1</span>) {
-      generateEvent(buffer, track.event(i));
-    }
-    <span class="hljs-keyword">return</span> buffer;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateSysexMessage</span><span class="hljs-params">(buffer, event)</span> </span>{
+
+}
+
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateTrackHeader</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> toBytes(<span class="hljs-string">'MTrk'</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toBytes</span><span class="hljs-params">(str)</span> </span>{
+  <span class="hljs-keyword">var</span> arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(str.length));
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = str.length; i &lt; n; i += <span class="hljs-number">1</span>) {
+    arr[i] = str.charCodeAt(i);
   }
+  <span class="hljs-keyword">return</span> arr;
+}
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateEvent</span><span class="hljs-params">(buffer, event)</span> </span>{
-    buffer.appendVariableInteger(event.timestamp);
-    <span class="hljs-keyword">switch</span> (event.kind) {
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'channel'</span>:
-        generateChannelMessage(buffer, event);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'meta'</span>:
-        generateMetaMessage(buffer, event);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'sysex'</span>:
-        generateSysexMessage(buffer, event);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">default</span>:
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'unrecognized event type'</span>); <span class="hljs-comment">// TODO: Formalize</span>
-    }
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toString</span><span class="hljs-params">(buffer)</span> </span>{
+  <span class="hljs-keyword">var</span> str = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; buffer.size(); i += <span class="hljs-number">1</span>) {
+    str += <span class="hljs-built_in">String</span>.fromCharCode(buffer.get(i));
   }
+  <span class="hljs-keyword">return</span> str;
+}
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateChannelMessage</span><span class="hljs-params">(buffer, evt)</span> </span>{
-    <span class="hljs-keyword">var</span> statusByte = (MT.Data.typeToBinary[evt.message] &lt;&lt; <span class="hljs-number">4</span>) | evt.channel;
-    buffer.appendInt8(statusByte);
-    buffer.appendInt8(evt.parameters[<span class="hljs-number">0</span>]);
-    <span class="hljs-keyword">if</span> (evt.parameters[<span class="hljs-number">1</span>] !== <span class="hljs-literal">undefined</span>) {
-      buffer.appendInt8(evt.parameters[<span class="hljs-number">1</span>]);
-    }
-  }
-
-  <span class="hljs-keyword">var</span> valueWriters = {
-    <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p, buffer)</span> </span>{
-      buffer.appendString(p);
-    }
-  };
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateMetaMessage</span><span class="hljs-params">(buffer, evt)</span> </span>{
-    buffer.appendInt8(<span class="hljs-number">0xFF</span>);
-    buffer.appendInt8(MT.Data.typeToBinary[evt.message]);
-    <span class="hljs-keyword">var</span> info = MT.Data.typeMap[evt.message];
-    <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
-      buffer.appendVariableInteger(evt.parameters.value.length);
-    } <span class="hljs-keyword">else</span> {
-      buffer.appendVariableInteger(info.parameters.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
-        <span class="hljs-keyword">return</span> p.length;
-      }).reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prev, current)</span> </span>{
-        <span class="hljs-keyword">return</span> prev + current;
-      }, <span class="hljs-number">0</span>));
-    }
-
-    <span class="hljs-keyword">if</span> (info.length === <span class="hljs-string">'variable'</span>) {
-      valueWriters[info.valueType](evt.parameters.value, buffer);
-    } <span class="hljs-keyword">else</span> {
-      info.parameters.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
-        <span class="hljs-keyword">if</span> (p.exporters &amp;&amp; p.exporters.binary) {
-          p.exporters.binary(evt.parameters[p.name], buffer);
-        } <span class="hljs-keyword">else</span> {
-          buffer.appendInteger(evt.parameters[p.name], p.length);
-        }
-      });
-    }
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateSysexMessage</span><span class="hljs-params">(buffer, event)</span> </span>{
-
-  }
-
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateTrackHeader</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> toBytes(<span class="hljs-string">'MTrk'</span>);
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toBytes</span><span class="hljs-params">(str)</span> </span>{
-    <span class="hljs-keyword">var</span> arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(str.length));
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = str.length; i &lt; n; i += <span class="hljs-number">1</span>) {
-      arr[i] = str.charCodeAt(i);
-    }
-    <span class="hljs-keyword">return</span> arr;
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toString</span><span class="hljs-params">(buffer)</span> </span>{
-    <span class="hljs-keyword">var</span> str = <span class="hljs-string">''</span>;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; buffer.size(); i += <span class="hljs-number">1</span>) {
-      str += <span class="hljs-built_in">String</span>.fromCharCode(buffer.get(i));
-    }
-    <span class="hljs-keyword">return</span> str;
-  }
-
-}(MIDI, <span class="hljs-built_in">window</span>.MIDITools));</pre></div></div>
+exports.binary = exportBinary;</pre></div></div>
             
         </li>
         
