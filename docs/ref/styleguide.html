@@ -1,0 +1,451 @@
+<!DOCTYPE  html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>doc</title>
+    <style>
+      /*github.com style (c) Vasily Polovnyov <vast@whiteants.net>*/
+      pre code {
+        display: block; padding: 0.5em;
+        color: #333;
+        background: #f8f8ff
+      }
+      pre .comment,
+      pre .template_comment,
+      pre .diff .header,
+      pre .javadoc {
+        color: #998;
+        font-style: italic
+      }
+      pre .keyword,
+      pre .css .rule .keyword,
+      pre .winutils,
+      pre .javascript .title,
+      pre .nginx .title,
+      pre .subst,
+      pre .request,
+      pre .status {
+        color: #333;
+        font-weight: bold
+      }
+      pre .number,
+      pre .hexcolor,
+      pre .ruby .constant {
+        color: #099;
+      }
+      pre .string,
+      pre .tag .value,
+      pre .phpdoc,
+      pre .tex .formula {
+        color: #d14
+      }
+      pre .title,
+      pre .id {
+        color: #900;
+        font-weight: bold
+      }
+      pre .javascript .title,
+      pre .lisp .title,
+      pre .clojure .title,
+      pre .subst {
+        font-weight: normal
+      }
+      pre .class .title,
+      pre .haskell .type,
+      pre .vhdl .literal,
+      pre .tex .command {
+        color: #458;
+        font-weight: bold
+      }
+      pre .tag,
+      pre .tag .title,
+      pre .rules .property,
+      pre .django .tag .keyword {
+        color: #000080;
+        font-weight: normal
+      }
+      pre .attribute,
+      pre .variable,
+      pre .lisp .body {
+        color: #008080
+      }
+      pre .regexp {
+        color: #009926
+      }
+      pre .class {
+        color: #458;
+        font-weight: bold
+      }
+      pre .symbol,
+      pre .ruby .symbol .string,
+      pre .lisp .keyword,
+      pre .tex .special,
+      pre .prompt {
+        color: #990073
+      }
+      pre .built_in,
+      pre .lisp .title,
+      pre .clojure .built_in {
+        color: #0086b3
+      }
+      pre .preprocessor,
+      pre .pi,
+      pre .doctype,
+      pre .shebang,
+      pre .cdata {
+        color: #999;
+        font-weight: bold
+      }
+      pre .deletion {
+        background: #fdd
+      }
+      pre .addition {
+        background: #dfd
+      }
+      pre .diff .change {
+        background: #0086b3
+      }
+      pre .chunk {
+        color: #aaa
+      }
+    </style>
+  </head>
+  <body>  
+    <h1 id="node-js-style-guide">Node.js Style Guide</h1>
+<p>This is a guide for writing consistent and aesthetically pleasing node.js code.
+It is inspired by what is popular within the community, and flavored with some
+personal opinions.</p>
+<p>There is a .jshintrc which enforces these rules as closely as possible. You can
+either use that and adjust it, or use
+<a href="https://gist.github.com/kentcdodds/11293570">this script</a> to make your own.</p>
+<p>This guide was created by <a href="http://felixge.de/">Felix Geisendörfer</a> and is
+licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>
+license. You are encouraged to fork this repository and make adjustments
+according to your preferences.</p>
+<p><img src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" alt="Creative Commons License"></p>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#2-spaces-for-indention">2 Spaces for indention</a></li>
+<li><a href="#newlines">Newlines</a></li>
+<li><a href="#no-trailing-whitespace">No trailing whitespace</a></li>
+<li><a href="#use-semicolons">Use Semicolons</a></li>
+<li><a href="#80-characters-per-line">80 characters per line</a></li>
+<li><a href="#use-single-quotes">Use single quotes</a></li>
+<li><a href="#opening-braces-go-on-the-same-line">Opening braces go on the same line</a></li>
+<li><a href="#method-chaining">Method chaining</a></li>
+<li><a href="#declare-one-variable-per-var-statement">Declare one variable per var statement</a></li>
+<li><a href="#use-lowercamelcase-for-variables-properties-and-function-names">Use lowerCamelCase for variables, properties and function names</a></li>
+<li><a href="#use-uppercamelcase-for-class-names">Use UpperCamelCase for class names</a></li>
+<li><a href="#use-uppercase-for-constants">Use UPPERCASE for Constants</a></li>
+<li><a href="#object--array-creation">Object / Array creation</a></li>
+<li><a href="#use-the--operator">Use the === operator</a></li>
+<li><a href="#use-multi-line-ternary-operator">Use multi-line ternary operator</a></li>
+<li><a href="#use-slashes-for-comments">Use slashes for comments</a></li>
+<li><a href="#objectfreeze-objectpreventextensions-objectseal-with-eval">Object.freeze, Object.preventExtensions, Object.seal, with, eval</a></li>
+<li><a href="#getters-and-setters">Getters and setters</a></li>
+</ul>
+<h2 id="2-spaces-for-indention">2 Spaces for indention</h2>
+<p>Use 2 spaces for indenting your code and swear an oath to never mix tabs and
+spaces - a special kind of hell is awaiting you otherwise.</p>
+<h2 id="newlines">Newlines</h2>
+<p>Use UNIX-style newlines (<code>\n</code>), and a newline character as the last character
+of a file. Windows-style newlines (<code>\r\n</code>) are forbidden inside any repository.</p>
+<h2 id="no-trailing-whitespace">No trailing whitespace</h2>
+<p>Just like you brush your teeth after every meal, you clean up any trailing
+whitespace in your JS files before committing. Otherwise the rotten smell of
+careless neglect will eventually drive away contributors and/or co-workers.</p>
+<h2 id="use-semicolons">Use Semicolons</h2>
+<p>According to <a href="http://news.ycombinator.com/item?id=1547647">scientific research</a>, the usage of semicolons is
+a core value of our community. Consider the points of <a href="http://blog.izs.me/post/2353458699/an-open-letter-to-javascript-leaders-regarding">the opposition</a>, but
+be a traditionalist when it comes to abusing error correction mechanisms for
+cheap syntactic pleasures.</p>
+<h2 id="80-characters-per-line">80 characters per line</h2>
+<p>Limit your lines to 80 characters. Yes, screens have gotten much bigger over the
+last few years, but your brain has not. Use the additional room for split screen,
+your editor supports that, right?</p>
+<h2 id="use-single-quotes">Use single quotes</h2>
+<p>Use single quotes, unless you are writing JSON.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var foo = &#39;bar&#39;;</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var foo = &quot;bar&quot;;</code></pre>
+<h2 id="opening-braces-go-on-the-same-line">Opening braces go on the same line</h2>
+<p>Your opening braces go on the same line as the statement.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">if (true) {
+  console.log(&#39;winning&#39;);
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">if (true)
+{
+  console.log(&#39;losing&#39;);
+}</code></pre>
+<p>Also, notice the use of whitespace before and after the condition statement.</p>
+<h2 id="method-chaining">Method chaining</h2>
+<p>One method per line should be used if you want to chain methods.</p>
+<p>You should also indent these methods so it&#39;s easier to tell they are part of the same chain.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">User
+  .findOne({ name: &#39;foo&#39; })
+  .populate(&#39;bar&#39;)
+  .exec(function(err, user) {
+    return true;
+  });
+`</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">User
+.findOne({ name: &#39;foo&#39; })
+.populate(&#39;bar&#39;)
+.exec(function(err, user) {
+  return true;
+});
+
+User.findOne({ name: &#39;foo&#39; })
+  .populate(&#39;bar&#39;)
+  .exec(function(err, user) {
+    return true;
+  });
+
+User.findOne({ name: &#39;foo&#39; }).populate(&#39;bar&#39;)
+.exec(function(err, user) {
+  return true;
+});
+
+User.findOne({ name: &#39;foo&#39; }).populate(&#39;bar&#39;)
+  .exec(function(err, user) {
+    return true;
+  });
+`</code></pre>
+<h2 id="declare-one-variable-per-var-statement">Declare one variable per var statement</h2>
+<p>Declare one variable per var statement, it makes it easier to re-order the
+lines. However, ignore <a href="http://javascript.crockford.com/code.html">Crockford</a> when it comes to
+declaring variables deeper inside a function, just put the declarations wherever
+they make sense.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var keys   = [&#39;foo&#39;, &#39;bar&#39;];
+var values = [23, 42];
+
+var object = {};
+while (keys.length) {
+  var key = keys.pop();
+  object[key] = values.pop();
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var keys = [&#39;foo&#39;, &#39;bar&#39;],
+    values = [23, 42],
+    object = {},
+    key;
+
+while (keys.length) {
+  key = keys.pop();
+  object[key] = values.pop();
+}</code></pre>
+<h2 id="use-lowercamelcase-for-variables-properties-and-function-names">Use lowerCamelCase for variables, properties and function names</h2>
+<p>Variables, properties and function names should use <code>lowerCamelCase</code>.  They
+should also be descriptive. Single character variables and uncommon
+abbreviations should generally be avoided.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var adminUser = db.query(&#39;SELECT * FROM users ...&#39;);</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var admin_user = db.query(&#39;SELECT * FROM users ...&#39;);</code></pre>
+<h2 id="use-uppercamelcase-for-class-names">Use UpperCamelCase for class names</h2>
+<p>Class names should be capitalized using <code>UpperCamelCase</code>.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">function BankAccount() {
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">function bank_Account() {
+}</code></pre>
+<h2 id="use-uppercase-for-constants">Use UPPERCASE for Constants</h2>
+<p>Constants should be declared as regular variables or static class properties,
+using all uppercase letters.</p>
+<p>Node.js / V8 actually supports mozilla&#39;s <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">const</a> extension, but
+unfortunately that cannot be applied to class members, nor is it part of any
+ECMA standard.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var SECOND = 1 * 1000;
+
+function File() {
+}
+File.FULL_PERMISSIONS = 0777;</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">const SECOND = 1 * 1000;
+
+function File() {
+}
+File.fullPermissions = 0777;</code></pre>
+<h2 id="object-array-creation">Object / Array creation</h2>
+<p>Use trailing commas and put <em>short</em> declarations on a single line. Only quote
+keys when your interpreter complains:</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var a = [&#39;hello&#39;, &#39;world&#39;];
+var b = {
+  good: &#39;code&#39;,
+  &#39;is generally&#39;: &#39;pretty&#39;,
+};</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var a = [
+  &#39;hello&#39;, &#39;world&#39;
+];
+var b = {&quot;good&quot;: &#39;code&#39;
+        , is generally: &#39;pretty&#39;
+        };</code></pre>
+<h2 id="use-the-operator">Use the === operator</h2>
+<p>Programming is not about remembering <a href="https://developer.mozilla.org/en/JavaScript/Reference/Operators/Comparison_Operators">stupid rules</a>. Use
+the triple equality operator as it will work just as expected.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var a = 0;
+if (a !== &#39;&#39;) {
+  console.log(&#39;winning&#39;);
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var a = 0;
+if (a == &#39;&#39;) {
+  console.log(&#39;losing&#39;);
+}</code></pre>
+<h2 id="use-multi-line-ternary-operator">Use multi-line ternary operator</h2>
+<p>The ternary operator should not be used on a single line. Split it up into multiple lines instead.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var foo = (a === b)
+  ? 1
+  : 2;</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">var foo = (a === b) ? 1 : 2;</code></pre>
+<h2 id="do-not-extend-built-in-prototypes">Do not extend built-in prototypes</h2>
+<p>Do not extend the prototype of native JavaScript objects. Your future self will
+be forever grateful.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var a = [];
+if (!a.length) {
+  console.log(&#39;winning&#39;);
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">Array.prototype.empty = function() {
+  return !this.length;
+}
+
+var a = [];
+if (a.empty()) {
+  console.log(&#39;losing&#39;);
+}</code></pre>
+<h2 id="use-descriptive-conditions">Use descriptive conditions</h2>
+<p>Any non-trivial conditions should be assigned to a descriptively named variable or function:</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">var isValidPassword = password.length &gt;= 4 &amp;&amp; /^(?=.*\d).{4,}$/.test(password);
+
+if (isValidPassword) {
+  console.log(&#39;winning&#39;);
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">if (password.length &gt;= 4 &amp;&amp; /^(?=.*\d).{4,}$/.test(password)) {
+  console.log(&#39;losing&#39;);
+}</code></pre>
+<h2 id="write-small-functions">Write small functions</h2>
+<p>Keep your functions short. A good function fits on a slide that the people in
+the last row of a big room can comfortably read. So don&#39;t count on them having
+perfect vision and limit yourself to ~15 lines of code per function.</p>
+<h2 id="return-early-from-functions">Return early from functions</h2>
+<p>To avoid deep nesting of if-statements, always return a function&#39;s value as early
+as possible.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">function isPercentage(val) {
+  if (val &lt; 0) {
+    return false;
+  }
+
+  if (val &gt; 100) {
+    return false;
+  }
+
+  return true;
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">function isPercentage(val) {
+  if (val &gt;= 0) {
+    if (val &lt; 100) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}</code></pre>
+<p>Or for this particular example it may also be fine to shorten things even
+further:</p>
+<pre><code class="lang-js">function isPercentage(val) {
+  var isInRange = (val &gt;= 0 &amp;&amp; val &lt;= 100);
+  return isInRange;
+}</code></pre>
+<h2 id="name-your-closures">Name your closures</h2>
+<p>Feel free to give your closures a name. It shows that you care about them, and
+will produce better stack traces, heap and cpu profiles.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">req.on(&#39;end&#39;, function onEnd() {
+  console.log(&#39;winning&#39;);
+});</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">req.on(&#39;end&#39;, function() {
+  console.log(&#39;losing&#39;);
+});</code></pre>
+<h2 id="no-nested-closures">No nested closures</h2>
+<p>Use closures, but don&#39;t nest them. Otherwise your code will become a mess.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">setTimeout(function() {
+  client.connect(afterConnect);
+}, 1000);
+
+function afterConnect() {
+  console.log(&#39;winning&#39;);
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">setTimeout(function() {
+  client.connect(function() {
+    console.log(&#39;losing&#39;);
+  });
+}, 1000);</code></pre>
+<h2 id="use-slashes-for-comments">Use slashes for comments</h2>
+<p>Use slashes for both single line and multi line comments. Try to write
+comments that explain higher level mechanisms or clarify difficult
+segments of your code. Don&#39;t use comments to restate trivial things.</p>
+<p><em>Right:</em></p>
+<pre><code class="lang-js">// &#39;ID_SOMETHING=VALUE&#39; -&gt; [&#39;ID_SOMETHING=VALUE&#39;, &#39;SOMETHING&#39;, &#39;VALUE&#39;]
+var matches = item.match(/ID_([^\n]+)=([^\n]+)/));
+
+// This function has a nasty side effect where a failure to increment a
+// redis counter used for statistics will cause an exception. This needs
+// to be fixed in a later iteration.
+function loadUser(id, cb) {
+  // ...
+}
+
+var isSessionValid = (session.expires &lt; Date.now());
+if (isSessionValid) {
+  // ...
+}</code></pre>
+<p><em>Wrong:</em></p>
+<pre><code class="lang-js">// Execute a regex
+var matches = item.match(/ID_([^\n]+)=([^\n]+)/));
+
+// Usage: loadUser(5, function() { ... })
+function loadUser(id, cb) {
+  // ...
+}
+
+// Check if the session is valid
+var isSessionValid = (session.expires &lt; Date.now());
+// If the session is valid
+if (isSessionValid) {
+  // ...
+}</code></pre>
+<h2 id="object-freeze-object-preventextensions-object-seal-with-eval">Object.freeze, Object.preventExtensions, Object.seal, with, eval</h2>
+<p>Crazy shit that you will probably never need. Stay away from it.</p>
+<h2 id="getters-and-setters">Getters and setters</h2>
+<p>Do not use setters, they cause more problems for people who try to use your
+software than they can solve.</p>
+<p>Feel free to use getters that are free from <a href="http://en.wikipedia.org/wiki/Side_effect_(computer_science)">side effects</a>, like
+providing a length property for a collection class.</p>
+
+  </body>
+</html>

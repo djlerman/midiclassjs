@@ -19,36 +19,6 @@
           <div id="jump_page">
             
               
-              <a class="source" href="API.html">
-                API.js
-              </a>
-            
-              
-              <a class="source" href="Data.html">
-                Data.js
-              </a>
-            
-              
-              <a class="source" href="Errors.html">
-                Errors.js
-              </a>
-            
-              
-              <a class="source" href="Exporters.html">
-                Exporters.js
-              </a>
-            
-              
-              <a class="source" href="Importers.Text.html">
-                Importers.Text.js
-              </a>
-            
-              
-              <a class="source" href="Importers.html">
-                Importers.js
-              </a>
-            
-              
               <a class="source" href="MIDIFile.html">
                 MIDIFile.js
               </a>
@@ -69,8 +39,8 @@
               </a>
             
               
-              <a class="source" href="Utils.html">
-                Utils.js
+              <a class="source" href="index.html">
+                index.js
               </a>
             
           </div>
@@ -103,9 +73,9 @@
  */</span>
 
 <span class="hljs-keyword">var</span> MIDITrack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDITrack'</span>);
-<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Errors'</span>);
-<span class="hljs-keyword">var</span> importers = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Importers'</span>);
-<span class="hljs-keyword">var</span> exporters = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Exporters'</span>);
+<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./errors'</span>);
+<span class="hljs-keyword">var</span> importers = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./importers'</span>);
+<span class="hljs-keyword">var</span> exporters = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./exporters'</span>);
 
 
 <span class="hljs-comment">/**
@@ -123,19 +93,29 @@
   <span class="hljs-keyword">this</span>.setTiming(<span class="hljs-number">96</span>);
 }
 
+
 <span class="hljs-comment">/**
  * @returns {Number} the type (0 or 1) of the MIDI file
  */</span>
+
 MIDIFile.prototype.type = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._type;
 };
 
+
 <span class="hljs-comment">/**
  * @returns {MIDITools.MIDITrack} the track at index `n`
  */</span>
+
 MIDIFile.prototype.track = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks[n];
 };
+
+
+<span class="hljs-comment">/**
+ * Adds a new, empty track to the file, then returns the track.
+ * @returns {MIDITools.MIDITrack} the newly-added track
+ */</span>
 
 MIDIFile.prototype.addTrack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._tracks.length === <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">16</span>)) {
@@ -147,15 +127,29 @@ MIDIFile.prototype.addTrack = <span class="hljs-function"><span class="hljs-keyw
   }
 
   <span class="hljs-keyword">this</span>._tracks.push(<span class="hljs-keyword">new</span> MIDITrack(<span class="hljs-keyword">this</span>._tracks.length));
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks[<span class="hljs-keyword">this</span>._tracks.length];
 };
+
+
+<span class="hljs-comment">/**
+ * @returns {Number} total number of tracks stored in the MIDIFile
+ */</span>
 
 MIDIFile.prototype.countTracks = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._tracks.length;
 };
 
+
 MIDIFile.prototype.exportBase64 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-  <span class="hljs-keyword">return</span> <span class="hljs-string">'base64,'</span> + btoa(<span class="hljs-keyword">this</span>.exportBinary());
+  <span class="hljs-keyword">return</span> <span class="hljs-string">'base64,'</span> + <span class="hljs-built_in">window</span>.btoa(<span class="hljs-keyword">this</span>.exportBinary());
 };
+
+
+<span class="hljs-comment">/**
+ * @returns the timing of the MIDIFile, which is usually a measure
+ *          of *ticks per beat*; see ??? for details
+ * TODO: put reference in above description
+ */</span>
 
 MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
@@ -174,6 +168,7 @@ MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-key
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>._timing));
 };
+
 
 MIDIFile.prototype.setTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(timing)</span> </span>{
   <span class="hljs-keyword">var</span> hasFrameParameters = (
@@ -210,7 +205,8 @@ MIDIFile.importBinary = <span class="hljs-function"><span class="hljs-keyword">f
     url: src,
     onload: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req)</span> </span>{
       <span class="hljs-keyword">try</span> {
-        <span class="hljs-keyword">return</span> callback(importers.binary(<span class="hljs-keyword">new</span> MIDIFile(), toByteString(req.responseText)));
+        <span class="hljs-keyword">return</span> callback(importers.binary(
+          <span class="hljs-keyword">new</span> MIDIFile(), toByteString(req.responseText)));
       } <span class="hljs-keyword">catch</span> (err) {
         <span class="hljs-keyword">return</span> (error &amp;&amp; error(err)) || <span class="hljs-literal">false</span>;
       }
@@ -236,10 +232,12 @@ MIDIFile.importBinary = <span class="hljs-function"><span class="hljs-keyword">f
 };
 
 
-MIDIFile.importText = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(text)</span> </span>{
+MIDIFile.importText = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text)</span> </span>{
   <span class="hljs-keyword">return</span> importers.text(<span class="hljs-keyword">new</span> MIDIFile(), text);
 };
-MIDIFile.prototype.exportBinary = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+
+
+MIDIFile.prototype.exportBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> exporters.binary(<span class="hljs-keyword">this</span>);
 };
 

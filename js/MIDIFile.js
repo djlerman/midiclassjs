@@ -25,19 +25,29 @@ function MIDIFile(type) {
   this.setTiming(96);
 }
 
+
 /**
  * @returns {Number} the type (0 or 1) of the MIDI file
  */
+
 MIDIFile.prototype.type = function() {
   return this._type;
 };
 
+
 /**
  * @returns {MIDITools.MIDITrack} the track at index `n`
  */
+
 MIDIFile.prototype.track = function(n) {
   return this._tracks[n];
 };
+
+
+/**
+ * Adds a new, empty track to the file, then returns the track.
+ * @returns {MIDITools.MIDITrack} the newly-added track
+ */
 
 MIDIFile.prototype.addTrack = function() {
   if (this._tracks.length === Math.pow(2, 16)) {
@@ -49,20 +59,35 @@ MIDIFile.prototype.addTrack = function() {
   }
 
   this._tracks.push(new MIDITrack(this._tracks.length));
+  return this._tracks[this._tracks.length];
 };
+
+
+/**
+ * @returns {Number} total number of tracks stored in the MIDIFile
+ */
 
 MIDIFile.prototype.countTracks = function() {
   return this._tracks.length;
 };
 
+
 MIDIFile.prototype.exportBase64 = function() {
-  return 'base64,' + btoa(this.exportBinary());
+  return 'base64,' + window.btoa(this.exportBinary());
 };
+
+
+/**
+ * @returns the timing of the MIDIFile, which is usually a measure
+ *          of *ticks per beat*; see ??? for details
+ * TODO: put reference in above description
+ */
 
 MIDIFile.prototype.getTiming = function() {
   // defensive copy
   return JSON.parse(JSON.stringify(this._timing));
 };
+
 
 MIDIFile.prototype.setTiming = function(timing) {
   var hasFrameParameters = (
@@ -99,7 +124,8 @@ MIDIFile.importBinary = function(src, callback, error) {
     url: src,
     onload: function(req) {
       try {
-        return callback(importers.binary(new MIDIFile(), toByteString(req.responseText)));
+        return callback(importers.binary(
+          new MIDIFile(), toByteString(req.responseText)));
       } catch (err) {
         return (error && error(err)) || false;
       }
@@ -112,10 +138,12 @@ MIDIFile.importBinary = function(src, callback, error) {
 };
 
 
-MIDIFile.importText = function (text) {
+MIDIFile.importText = function(text) {
   return importers.text(new MIDIFile(), text);
 };
-MIDIFile.prototype.exportBinary = function () {
+
+
+MIDIFile.prototype.exportBinary = function() {
   return exporters.binary(this);
 };
 

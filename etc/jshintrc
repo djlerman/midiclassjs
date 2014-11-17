@@ -1,0 +1,19 @@
+{
+  "globals": {
+    "DOMLoader": false
+  },
+    "browser": true,
+        "browserify": true,	
+  "funcscope": true,
+  "eqnull": true,
+  "maxlen": 80,
+  "maxstatements": 15,
+  "maxdepth": 3,
+  "quotmark": "single",
+  "newcap": true,
+  "indent": 2,
+  "freeze": true,
+  "eqeqeq": true,
+  "curly": true,
+  "camelcase": true
+}

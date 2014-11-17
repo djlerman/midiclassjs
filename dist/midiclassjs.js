@@ -483,19 +483,29 @@ function MIDIFile(type) {
   this.setTiming(96);
 }
 
+
 /**
  * @returns {Number} the type (0 or 1) of the MIDI file
  */
+
 MIDIFile.prototype.type = function() {
   return this._type;
 };
 
+
 /**
  * @returns {MIDITools.MIDITrack} the track at index `n`
  */
+
 MIDIFile.prototype.track = function(n) {
   return this._tracks[n];
 };
+
+
+/**
+ * Adds a new, empty track to the file, then returns the track.
+ * @returns {MIDITools.MIDITrack} the newly-added track
+ */
 
 MIDIFile.prototype.addTrack = function() {
   if (this._tracks.length === Math.pow(2, 16)) {
@@ -507,20 +517,35 @@ MIDIFile.prototype.addTrack = function() {
   }
 
   this._tracks.push(new MIDITrack(this._tracks.length));
+  return this._tracks[this._tracks.length];
 };
+
+
+/**
+ * @returns {Number} total number of tracks stored in the MIDIFile
+ */
 
 MIDIFile.prototype.countTracks = function() {
   return this._tracks.length;
 };
 
+
 MIDIFile.prototype.exportBase64 = function() {
-  return 'base64,' + btoa(this.exportBinary());
+  return 'base64,' + window.btoa(this.exportBinary());
 };
+
+
+/**
+ * @returns the timing of the MIDIFile, which is usually a measure
+ *          of *ticks per beat*; see ??? for details
+ * TODO: put reference in above description
+ */
 
 MIDIFile.prototype.getTiming = function() {
   // defensive copy
   return JSON.parse(JSON.stringify(this._timing));
 };
+
 
 MIDIFile.prototype.setTiming = function(timing) {
   var hasFrameParameters = (
@@ -557,7 +582,8 @@ MIDIFile.importBinary = function(src, callback, error) {
     url: src,
     onload: function(req) {
       try {
-        return callback(importers.binary(new MIDIFile(), toByteString(req.responseText)));
+        return callback(importers.binary(
+          new MIDIFile(), toByteString(req.responseText)));
       } catch (err) {
         return (error && error(err)) || false;
       }
@@ -570,10 +596,12 @@ MIDIFile.importBinary = function(src, callback, error) {
 };
 
 
-MIDIFile.importText = function (text) {
+MIDIFile.importText = function(text) {
   return importers.text(new MIDIFile(), text);
 };
-MIDIFile.prototype.exportBinary = function () {
+
+
+MIDIFile.prototype.exportBinary = function() {
   return exporters.binary(this);
 };
 
@@ -643,7 +671,7 @@ MIDISequence.prototype.getTempo = function() {
 };
 
 MIDISequence.prototype.beatLength = function() {
-  return util.bpmToTempo(this._tempo) / 1000;
+  return (60000 / this._tempo);
 };
 
 MIDISequence.prototype.ticksPerBeat = function() {
@@ -1613,30 +1641,25 @@ function parseHeader(midi, text) {
   var pieces = text.split(matches.WHITESPACE);
 
   var declaredType = parseInt(pieces[1]);
-  var count = parseInt(pieces[2]);
+  var trackCount = parseInt(pieces[2]);
 
   if (pieces[0] !== strings.HEADER_PRELUDE) {
     throw errors.Import.HeaderPrelude;
   }
 
+  addDeclaredTracks(midi, trackCount);
+
+  // TODO: SMPTE timing
+  //<division> is either a positive number (giving the time resolution in
+  //clicks per quarter note) or a negative number followed by a positive
+  //number (giving SMPTE timing)
+
+  midi.setTiming(parseInt(pieces[3]));
+}
+
+function verifyDeclaredType(midi, declaredType) {
   if (isNaN(declaredType)) {
     throw errors.Import.Type;
-  }
-
-  if (isNaN(count) || count < 0) {
-    throw errors.Import.TrackCount;
-  }
-
-  try {
-    for (var i = 0; i < count; i += 1) {
-      midi.addTrack();
-    }
-  } catch (err) {
-    if (err === errors.MIDI.TrackOverflow) {
-      throw errors.Import.TrackCount;
-    } else {
-      throw err;
-    }
   }
 
   if (midi.type() !== declaredType) {
@@ -1648,24 +1671,35 @@ function parseHeader(midi, text) {
       throw errors.Import.Type0MultiTrack;
     }
   }
+}
+function addDeclaredTracks(midi, trackCount) {
+  if (isNaN(trackCount) || trackCount < 0) {
+    throw errors.Import.TrackCount;
+  }
+  try {
+    for (var i = 0; i < trackCount; i += 1) {
+      midi.addTrack();
+    }
+  } catch (err) {
+    if (err === errors.MIDI.TrackOverflow) {
+      throw errors.Import.TrackCount;
+    } else {
+      throw err;
+    }
+  }
 
-  // TODO: SMPTE timing
-  //<division> is either a positive number (giving the time resolution in
-  //clicks per quarter note) or a negative number followed by a positive
-  //number (giving SMPTE timing)
-
-  midi.setTiming(parseInt(pieces[3]));
 }
 
 
 
-
 },{"../Data":1,"../Errors":2}],14:[function(require,module,exports){
+
 exports.MIDIFile = require('./MIDIFile');
 exports.MIDISequence = require('./MIDISequence');
 exports.Errors = require('./errors');
 exports.Data = require('./data');
 exports.Utils = require('./util');
+
 
 window.MIDITools = module.exports;
 

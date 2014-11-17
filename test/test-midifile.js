@@ -7,11 +7,13 @@ QUnit.test("constructor creates default file", function(assert) {
   assert.equal(midi.type(), 0);
 });
 
+
 QUnit.test("addTrack - add single track to empty file", function(assert) {
   var midi = new MIDITools.MIDIFile();
   midi.addTrack();
   assert.equal(midi.countTracks(), 1);
 });
+
 
 QUnit.test("addTrack - adding second track changes type to 1", function(assert) {
   var midi = new MIDITools.MIDIFile();
@@ -25,6 +27,7 @@ QUnit.test("addTrack - adding second track changes type to 1", function(assert) 
   assert.equal(midi.countTracks(), 2);
 });
 
+
 QUnit.test("addTrack - throws error on too many tracks", function(assert) {
   var midi = new MIDITools.MIDIFile();
   midi.addTrack();
@@ -35,6 +38,7 @@ QUnit.test("addTrack - throws error on too many tracks", function(assert) {
   }, MIDITools.Errors.MIDI.TrackOverflow);
 });
 
+
 QUnit.test("setTiming - throws error on non-number literal", function(assert) {
   var midi = new MIDITools.MIDIFile();
   midi.addTrack();
@@ -42,6 +46,7 @@ QUnit.test("setTiming - throws error on non-number literal", function(assert) {
     midi.setTiming('120');
   }, MIDITools.Errors.Parameters.SetTiming);
 });
+
 
 QUnit.test("setTiming - throws error on object with bad values", function(assert) {
   var midi = new MIDITools.MIDIFile();
@@ -54,6 +59,7 @@ QUnit.test("setTiming - throws error on object with bad values", function(assert
   }, MIDITools.Errors.Parameters.SetTiming);
 });
 
+
 QUnit.test("setTiming - sets type and value appropriately given number", function(assert) {
   var midi = new MIDITools.MIDIFile();
   midi.addTrack();
@@ -61,6 +67,7 @@ QUnit.test("setTiming - sets type and value appropriately given number", functio
   assert.equal(midi.getTiming().type, 'ticksPerBeat');
   assert.equal(midi.getTiming().ticksPerBeat, 120);
 });
+
 
 QUnit.test("setTiming - sets type and value appropriately given object", function(assert) {
   var midi = new MIDITools.MIDIFile();

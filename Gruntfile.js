@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         src: ['dist/<%= pkg.name %>.js'],
         options: {
           destination: 'docs/api/',
-          configure: 'jsdoc.conf.json'
+          configure: 'etc/jsdoc.conf'
         }
       }
     },
@@ -47,33 +47,16 @@ module.exports = function(grunt) {
         }]
       }
     },
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-      },
-      dist: {
-        files: {
-          'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
     qunit: {
-      all: {
-        options: {
-          urls: [
-            'http://localhost:80/tests/index.html'
-          ]
-        }
-      }
+	all: ['test/**/*.html']
     },
     jshint: {
-      files: ['Gruntfile.js', 'js/*.js', 'tests/*.js'],
+      files: ['Gruntfile.js', 'js/**/*.js', 'tests/*.js'],
       options: {
-          // options here to override JSHint defaults
-	  browserify: true,
-	  browser: true,
-	  globals: {
-'DOMLoader': false}
+        // options here to override JSHint defaults
+        browserify: true,
+        browser: true,
+        jshintrc: 'etc/jshintrc'
       }
     },
     watch: {

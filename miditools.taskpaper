@@ -1,0 +1,66 @@
+Up-front:
+	- pick a style convention @done(2014-11-14)
+	- pick a module-ordering scheme
+	- read styleguide in docs/ref
+MIDIFile:
+	import/export:
+		- importBinary @started
+		- importBase64 @started @dep(importBinary)
+		- importText @started
+		- importXML @none
+		- exportBinary @started
+		- exportBase64 @started @dep(exportBinary)
+		- exportText @started
+		- exportXML @none
+	tracks:
+		- addTrack() @code
+		- removeTrack() @code
+		- countTracks() @code
+		- track(i) @code
+	events:
+		- filterEvents() /* over all tracks */ @none
+	header info:
+		- getTiming() @code
+		- type() @code
+MIDITrack:
+	- addEvent() @code
+	- removeEvent(i) @code
+	- event(i) @code
+	- countEvents() @code
+	- filterEvents() @none
+MIDISequence:
+	- getTempo() @code
+	- setTempo() @code
+	- soloChannel(i) @none
+	- transpose(numSteps) @none
+	- setVolume(level) @none
+	- getVolume(level) @none
+	- channel(i) @code
+	- getTitle() @code
+	- setTitle(t) @code
+	- getVolume() @code
+	- setVolume() /* over all tracks */ @code
+	- exportFile() /* creates COPY first */ @started
+	- more metadata methods
+MIDIChannel:
+	- transpose(numSteps) @none
+	- setVolume(level) @none
+	- getVolume(level) @none
+Utils:
+	- eventToText(evt) @none
+	- eventToXML(evt) @none 
+	- textToEvent(txt) @none
+	- xmlToEvent(xml) @none
+MISC: Save / Load (?):
+	- data() @none
+	- loadData() @none
+MISC: MIDI object supplement (?):
+	- MIDI.drumset @none
+	- MIDI.drumkitList @none
+MISC fixes:
+	- add andrew (and twitter handle) to the acknowledgements
+	- replace DOMLoader with custom async loader
+	- attribute styleguide author
+	- README updates
+	- check that beatLength() rets correct values
+

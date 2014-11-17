@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>MIDITools.js</title>
+  <title>index.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -51,7 +51,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>MIDITools.js</h1>
+                  <h1>index.js</h1>
               </div>
           </li>
         
@@ -66,15 +66,15 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
- * @namespace MIDITools
- */</span>
-<span class="hljs-built_in">window</span>.MIDITools = {
-  Importers: {},
-  Exporters: {},
-  Utils: {},
-  Errors: {}
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+exports.MIDIFile = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDIFile'</span>);
+exports.MIDISequence = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDISequence'</span>);
+exports.Errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./errors'</span>);
+exports.Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./data'</span>);
+exports.Utils = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./util'</span>);
+
+
+<span class="hljs-built_in">window</span>.MIDITools = <span class="hljs-built_in">module</span>.exports;</pre></div></div>
             
         </li>
         

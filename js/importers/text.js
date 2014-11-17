@@ -126,30 +126,25 @@ function parseHeader(midi, text) {
   var pieces = text.split(matches.WHITESPACE);
 
   var declaredType = parseInt(pieces[1]);
-  var count = parseInt(pieces[2]);
+  var trackCount = parseInt(pieces[2]);
 
   if (pieces[0] !== strings.HEADER_PRELUDE) {
     throw errors.Import.HeaderPrelude;
   }
 
+  addDeclaredTracks(midi, trackCount);
+
+  // TODO: SMPTE timing
+  //<division> is either a positive number (giving the time resolution in
+  //clicks per quarter note) or a negative number followed by a positive
+  //number (giving SMPTE timing)
+
+  midi.setTiming(parseInt(pieces[3]));
+}
+
+function verifyDeclaredType(midi, declaredType) {
   if (isNaN(declaredType)) {
     throw errors.Import.Type;
-  }
-
-  if (isNaN(count) || count < 0) {
-    throw errors.Import.TrackCount;
-  }
-
-  try {
-    for (var i = 0; i < count; i += 1) {
-      midi.addTrack();
-    }
-  } catch (err) {
-    if (err === errors.MIDI.TrackOverflow) {
-      throw errors.Import.TrackCount;
-    } else {
-      throw err;
-    }
   }
 
   if (midi.type() !== declaredType) {
@@ -161,14 +156,23 @@ function parseHeader(midi, text) {
       throw errors.Import.Type0MultiTrack;
     }
   }
-
-  // TODO: SMPTE timing
-  //<division> is either a positive number (giving the time resolution in
-  //clicks per quarter note) or a negative number followed by a positive
-  //number (giving SMPTE timing)
-
-  midi.setTiming(parseInt(pieces[3]));
 }
+function addDeclaredTracks(midi, trackCount) {
+  if (isNaN(trackCount) || trackCount < 0) {
+    throw errors.Import.TrackCount;
+  }
+  try {
+    for (var i = 0; i < trackCount; i += 1) {
+      midi.addTrack();
+    }
+  } catch (err) {
+    if (err === errors.MIDI.TrackOverflow) {
+      throw errors.Import.TrackCount;
+    } else {
+      throw err;
+    }
+  }
 
+}
 
 

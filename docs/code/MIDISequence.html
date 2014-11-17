@@ -19,36 +19,6 @@
           <div id="jump_page">
             
               
-              <a class="source" href="API.html">
-                API.js
-              </a>
-            
-              
-              <a class="source" href="Data.html">
-                Data.js
-              </a>
-            
-              
-              <a class="source" href="Errors.html">
-                Errors.js
-              </a>
-            
-              
-              <a class="source" href="Exporters.html">
-                Exporters.js
-              </a>
-            
-              
-              <a class="source" href="Importers.Text.html">
-                Importers.Text.js
-              </a>
-            
-              
-              <a class="source" href="Importers.html">
-                Importers.js
-              </a>
-            
-              
               <a class="source" href="MIDIFile.html">
                 MIDIFile.js
               </a>
@@ -69,8 +39,8 @@
               </a>
             
               
-              <a class="source" href="Utils.html">
-                Utils.js
+              <a class="source" href="index.html">
+                index.js
               </a>
             
           </div>
@@ -98,9 +68,9 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
 <span class="hljs-keyword">var</span> MIDIFile = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDIFile'</span>);
-<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Errors'</span>);
-<span class="hljs-keyword">var</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Data'</span>);
-<span class="hljs-keyword">var</span> utils = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Utils'</span>);
+<span class="hljs-keyword">var</span> errors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./errors'</span>);
+<span class="hljs-keyword">var</span> data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./data'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./util'</span>);
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">MIDISequence</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">this</span>._midi = <span class="hljs-keyword">new</span> MIDIFile();
@@ -121,13 +91,13 @@
     message: <span class="hljs-string">'setTempo'</span>,
     timestamp: <span class="hljs-number">0</span>,
     parameters: {
-      microsecondsPerBeat: utils.bpmToTempo(<span class="hljs-keyword">this</span>._tempo)
+      microsecondsPerBeat: util.bpmToTempo(<span class="hljs-keyword">this</span>._tempo)
     }
   });
   <span class="hljs-keyword">this</span>._midi.track(<span class="hljs-number">0</span>).addEvent({
     message: <span class="hljs-string">'timeSignature'</span>,
     timestamp: <span class="hljs-number">0</span>,
-    parameters: utils.fromTimeSignature(<span class="hljs-string">'4/4'</span>)
+    parameters: util.fromTimeSignature(<span class="hljs-string">'4/4'</span>)
   });
   <span class="hljs-keyword">this</span>._meta = {
     sequenceName: <span class="hljs-keyword">this</span>._midi.track(<span class="hljs-number">0</span>).event(<span class="hljs-number">0</span>),
@@ -159,7 +129,7 @@ MIDISequence.prototype.getTempo = <span class="hljs-function"><span class="hljs-
 };
 
 MIDISequence.prototype.beatLength = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-  <span class="hljs-keyword">return</span> utils.bpmToTempo(<span class="hljs-keyword">this</span>._tempo) / <span class="hljs-number">1000</span>;
+  <span class="hljs-keyword">return</span> (<span class="hljs-number">60000</span> / <span class="hljs-keyword">this</span>._tempo);
 };
 
 MIDISequence.prototype.ticksPerBeat = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
@@ -168,7 +138,7 @@ MIDISequence.prototype.ticksPerBeat = <span class="hljs-function"><span class="h
 
 MIDISequence.prototype.setTempo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bpm)</span> </span>{
   <span class="hljs-keyword">this</span>._tempo = bpm;
-  <span class="hljs-keyword">this</span>._meta.tempo.parameters.microsecondsPerBeat = utils.bpmToTempo(
+  <span class="hljs-keyword">this</span>._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(
     bpm);
 };
 
@@ -181,7 +151,7 @@ MIDISequence.prototype.getTimeSignature = <span class="hljs-function"><span clas
 
 MIDISequence.prototype.setTimeSignature = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ts)</span> </span>{
   <span class="hljs-keyword">this</span>._ts = ts;
-  <span class="hljs-keyword">this</span>._meta.timeSignature.parameters = utils.fromTimeSignature(
+  <span class="hljs-keyword">this</span>._meta.timeSignature.parameters = util.fromTimeSignature(
     ts);
 };
 

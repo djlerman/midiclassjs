@@ -1,0 +1,180 @@
+<!DOCTYPE  html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>doc</title>
+    <style>
+      /*github.com style (c) Vasily Polovnyov <vast@whiteants.net>*/
+      pre code {
+        display: block; padding: 0.5em;
+        color: #333;
+        background: #f8f8ff
+      }
+      pre .comment,
+      pre .template_comment,
+      pre .diff .header,
+      pre .javadoc {
+        color: #998;
+        font-style: italic
+      }
+      pre .keyword,
+      pre .css .rule .keyword,
+      pre .winutils,
+      pre .javascript .title,
+      pre .nginx .title,
+      pre .subst,
+      pre .request,
+      pre .status {
+        color: #333;
+        font-weight: bold
+      }
+      pre .number,
+      pre .hexcolor,
+      pre .ruby .constant {
+        color: #099;
+      }
+      pre .string,
+      pre .tag .value,
+      pre .phpdoc,
+      pre .tex .formula {
+        color: #d14
+      }
+      pre .title,
+      pre .id {
+        color: #900;
+        font-weight: bold
+      }
+      pre .javascript .title,
+      pre .lisp .title,
+      pre .clojure .title,
+      pre .subst {
+        font-weight: normal
+      }
+      pre .class .title,
+      pre .haskell .type,
+      pre .vhdl .literal,
+      pre .tex .command {
+        color: #458;
+        font-weight: bold
+      }
+      pre .tag,
+      pre .tag .title,
+      pre .rules .property,
+      pre .django .tag .keyword {
+        color: #000080;
+        font-weight: normal
+      }
+      pre .attribute,
+      pre .variable,
+      pre .lisp .body {
+        color: #008080
+      }
+      pre .regexp {
+        color: #009926
+      }
+      pre .class {
+        color: #458;
+        font-weight: bold
+      }
+      pre .symbol,
+      pre .ruby .symbol .string,
+      pre .lisp .keyword,
+      pre .tex .special,
+      pre .prompt {
+        color: #990073
+      }
+      pre .built_in,
+      pre .lisp .title,
+      pre .clojure .built_in {
+        color: #0086b3
+      }
+      pre .preprocessor,
+      pre .pi,
+      pre .doctype,
+      pre .shebang,
+      pre .cdata {
+        color: #999;
+        font-weight: bold
+      }
+      pre .deletion {
+        background: #fdd
+      }
+      pre .addition {
+        background: #dfd
+      }
+      pre .diff .change {
+        background: #0086b3
+      }
+      pre .chunk {
+        color: #aaa
+      }
+    </style>
+  </head>
+  <body>  
+    <h2 id="midi-loadplugin-js">MIDI.loadPlugin.js</h2>
+<p>Decides which framework is best to use, and sends request.</p>
+<pre><code>// interface to download soundfont, then execute callback;
+MIDI.loadPlugin(callback, soundfont);</code></pre>
+<pre><code>// simple example to get started;
+MIDI.loadPlugin(function() {
+    MIDI.noteOn(0, 100, 127, 0); // plays note once loaded
+}, &quot;soundfont/soundfont-ogg-guitar.js&quot;);</code></pre>
+<h2 id="midi-soundfont-js">MIDI.Soundfont.js</h2>
+<p>Customizable base64 Soundfont.</p>
+<p>Encode your own soundfonts, Drums, Guitars, and so on.
+You are listening to Fluid (R3) General MIDI SoundFont (GM).</p>
+<h2 id="midi-plugin-js">MIDI.Plugin.js</h2>
+<p>Ties together the following frameworks;</p>
+<pre><code>MIDI.noteOn(channel, note, velocity, delay);
+MIDI.noteOff(channel, note, delay);
+MIDI.chordOn(channel, chord, velocity, delay);
+MIDI.chordOff(channel, chord, delay);
+MIDI.keyToNote = object; // A0 =&gt; 21
+MIDI.noteToKey = object; // 21 =&gt; A0</code></pre>
+<h2 id="midi-player-js">MIDI.Player.js</h2>
+<p>Streams the MIDI to the browser.</p>
+<pre><code>MIDI.Player.currentTime = integer; // time we are at now within the song.
+MIDI.Player.endTime = integer; // time when song ends.
+MIDI.Player.playing = boolean; // are we playing? yes or no.
+MIDI.Player.loadFile(file, callback); // load .MIDI from base64 or binary XML request.
+MIDI.Player.start(); // start the MIDI track (you can put this in the loadFile callback)
+MIDI.Player.resume(); // resume the MIDI track from pause.
+MIDI.Player.pause(); // pause the MIDI track.
+MIDI.Player.stop(); // stops all audio being played, and resets currentTime to 0.
+Callback whenever a note is played;
+
+MIDI.Player.removeListener(); // removes current listener.
+MIDI.Player.addListener(function(data) { // set it to your own function!
+    var now = data.now; // where we are now
+    var end = data.end; // time when song ends
+    var channel = data.channel; // channel note is playing on
+    var message = data.message; // 128 is noteOff, 144 is noteOn
+    var note = data.note; // the note
+    var velocity = data.velocity; // the velocity of the note
+    // then do whatever you want with the information!
+});
+
+Smooth animation, interpolates between onMidiEvent calls;
+MIDI.Player.clearAnimation(); // clears current animation.
+MIDI.Player.setAnimation(function(data) {
+    var now = data.now; // where we are now
+    var end = data.end; // time when song ends
+    var events = data.events; // all the notes currently being processed
+    // then do what you want with the information!
+});</code></pre>
+<h2 id="domloader-js">DOMLoader.js</h2>
+<p>Loads scripts in synchronously, or asynchronously.</p>
+<pre><code>DOMLoader.script.add(src, callback);
+DOMLoader.XMLHttp.js:  Cross-browser XMLHttpd request.</code></pre>
+<h3 id="domloader-sendrequest-config-">DOMLoader.sendRequest(config)</h3>
+<pre><code>config {
+  url: the url of the resource,
+  data: set to true for a content-type request of application/x-wwww-form-urlencoded,
+  onerror: callback for errors (same parameters as XMLHttpRequest.onerror),
+  onprogress: called on progress updates  (same parameters as XMLHttpRequest.onprogress),
+  onload: called when complete (req is parameter)
+}</code></pre>
+
+  </body>
+</html>

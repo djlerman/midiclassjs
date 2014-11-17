@@ -61,7 +61,7 @@ MIDISequence.prototype.getTempo = function() {
 };
 
 MIDISequence.prototype.beatLength = function() {
-  return util.bpmToTempo(this._tempo) / 1000;
+  return (60000 / this._tempo);
 };
 
 MIDISequence.prototype.ticksPerBeat = function() {
