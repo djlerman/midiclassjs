@@ -74,7 +74,7 @@ describe('MIDIFile', function() {
     });
   });
 
-  describe('setTiming', function() {
+  describe('getTiming/setTiming', function() {
 
     it('throws error on non-numeric literal', function() {
       var midi = mt.createMIDI();
