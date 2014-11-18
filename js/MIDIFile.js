@@ -12,22 +12,27 @@ var exporters = require('./exporters');
 
 /**
  * Creates a new MIDIFile
- * @classdesc A representation of a standard MIDI file (SMF).
- * @class
- * @memberof MIDITools
+ *
+ * @param {Number} [type] - the type of the midifile; only needed
+ *        if you desire a single-track Type-1 file
+ * @throws errors.parameters.Type if type is not 0 or 1
  */
 
 function MIDIFile(type) {
+  if (type !== undefined && !(type === 0 || type === 1)) {
+    throw errors.midi.constructor;
+  }
   this._tracks = [];
   this._timing = {};
-  this._type = (type === 0 || type === 1) ? type : 0;
+  this._type = (type) ? type : 0;
   this._tracks = [];
   this.setTiming(96);
 }
 
 
 /**
- * @returns {Number} the type (0 or 1) of the MIDI file
+ * Returns the type (0 or 1) of this MIDIFile.
+ * @returns {Number} the type of the MIDI file
  */
 
 MIDIFile.prototype.type = function() {
@@ -36,10 +41,14 @@ MIDIFile.prototype.type = function() {
 
 
 /**
- * @returns {MIDITools.MIDITrack} the track at index `n`
+ * Returns the {miditools.MIDITrack} at index `n`
+ * @returns {miditools.MIDITrack} the track at index `n`
  */
 
 MIDIFile.prototype.track = function(n) {
+  if (n < 0 || n >= this._tracks.length) {
+    throw errors.midi.track;
+  }
   return this._tracks[n];
 };
 
@@ -51,7 +60,7 @@ MIDIFile.prototype.track = function(n) {
 
 MIDIFile.prototype.addTrack = function() {
   if (this._tracks.length === Math.pow(2, 16)) {
-    throw errors.MIDI.TrackOverflow;
+    throw errors.midi.trackOverflow;
   }
 
   if (this._type === 0 && this._tracks.length === 1) {
@@ -59,11 +68,17 @@ MIDIFile.prototype.addTrack = function() {
   }
 
   this._tracks.push(new MIDITrack(this._tracks.length));
-  return this._tracks[this._tracks.length];
+  return this._tracks[this._tracks.length-1];
 };
 
-
+MIDIFile.prototype.removeTrack = function(n) {
+  if (this._tracks.length <= n) {
+    throw errors.midi.removeInvalidTrack;
+  }
+  this._tracks.splice(n, 1);
+};
 /**
+ * Returns the number of tracks in the MIDIFile.
  * @returns {Number} total number of tracks stored in the MIDIFile
  */
 
@@ -105,7 +120,7 @@ MIDIFile.prototype.setTiming = function(timing) {
     this._timing.type = 'ticksPerBeat';
     this._timing.ticksPerBeat = timing;
   } else {
-    throw errors.Parameters.SetTiming;
+    throw errors.midi.setTiming;
   }
 };
 

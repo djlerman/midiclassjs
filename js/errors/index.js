@@ -1,11 +1,15 @@
 'use strict';
 
-exports.MIDI = {
-  TrackOverflow: new Error(
-    'addTrack called on MIDIFile with 2^16 tracks.')
+exports.midi = {
+  trackOverflow: new Error(
+    'addTrack called on MIDIFile with 2^16 tracks.'),
+  constructor: new Error('createMIDI parameter value must be 0 or 1'),
+  setTiming: new Error('setTiming requires a number or a `fps` object.'),
+  track: new Error('track(n) called with an invalid value'),
+  removeInvalidTrack: new Error('Attempted to remove a non-existent track.')
 };
 
-exports.Import = {
+exports.import = {
   DeltaInvalid: new Error('Event contained an invalid delta-time value'),
 
   FileSize: new Error('File is too small to be a standard MIDI file.'),
@@ -32,8 +36,4 @@ exports.Import = {
 
   Type0MultiTrack: new Error(
     'File format is Type-0, but declares multiple tracks.')
-};
-
-exports.Parameters = {
-  SetTiming: new Error('setTiming requires a number or a `fps` object.')
 };
