@@ -1,5 +1,5 @@
 {
-  "name": "midiclassjs",
+  "name": "miditools",
   "version": "0.1.0",
   "devDependencies": {
     "browserify": "^6.2.0",

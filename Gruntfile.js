@@ -47,11 +47,20 @@ module.exports = function(grunt) {
         }]
       }
     },
-    qunit: {
-	all: ['test/**/*.html']
+
+    jasmine_node: {
+      options: {
+        forceExit: true,
+        match: '.',
+        matchall: false,
+        extensions: 'js',
+        specNameMatcher: 'spec'
+      },
+      all: ['spec/']
     },
+
     jshint: {
-      files: ['Gruntfile.js', 'js/**/*.js', 'tests/*.js'],
+      files: ['js/**/*.js', 'tests/*.js'],
       options: {
         // options here to override JSHint defaults
         browserify: true,
@@ -61,18 +70,15 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'browserify', 'docco', 'markdown', 'jsdoc']
+      tasks: ['jshint', 'browserify', 'jasmine_node', 'docco', 'markdown']
     }
   });
 
-  /**
-   * We need to load the previously de
-   */
   var taskConfig = {
     tasks: [
+      'grunt-jasmine-node',
       'grunt-contrib-uglify',
       'grunt-contrib-jshint',
-      'grunt-contrib-qunit',
       'grunt-contrib-watch',
       'grunt-browserify',
       'grunt-jsdoc',
@@ -81,7 +87,7 @@ module.exports = function(grunt) {
     ],
     register: [{
       name: 'test',
-      tasks: ['jshint', 'qunit']
+      tasks: ['jshint']
     }, {
       name: 'default',
       tasks: ['jshint', 'browserify']
