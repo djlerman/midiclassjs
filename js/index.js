@@ -1,4 +1,3 @@
-
 exports.MIDIFile = require('./MIDIFile');
 exports.MIDISequence = require('./MIDISequence');
 exports.Errors = require('./errors');

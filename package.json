@@ -11,9 +11,11 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
     "grunt-docco": "^0.3.3",
+    "grunt-jasmine-node": "^0.2.1",
     "grunt-jsdoc": "*",
     "grunt-markdown": "^0.6.1",
     "grunt-simple-mocha": "^0.4.0",
+    "jasmine-node": "^1.14.5",
     "mocha": "^2.0.1",
     "watchify": "^2.1.1"
   }
