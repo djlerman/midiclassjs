@@ -4,11 +4,10 @@
  * Module dependencies
  */
 
-var MIDITrack = require('./MIDITrack');
 var errors = require('./errors');
 var importers = require('./importers');
 var exporters = require('./exporters');
-
+var MIDITrack = require('./MIDITrack');
 
 /**
  * Creates a new MIDIFile
@@ -69,8 +68,8 @@ MIDIFile.prototype.addTrack = function() {
     this._type = 1;
   }
 
-  this._tracks.push(new MIDITrack(this._tracks.length));
-  return this._tracks[this._tracks.length-1];
+  this._tracks.push(new MIDITrack());
+  return this._tracks[this._tracks.length - 1];
 };
 
 
@@ -112,15 +111,16 @@ MIDIFile.prototype.getTiming = function() {
 
 /**
  * Sets the MIDI file's header field for time divisions.
- * @param {Number|PlainObject} If `timing` is a number, 
+ * @param {Number|PlainObject} If `timing` is a number,
  *        then the MIDIFile's division type will be set to
  *        `ticksPerBeat` and the number will be used as the
- *        value of this field. If `timing` is an object, 
+ *        value of this field. If `timing` is an object,
  *        then it must have the properties `framesPerSecond` and
- *        `ticksPerFrame`, and these will be used to set the 
+ *        `ticksPerFrame`, and these will be used to set the
  *        time division as documented in ???
  * TODO: add reference
  */
+
 MIDIFile.prototype.setTiming = function(timing) {
   var hasFrameParameters = (
     typeof timing === 'object' &&
@@ -146,36 +146,12 @@ MIDIFile.prototype.exportBase64 = function() {
   return 'base64,' + window.btoa(this.exportBinary());
 };
 
-
-MIDIFile.importBinary = function(src, callback, error) {
-  if (!src || !callback) {
-    throw new Error('Both parameters required!');
-  }
-
-  DOMLoader.sendRequest({
-    url: src,
-    onload: function(req) {
-      try {
-        return callback(importers.binary(
-          new MIDIFile(), toByteString(req.responseText)));
-      } catch (err) {
-        return (error && error(err)) || false;
-      }
-    },
-    onerror: function() {
-      // TODO: replace with custom error type?
-      throw new Error('Could not load file');
-    }
-  });
+MIDIFile.fromBinary = function(binary) {
+  return importers.binary(new MIDIFile(), binary);
 };
 
 
 
-function toByteString(str) {
-  return Array.prototype.map.call(str, function(ch) {
-    return (0x00FF & ch.charCodeAt(0));
-  });
-}
 
 MIDIFile.importText = function(text) {
   return importers.text(new MIDIFile(), text);

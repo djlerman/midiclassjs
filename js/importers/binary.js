@@ -1,6 +1,6 @@
 'use strict';
 
-var errors = require('../Errors');
+var errors = require('../errors');
 var data = require('../Data');
 
 module.exports = importBinary;
@@ -44,11 +44,11 @@ function parseHeader(m, bytes) {
   // sanity check: die for files that aren't big enough
   // to even declare a MIDI header
   if (bytes.length < MIN_HEADER_LENGTH) {
-    throw errors.Import.FileSize;
+    throw errors.import.FileSize;
   }
 
   // sanity check: Any MIDI file must begin with the `MTrk` constant.
-  parseStringConstant(bytes, HEADER_PRELUDE, errors.Import.HeaderPrelude);
+  parseStringConstant(bytes, HEADER_PRELUDE, errors.import.HeaderPrelude);
   var headerSize = parseHeaderSize(bytes);
   var midiType = parseType(bytes);
   var trackCount = parseInteger(bytes, 2);
@@ -57,7 +57,7 @@ function parseHeader(m, bytes) {
   // sanity check: a Type-0 file that declares multiple tracks
   // is just asking for trouble; we fail appropriately
   if (midiType === 0 && trackCount !== 1) {
-    throw errors.Import.Type0MultiTrack;
+    throw errors.import.Type0MultiTrack;
   }
 
   // Since the header contains globally-useful information,
@@ -76,14 +76,14 @@ function parseHeader(m, bytes) {
  * Returns header's file size declaration,
  * if and only if it agrees with actual file size.
  *
- * @throws errors.Import.HeaderSize if size declaration and
+ * @throws errors.import.HeaderSize if size declaration and
  *         file size do not agree
  */
 
 function parseHeaderSize(bytes) {
   var size = parseInteger(bytes, 4);
   if (bytes.length < size) {
-    throw errors.Import.HeaderSize;
+    throw errors.import.HeaderSize;
   } else {
     return size;
   }
@@ -94,13 +94,13 @@ function parseHeaderSize(bytes) {
  * Returns the MIDI file type,
  * if and only if the type is in {0, 1}.
  *
- * @throws errors.Import.Type if the type is not 0 or 1
+ * @throws errors.import.Type if the type is not 0 or 1
  */
 
 function parseType(bytes) {
   var type = parseInteger(bytes, 2);
   if (type !== 0 && type !== 1) {
-    throw errors.Import.Type;
+    throw errors.import.Type;
   } else {
     return type;
   }
@@ -149,9 +149,9 @@ function getSMPTE(byte) {
  * the events and metadata contained within to the `track`
  * parameter.
  *
- * @throws errors.Import.TrackPrelude
- * @throws errors.Import.TrackSize
- * @throws errors.Import.TrackFooter
+ * @throws errors.import.TrackPrelude
+ * @throws errors.import.TrackSize
+ * @throws errors.import.TrackFooter
  */
 
 function parseTrack(track, bytes) {
@@ -172,23 +172,23 @@ function parseTrack(track, bytes) {
   }
 
   if (track.event(track.countEvents() - 1).message !== 'endOfTrack') {
-    throw errors.Import.TrackFooter;
+    throw errors.import.TrackFooter;
   }
 }
 
 
 /*!
- * @throws {MIDITools.Errors.Import.TrackPrelude} if the track declaration
+ * @throws {MIDITools.errors.import.TrackPrelude} if the track declaration
  *         does not appear or is invalid
- * @throws {MIDITools.Errors.Import.TrackLength} if size declaration
+ * @throws {MIDITools.errors.import.TrackLength} if size declaration
  *         is greater than remaining file size
  */
 
 function parseTrackHeader(track, bytes) {
-  parseStringConstant(bytes, TRACK_PRELUDE, errors.Import.TrackPrelude);
+  parseStringConstant(bytes, TRACK_PRELUDE, errors.import.TrackPrelude);
   var size = parseInteger(bytes, 4);
   if (bytes.length < size) {
-    throw errors.Import.TrackLength;
+    throw errors.import.TrackLength;
   } else {
     return size;
   }
@@ -227,7 +227,7 @@ function parseEvent(track, bytes) {
 }
 
 /*!
- * @throws errors.Import.MessageType if the message type
+ * @throws errors.import.MessageType if the message type
  *         is not recognized and there is no running status
  */
 function parseMessage(track, evt, bytes, checkedPrevious) {
@@ -243,7 +243,7 @@ function parseMessage(track, evt, bytes, checkedPrevious) {
     evt.status = track.event(track.countEvents() - 1).status;
     parseMessage(track, evt, bytes, true);
   } else {
-    throw errors.Import.MessageType;
+    throw errors.import.MessageType;
   }
   return evt;
 }
@@ -295,7 +295,7 @@ function parseMetaMessage(evt, bytes) {
   var spec = data.binaryMap[type];
 
   if (!spec) {
-    throw errors.Import.MetaType;
+    throw errors.import.MetaType;
   }
   // TODO: compare length and throw error
 
