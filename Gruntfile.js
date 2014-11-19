@@ -50,15 +50,18 @@ module.exports = function(grunt) {
 
     jasmine_node: {
       options: {
-        forceExit: true,
+        forceExit: false,
         match: '.',
         matchall: false,
+	verbose: false,
         extensions: 'js',
         specNameMatcher: 'spec'
       },
       all: ['spec/']
     },
 
+    // TODO: fix etc/jshintrc to reset max-lines to 15 after index.js is shrunk
+    // TODO: merge options into the jshintrc file
     jshint: {
       files: ['js/**/*.js', 'tests/*.js'],
       options: {
