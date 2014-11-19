@@ -63,7 +63,7 @@ module.exports = function(grunt) {
     // TODO: fix etc/jshintrc to reset max-lines to 15 after index.js is shrunk
     // TODO: merge options into the jshintrc file
     jshint: {
-      files: ['js/**/*.js', 'tests/*.js'],
+      files: ['js/**/*.js', 'spec/*.js'],
       options: {
         // options here to override JSHint defaults
         browserify: true,

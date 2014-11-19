@@ -92,7 +92,7 @@ describe('importBinary', function() {
         velocity: 0x60
       }
     }, {
-      type: types.controlChange,
+      type: types.controlChange, /* All notes off */
       time: 0x80,
       parameters: {
         controller: 0x7B,
@@ -259,6 +259,34 @@ describe('importBinary', function() {
       }
     });
   });
+  it('should correctly import an afterTouch event', function() {
+    expectLoaded({
+      file: 'spec/samples/mid/import-afterTouch-type0.mid',
+      expects: function(m) {
+	expect(m.track(0).event(0).message).toBe('noteOn');
+	expect(m.track(0).event(1).message).toBe('afterTouch');
+	expect(m.track(0).event(2).message).toBe('noteOff');
+	expect(m.track(0).event(3).message).toBe('endOfTrack');
+	var events = m.track(0).filterEvents('afterTouch');
+	expect(events[0].parameters.note).toBe(0x3C);
+	expect(events[0].parameters.amount).toBe(0x40);
+      }
+    });
+  });
+
+  it('should correctly import a channelPressure event', function() {
+    expectLoaded({
+      file: 'spec/samples/mid/import-channelPressure-type0.mid',
+      expects: function(m) {
+	expect(m.track(0).event(0).message).toBe('noteOn');
+	expect(m.track(0).event(1).message).toBe('channelPressure');
+	expect(m.track(0).event(2).message).toBe('noteOff');
+	expect(m.track(0).event(3).message).toBe('endOfTrack');
+	var events = m.track(0).filterEvents('channelPressure');
+	expect(events[0].parameters.amount).toBe(0x40);
+      }
+    });
+  });
 });
 
 function expectLoaded(opts) {
@@ -267,7 +295,6 @@ function expectLoaded(opts) {
     mt.loadMIDIFromFile(opts.file, function(m) {
       imported = m;
     }, function(err) {
-      console.log("ERROR");
       console.log(err);
     });
   });
