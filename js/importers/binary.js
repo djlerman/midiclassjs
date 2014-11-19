@@ -222,8 +222,7 @@ function parseEvent(track, bytes) {
     status: parseInteger(bytes, 1)
   };
 
-  parseMessage(track, evt, bytes);
-  return evt;
+  return parseMessage(track, evt, bytes);
 }
 
 /*!
@@ -231,35 +230,37 @@ function parseEvent(track, bytes) {
  *         is not recognized and there is no running status
  */
 function parseMessage(track, evt, bytes, checkedPrevious) {
-  if (isChannelEvent(evt.status)) {
-    parseChannelMessage(evt, bytes);
-  } else if (isMetaEvent(evt.status)) {
-    parseMetaMessage(evt, bytes);
-  } else if (isSysExEvent(evt.status)) {
-    parseSysExMessage(evt, bytes);
+  var parser = {
+    channel: parseChannelMessage,
+    meta: parseMetaMessage,
+    sysEx: parseSysExMessage
+  }[getKind(evt.status)];
+
+  if (parser) {
+    return parser(evt, bytes);
   } else if (!checkedPrevious && track.countEvents() > 0) {
     evt.runningStatus = true;
     bytes.unshift(evt.status);
     evt.status = track.event(track.countEvents() - 1).status;
-    parseMessage(track, evt, bytes, true);
+    return parseMessage(track, evt, bytes, true);    
   } else {
     throw errors.import.MessageType;
   }
-  return evt;
 }
 
-function isChannelEvent(status) {
+function getKind(status) {
   var type = ((status & 0xF0) >> 4);
-  return (0x8 <= type && type <= 0xE);
+  if (0x8 <= type && type <= 0xE) {
+    return 'channel';
+  } else if (status === 0xFF) {
+    return 'meta';
+  } else if (status === 0xF0 || status === 0xF7) {
+    return 'sysEx';
+  } else {
+    return false;
+  }
 }
 
-function isMetaEvent(status) {
-  return (status === 0xFF);
-}
-
-function isSysExEvent(status) {
-  return (status === 0xF0 || status === 0xF7);
-}
 
 /*!
  * @post evt.kind = 'channel'
@@ -268,19 +269,24 @@ function isSysExEvent(status) {
  */
 function parseChannelMessage(evt, bytes) {
   var type = (evt.status & 0xF0) >> 4;
-  var channel = (evt.status & 0x0F) >> 4;
+  var channel = (evt.status & 0x0F);
   var spec = data.binaryMap[type];
 
   evt.kind = spec.kind;
+
   evt.message = spec.message;
   evt.channel = channel;
   evt.parameters = {};
   // TODO: document that the parameters are available by name or index
   spec.parameters.forEach(function(p, index) {
-    evt.parameters[p.name] = parseInteger(bytes, 1);
-    evt.parameters[index] = evt.parameters[p.name];
+    if (p.importers && p.importers.binary) {
+      p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
+    } else {
+      // The pitchWheel event is the only one for which a multi-byte
+      // integer is required
+      evt.parameters[p.name] = parseInteger(bytes, 1);
+    }
   });
-
   return evt;
 }
 
@@ -316,12 +322,10 @@ function parseMetaMessage(evt, bytes) {
         p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
       } else {
         var value = valueParsers[p.valueType](bytes, p.length);
-        evt.parameters[p.name] = value;
-        evt.parameters[index] = evt.parameters[p.name];
+	evt.parameters[p.name] = value;
       }
     });
   }
-
   return evt;
 }
 

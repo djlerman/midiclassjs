@@ -52,12 +52,10 @@ function checkEvent(evt) {
   var spec = data.typeMap[evt.message];
   evt.kind = spec.kind;
 
-  evt.parameters = {};
   var checked = {};
   if (spec.length === 'variable') {
     checked.value = evt.parameters.value;
   }
-
   else {
     spec.parameters.forEach(function(p, index) {
       if (evt.parameters[p.name] === 'undefined') {
@@ -85,7 +83,7 @@ MIDITrack.prototype.countEvents = function(trackNumber) {
 
 MIDITrack.prototype.filterEvents = function(type) {
   return this._events.filter(function(evt) {
-    return (evt.message === type);
+        return (evt.message === type);
   });
 };
 

@@ -109,16 +109,15 @@ describe('importBinary', function() {
         this.expect(m.countTracks()).toBe(1);
         this.expect(m.track(0).countEvents()).toBe(events.length);
         var track = m.track(0);
-        for (var i = 0, n1 = events.length; i < n1; i++) {
-          this.expect(track.event(i).timestamp).toBe(events[i].time);
-          this.expect(track.event(i).message).toBe(events[i].type);
-          var names = Object.keys(events[i].parameters);
-          for (var j = 0, n2 = names.length; j < n2; j += 1) {
-            var expect = events[i].parameters[j];
-            var actual = track.event(i).parameters[j];
+	events.forEach(function(evt, i) {
+          this.expect(track.event(i).timestamp).toBe(evt.time);
+          this.expect(track.event(i).message).toBe(evt.type);
+          Object.keys(evt.parameters).forEach(function(name) {
+	    var expect = evt.parameters[name];
+            var actual = track.event(i).parameters[name];
             this.expect(expect).toBe(actual);
-          }
-        }
+	  });
+	});
       }
     });
   });
@@ -228,16 +227,15 @@ describe('importBinary', function() {
 	this.expect(m.countTracks()).toBe(1);
         this.expect(m.track(0).countEvents()).toBe(events.length);
         var track = m.track(0);
-        for (var i = 0, n1 = events.length; i < n1; i++) {
-          this.expect(track.event(i).timestamp).toBe(events[i].time);
-          this.expect(track.event(i).message).toBe(events[i].type);
-          var names = Object.keys(events[i].parameters);
-          for (var j = 0, n2 = names.length; j < n2; j += 1) {
-            var expect = events[i].parameters[j];
-            var actual = track.event(i).parameters[j];
+       	events.forEach(function(evt, i) {
+          this.expect(track.event(i).timestamp).toBe(evt.time);
+          this.expect(track.event(i).message).toBe(evt.type);
+          Object.keys(evt.parameters).forEach(function(name) {
+	    var expect = evt.parameters[name];
+            var actual = track.event(i).parameters[name];
             this.expect(expect).toBe(actual);
-          }
-        }
+	  });
+	});
       }
     });
   });
@@ -251,6 +249,16 @@ describe('importBinary', function() {
       }
     });
   });
+  it('should correctly import a pitchWheel event', function() {
+    expectLoaded({
+      file: 'spec/samples/mid/import-pitchWheel-type1.mid',
+      expects: function(m) {
+	var events = m.track(0).filterEvents('pitchWheel');
+
+	expect(events[0].parameters.pitchValue).toBe(0x2000);
+      }
+    });
+  });
 });
 
 function expectLoaded(opts) {
@@ -259,6 +267,7 @@ function expectLoaded(opts) {
     mt.loadMIDIFromFile(opts.file, function(m) {
       imported = m;
     }, function(err) {
+      console.log("ERROR");
       console.log(err);
     });
   });
