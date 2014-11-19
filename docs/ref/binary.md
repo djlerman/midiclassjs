@@ -143,67 +143,22 @@ A channel message has the following format:
 
 Where:
 
-- *type* is a 4-bit quantity in the range `0x8`&ndash;`0xE`.
+- *message* is a 4-bit quantity in the range `0x8`&ndash;`0xE`.
 - *channel* is a 4-bit quantity in the range `0x0`&ndash;`0xF`.
 - *data* is either 1 or 2 bytes of data, split into the *parameters*
   of the particular message.
  
-There are 7 channel message types, one for each possible value of `type`
+These are the 7 defined channel messages:
 
-* "Note Off" (`0x8`)
-* "Note On" (`0x9`)
-* "AfterTouch" (`0xA`)
-* "Control Change" (`0xB`)
-* "Program Change" (`0xC`)
-* "Channel Pressure" (`0xD`)
-* "Pitch Wheel" (`0xE`)
-
-#### "Note Off"
-- status
-  - first 4 bits = `0x8`
-  - next 4 indicate channel
-- parameters
-  - `note`
-  - `velocity`
-
-####  "Note On"
-- status byte of `0x9`
-- parameters
-    - `note`
-    - `velocity`
-
-####  "AfterTouch"
-- status byte of `0xA`
-- parameters
-    - `note`
-    - `amount`
-
-####  "Control Change"
-- status byte of `0xB`
-- parameters
-    - `controller`
-    - `value`
-
-####  "Program Change"
-- status byte of `0xC`
-- parameters
-    - `program`
-
-####  "Channel Pressure"
-- status byte of `0xD`
-- parameters
-    - `amount`
-
-####  "Pitch Wheel"
-- status byte of `0xE`
-- parameters
-    - `pitchValue1`
-    - `pitchValue2`
-
-### Meta Messages
-
-### System-Exclusive ("sysex") Messages
-
+Message    	  |Status  |Byte 1          |Byte 2
+------------------|--------|----------------|-----------
+Note Off    	  |`0x8`   |`note`          |`velocity`
+Note On     	  |`0x9`   |`note`          |`velocity`
+After Touch 	  |`0xA`   |`note`          |`amount`
+Control Change    |`0xB`   |`controller`    |`value`
+Program  Change   |`0xC`   |`program`       | N/A
+Channel Pressure  |`0xD`   |`amount`        | N/A
+Pitch Wheel       |`0xE`   |`pitchValue1`   |`pitchValue2`
 
 ## References
 

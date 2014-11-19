@@ -210,88 +210,66 @@ MIDI section  A---------&gt; B---------&gt;</code></pre>
 <p><code>&lt;type&gt; &lt;channel&gt; &lt;data&gt;</code></p>
 <p>Where:</p>
 <ul>
-<li><em>type</em> is a 4-bit quantity in the range <code>0x8</code>&ndash;<code>0xE</code>.</li>
+<li><em>message</em> is a 4-bit quantity in the range <code>0x8</code>&ndash;<code>0xE</code>.</li>
 <li><em>channel</em> is a 4-bit quantity in the range <code>0x0</code>&ndash;<code>0xF</code>.</li>
 <li><em>data</em> is either 1 or 2 bytes of data, split into the <em>parameters</em>
 of the particular message.</li>
 </ul>
-<p>There are 7 channel message types, one for each possible value of <code>type</code></p>
-<ul>
-<li>&quot;Note Off&quot; (<code>0x8</code>)</li>
-<li>&quot;Note On&quot; (<code>0x9</code>)</li>
-<li>&quot;AfterTouch&quot; (<code>0xA</code>)</li>
-<li>&quot;Control Change&quot; (<code>0xB</code>)</li>
-<li>&quot;Program Change&quot; (<code>0xC</code>)</li>
-<li>&quot;Channel Pressure&quot; (<code>0xD</code>)</li>
-<li>&quot;Pitch Wheel&quot; (<code>0xE</code>)</li>
-</ul>
-<h4 id="-note-off-">&quot;Note Off&quot;</h4>
-<ul>
-<li>status<ul>
-<li>first 4 bits = <code>0x8</code></li>
-<li>next 4 indicate channel</li>
-</ul>
-</li>
-<li>parameters<ul>
-<li><code>note</code></li>
-<li><code>velocity</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-note-on-">&quot;Note On&quot;</h4>
-<ul>
-<li>status byte of <code>0x9</code></li>
-<li>parameters<ul>
-<li><code>note</code></li>
-<li><code>velocity</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-aftertouch-">&quot;AfterTouch&quot;</h4>
-<ul>
-<li>status byte of <code>0xA</code></li>
-<li>parameters<ul>
-<li><code>note</code></li>
-<li><code>amount</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-control-change-">&quot;Control Change&quot;</h4>
-<ul>
-<li>status byte of <code>0xB</code></li>
-<li>parameters<ul>
-<li><code>controller</code></li>
-<li><code>value</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-program-change-">&quot;Program Change&quot;</h4>
-<ul>
-<li>status byte of <code>0xC</code></li>
-<li>parameters<ul>
-<li><code>program</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-channel-pressure-">&quot;Channel Pressure&quot;</h4>
-<ul>
-<li>status byte of <code>0xD</code></li>
-<li>parameters<ul>
-<li><code>amount</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="-pitch-wheel-">&quot;Pitch Wheel&quot;</h4>
-<ul>
-<li>status byte of <code>0xE</code></li>
-<li>parameters<ul>
-<li><code>pitchValue1</code></li>
-<li><code>pitchValue2</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="meta-messages">Meta Messages</h3>
-<h3 id="system-exclusive-sysex-messages">System-Exclusive (&quot;sysex&quot;) Messages</h3>
+<p>These are the 7 defined channel messages:</p>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Status</th>
+<th>Byte 1</th>
+<th>Byte 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Note Off</td>
+<td><code>0x8</code></td>
+<td><code>note</code></td>
+<td><code>velocity</code></td>
+</tr>
+<tr>
+<td>Note On</td>
+<td><code>0x9</code></td>
+<td><code>note</code></td>
+<td><code>velocity</code></td>
+</tr>
+<tr>
+<td>After Touch</td>
+<td><code>0xA</code></td>
+<td><code>note</code></td>
+<td><code>amount</code></td>
+</tr>
+<tr>
+<td>Control Change</td>
+<td><code>0xB</code></td>
+<td><code>controller</code></td>
+<td><code>value</code></td>
+</tr>
+<tr>
+<td>Program  Change</td>
+<td><code>0xC</code></td>
+<td><code>program</code></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Channel Pressure</td>
+<td><code>0xD</code></td>
+<td><code>amount</code></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Pitch Wheel</td>
+<td><code>0xE</code></td>
+<td><code>pitchValue1</code></td>
+<td><code>pitchValue2</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/MIDI_timecode">Wikipedia - MIDI Timecode</a></li>

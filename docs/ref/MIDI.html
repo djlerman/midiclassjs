@@ -112,7 +112,34 @@
     </style>
   </head>
   <body>  
-    <h1 id="midi-sequence">MIDI Sequence</h1>
+    <h1 id="midi-sequences">MIDI Sequences</h1>
+<h2 id="events">Events</h2>
+<h2 id="message-details">Message Details</h2>
+<h3 id="channel-voice-messages">Channel (Voice) Messages</h3>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Description</th>
+<th>Parameter 1</th>
+<th>Parameter 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Note Off</td>
+<td>Silence a given note</td>
+<td>note</td>
+<td>velocity (of release)</td>
+</tr>
+</tbody>
+</table>
+<p>Note On | Attack a given note |note | velocity ( force of attack). <strong>Note that a value of 0 translates in MIDI devices as a Note Off event.</strong></p>
+<p>AfterTouch  | A change in the pressure of a note after the attack |  | amount (of pressure)</p>
+<p>Control Change | Sends a &quot;controller&quot; some &quot;value&quot;. A &quot;controller&quot; is usually an &quot;effect&quot; of some sort, affecting a single channel. The controller number identifies which effect to use. | controller | value (sent to controller)</p>
+<p>Program Change | Changes the current program (instrument) for a given channel | instrument | N/A</p>
+<p>Channel Pressure | Varies the amount of pressure for the currently played note (may affect timbre, volume, etc.) | amount (of pressure) | asdf</p>
+<p>Pitch Wheel | Bends the pitch of the currently playing note some number of semitones, either up or down | +/-semitones | N/A</p>
 <h2 id="smpte-smpte-">SMPTE [SMPTE]</h2>
 
   </body>
