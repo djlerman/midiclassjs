@@ -83,7 +83,7 @@ MIDITrack.prototype.countEvents = function(trackNumber) {
 
 MIDITrack.prototype.filterEvents = function(type) {
   return this._events.filter(function(evt) {
-        return (evt.message === type);
+    return (evt.message === type);
   });
 };
 
