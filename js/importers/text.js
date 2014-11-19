@@ -34,7 +34,7 @@ function importText(midi, text) {
 
   var trackLines = splitTracks(lines);
   if (trackLines.length < midi.countTracks()) {
-    throw errors.Import.TracksMissing;
+    throw errors.import.TracksMissing;
   }
   trackLines.forEach(function(tl, index) {
     parseTrack(midi.track(index), tl);
@@ -46,7 +46,7 @@ function parseTrack(track, lines) {
   var trackHeader = lines.shift();
 
   if (trackHeader !== strings.TRACK_START_MARKER) {
-    throw errors.Import.TrackPrelude;
+    throw errors.import.TrackPrelude;
   }
 
   lines.forEach(function(line) {
@@ -59,13 +59,13 @@ function parseEvent(track, text) {
 
   var delta = parseInt(pieces.shift());
   if (pieces.length < 1 || isNaN(delta)) {
-    throw errors.Import.DeltaInvalid;
+    throw errors.import.DeltaInvalid;
   }
 
   var type = extractType(pieces);
 
   if (type === undefined) {
-    throw errors.Import.MessageType;
+    throw errors.import.MessageType;
   }
 
   var msg = parseMessage(type, pieces);
@@ -86,7 +86,7 @@ function parseMessage(spec, pieces) {
     case 'sysex':
       return parseSysExMessage(spec, pieces);
     default:
-      throw errors.Import.MessageType;
+      throw errors.import.MessageType;
   }
 }
 
@@ -129,10 +129,11 @@ function parseHeader(midi, text) {
   var trackCount = parseInt(pieces[2]);
 
   if (pieces[0] !== strings.HEADER_PRELUDE) {
-    throw errors.Import.HeaderPrelude;
+    throw errors.import.HeaderPrelude;
   }
-
   addDeclaredTracks(midi, trackCount);
+  verifyDeclaredType(midi, declaredType);
+
 
   // TODO: SMPTE timing
   //<division> is either a positive number (giving the time resolution in
@@ -144,7 +145,7 @@ function parseHeader(midi, text) {
 
 function verifyDeclaredType(midi, declaredType) {
   if (isNaN(declaredType)) {
-    throw errors.Import.Type;
+    throw errors.import.Type;
   }
 
   if (midi.type() !== declaredType) {
@@ -153,26 +154,21 @@ function verifyDeclaredType(midi, declaredType) {
       // this method on the MF instance
       midi._type = 1;
     } else {
-      throw errors.Import.Type0MultiTrack;
+      throw errors.import.Type0MultiTrack;
     }
   }
 }
 function addDeclaredTracks(midi, trackCount) {
   if (isNaN(trackCount) || trackCount < 0) {
-    throw errors.Import.TrackCount;
+    throw errors.import.TrackCount;
   }
   try {
     for (var i = 0; i < trackCount; i += 1) {
       midi.addTrack();
     }
-  } catch (err) {
-    if (err === errors.MIDI.TrackOverflow) {
-      throw errors.Import.TrackCount;
-    } else {
-      throw err;
-    }
+  } catch (e) {
+    throw errors.import.TrackCount;
   }
-
 }
 
 
