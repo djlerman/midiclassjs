@@ -10,10 +10,10 @@ var HEADER_PRELUDE = 'MThd';
 var TRACK_PRELUDE = 'MTrk';
 
 /*!
+ *
  * @param {Array} bytes - the byte array representing the binary file
  * @return {MIDIFile} - the MIDIFile representation of the binary file
  */
-
 function importBinary(m, bytes) {
   parseHeader(m, bytes);
   for (var i = 0, n = m.countTracks(); i < n; i += 1) {
