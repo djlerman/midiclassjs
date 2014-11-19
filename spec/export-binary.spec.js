@@ -1,5 +1,4 @@
 var mt = require('../js/index');
-var data = require('../js/data');
 
 describe('exportBinary', function() {
   it('should export an empty MIDIFile as an empty SMF', function() {
