@@ -60,6 +60,7 @@
   exports.errors = require('./errors');
   exports.Data = require('./data');
   exports.Utils = require('./util');
+  exports.util = require('./util');
 
 
   global.MIDITools = module.exports;
