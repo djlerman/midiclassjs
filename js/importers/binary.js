@@ -303,14 +303,13 @@ function parseMetaMessage(evt, bytes) {
   var spec = data.binaryMap[type];
   if (!spec) {
     throw errors.import.MetaType;
+    
   }
 
-  // TODO: compare length and throw error
   evt.kind = spec.kind;
   evt.message = spec.message;
   evt.parameters = {};
 
-  var cutLength = (spec.length === 'variable' ? length : spec.length);
   if (spec.length === 'variable') {
     evt.parameters.value = valueParsers[spec.valueType](bytes, length);
   } else {

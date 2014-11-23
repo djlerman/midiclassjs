@@ -3,72 +3,83 @@ Up-front:
 	- pick a module-ordering scheme
 	- read styleguide in docs/ref
 MIDIFile:
-	constructor: @done(2014-11-18)
-		- empty @done(2014-11-18)
-		- with type 1 @done(2014-11-18)
-		- with invalid type @done(2014-11-18)
-	tracks: @done(2014-11-18)
-		- addTrack() @code @done(2014-11-18)
-			- second track goes to type 1 @done(2014-11-18)
-			- too many throws error @done(2014-11-18)
-		- removeTrack() @code @done(2014-11-18)
-			- remove existingb @done(2014-11-18)
-			- remove non-existing @done(2014-11-18)
-		- countTracks() @code @done(2014-11-18)
-		- track(i) @code @done(2014-11-18)
-			- valid calls @done(2014-11-18)
-			- invalid calls @done(2014-11-18)
-	events:
-		- filterEvents() /* over all tracks */ @none
-			- wait for MIDITrack's filterEvents @done(2014-11-19)
-	header info:
-		- getTiming() @code @done(2014-11-18)
-		- type() @code @done(2014-11-18)
-	import/export:
-		- importBinary @testing
-			- 
-		- importBase64 @started @dep(importBinary)
-		- importText @started
-		- importXML @none
-		- exportBinary @started
-		- exportBase64 @started @dep(exportBinary)
-		- exportText @started
-		- exportXML @none
+	docs:
+		- summary
+	code:
+		constructor: @done(2014-11-18)
+			- empty @done(2014-11-18)
+			- with type 1 @done(2014-11-18)
+			- with invalid type @done(2014-11-18)
+		tracks: @done(2014-11-18)
+			- addTrack() @code @done(2014-11-18)
+				- second track goes to type 1 @done(2014-11-18)
+				- too many throws error @done(2014-11-18)
+			- removeTrack() @code @done(2014-11-18)
+				- remove existingb @done(2014-11-18)
+				- remove non-existing @done(2014-11-18)
+			- countTracks() @code @done(2014-11-18)
+			- track(i) @code @done(2014-11-18)
+				- valid calls @done(2014-11-18)
+				- invalid calls @done(2014-11-18)
+		events:
+			- filterEvents() /* over all tracks */ @none
+				- wait for MIDITrack's filterEvents @done(2014-11-19)
+		header info:
+			- getTiming() @code @done(2014-11-18)
+			- type() @code @done(2014-11-18)
+		import/export:
+			- importBinary @testing
+			- importBase64 @started @dep(importBinary)
+			- importText @started
+			- importXML @none
+			- exportBinary @started
+			- exportBase64 @started @dep(exportBinary)
+			- exportText @started
+			- exportXML @none
 MIDITrack:
-	- addEvent() 
-		- add valid event
-		- add invalid event
-		- add event with invalid type
-		- add event with invalid parameter(s)
-	- removeEvent(i) @code
-		- replace valid event
-		- replace invalid event
-		- replace event with invalid type - check preservation
-		- replace event with invalid parameter(s) - check preservation
-	- event(i) @code 
-		- valid index
-		- invalid index
-	- countEvents() @code @done(2014-11-18)
-	- filterEvents() @none
-		- decide on API
+	docs:
+		- summary
+	code:
+		addEvent():
+			- add valid event
+			- add invalid event
+			- add event with invalid type
+			- add event with invalid parameter(s)
+		removeEvent(i): @code
+			- replace valid event
+			- replace invalid event
+			- replace event with invalid type - check preservation
+			- replace event with invalid parameter(s) - check preservation
+		event(i): @code 
+			- valid index
+			- invalid index
+		countEvents(): @code @done(2014-11-18)
+		filterEvents(): @none
+			- decide on API
 MIDISequence:
-	- getTempo() @code
-	- setTempo() @code
-	- soloChannel(i) @none
-	- transpose(numSteps) @none
-	- setVolume(level) @none
-	- getVolume(level) @none
-	- channel(i) @code
-	- getTitle() @code
-	- setTitle(t) @code
-	- getVolume() @code
-	- setVolume() /* over all tracks */ @code
-	- exportFile() /* creates COPY first */ @started
-	- more metadata methods
+	docs:
+		- summary
+	code:
+		- getTempo() @code
+		- setTempo() @code
+		- soloChannel(i) @none
+		- transpose(numSteps) @none
+		- setVolume(level) @none
+		- getVolume(level) @none
+		- channel(i) @code
+		- getTitle() @code
+		- setTitle(t) @code
+		- getVolume() @code
+		- setVolume() /* over all tracks */ @code
+		- exportFile() /* creates COPY first */ @started
+		- more metadata methods
 MIDIChannel:
-	- transpose(numSteps) @none
-	- setVolume(level) @none
-	- getVolume(level) @none
+	docs:
+		- summary
+	code:
+		- transpose(numSteps) @none
+		- setVolume(level) @none
+		- getVolume(level) @none
 Utils:
 	- eventToText(evt) @none
 	- eventToXML(evt) @none 

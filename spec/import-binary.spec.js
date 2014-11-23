@@ -120,7 +120,7 @@ describe('importBinary', function() {
       }, this);
     });
 
-  it('correctly parses channel events of a Type-0 MIDI file',
+  it('correctly parses events of a Type-0 MIDI file',
     function() {
 
       var types = data.eventTypes;
@@ -152,6 +152,12 @@ describe('importBinary', function() {
         time: 0x00,
         parameters: {
           microsecondsPerBeat: 500000
+        }
+      }, {
+        type: types.sequenceNumber,
+        time: 0x00,
+        parameters: {
+          number: 0x9C4 // 2500
         }
       }, {
         type: types.programChange,
