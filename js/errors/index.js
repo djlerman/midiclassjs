@@ -18,6 +18,7 @@ exports.import = {
   HeaderSize: new Error('File size is smaller than its declared header size.'),
   MessageType: new Error('File had a MIDI message with an unknown type.'),
   MetaType: new Error('File had a meta message with an unknown subtype.'),
+  ChannelType: new Error('File had a channel message with an unknown subtype.'),
   TrackCount: new Error('File declared a number of tracks outside 0-(2^16).'),
   TrackLength: new Error(
     'File contains a track declared with the wrong size.'),

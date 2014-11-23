@@ -4,12 +4,17 @@
   var MIDIFile = require('./MIDIFile');
   var MIDISequence = require('./MIDISequence');
   exports.MIDIFile = MIDIFile;
+
+
   exports.createMIDI = function(type) {
     return new MIDIFile(type);
   };
+
+
   exports.createSequence = function() {
     return new MIDISequence();
   };
+
 
   exports.loadMIDIFromURL = function(src, callback, error) {
     if (!src || !callback) {
@@ -32,6 +37,7 @@
     });
   };
 
+  
   exports.loadMIDIFromFile = function(path, callback, error) {
     if (!path || !callback) {
       throw new Error('Both parameters required!');

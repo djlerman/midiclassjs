@@ -3,7 +3,7 @@ var data = require('../js/data');
 var fs = require('fs');
 
 describe('importBinary', function() {
-  
+
   /*
    * Header parsing
    */
@@ -112,11 +112,9 @@ describe('importBinary', function() {
         expect(track.event(i).timestamp).toBe(
           evt.time);
         expect(track.event(i).message).toBe(evt.type);
-        Object.keys(evt.parameters).forEach(function(
-          name) {
+        Object.keys(evt.parameters).forEach(function(name) {
           var expected = evt.parameters[name];
-          var actual = track.event(i).parameters[
-            name];
+          var actual = track.event(i).parameters[name];
           expect(expected).toBe(actual);
         });
       }, this);
@@ -135,6 +133,19 @@ describe('importBinary', function() {
           denominator: 2,
           metronome: 24,
           thirtySeconds: 8
+        }
+      }, {
+        type: types.keySignature,
+        time: 0x00,
+        parameters: {
+          key: 3,
+          scale: 0
+        }
+      }, {
+        type: types.text,
+        time: 0x00,
+        parameters: {
+          value: "TEST MIDI"
         }
       }, {
         type: types.setTempo,
@@ -239,13 +250,17 @@ describe('importBinary', function() {
         });
       }, this);
     });
+
+
   it('should correctly import a setTempo event', function() {
-      var file = fs.readFileSync(
-        'spec/samples/mid/setTempo-type0.mid');
+    var file = fs.readFileSync(
+      'spec/samples/mid/setTempo-type0.mid');
     var m = mt.MIDIFile.fromBinary(file);
-          var events = m.track(0).filterEvents('setTempo');
-          expect(events.length).toBeGreaterThan(0);
+    var events = m.track(0).filterEvents('setTempo');
+    expect(events.length).toBeGreaterThan(0);
   });
+
+
   it('should correctly import a pitchWheel event', function() {
     var file = fs.readFileSync(
       'spec/samples/mid/import-pitchWheel-type1.mid');
@@ -253,8 +268,11 @@ describe('importBinary', function() {
     var events = m.track(0).filterEvents('pitchWheel');
     expect(events[0].parameters.pitchValue).toBe(0x2000);
   });
+
+
   it('should correctly import an afterTouch event', function() {
-    var file = fs.readFileSync('spec/samples/mid/import-afterTouch-type0.mid');
+    var file = fs.readFileSync(
+      'spec/samples/mid/import-afterTouch-type0.mid');
     var m = mt.MIDIFile.fromBinary(file);
     expect(m.track(0).event(0).message).toBe('noteOn');
     expect(m.track(0).event(1).message).toBe('afterTouch');
@@ -265,13 +283,13 @@ describe('importBinary', function() {
     expect(events[0].parameters.amount).toBe(0x40);
   });
 
+
   it('should correctly import a channelPressure event', function() {
     var file = fs.readFileSync(
       'spec/samples/mid/import-channelPressure-type0.mid');
     var m = mt.MIDIFile.fromBinary(file);
     expect(m.track(0).event(0).message).toBe('noteOn');
-    expect(m.track(0).event(1).message).toBe(
-      'channelPressure');
+    expect(m.track(0).event(1).message).toBe('channelPressure');
     expect(m.track(0).event(2).message).toBe('noteOff');
     expect(m.track(0).event(3).message).toBe('endOfTrack');
     var events = m.track(0).filterEvents('channelPressure');

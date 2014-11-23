@@ -242,6 +242,7 @@ function parseMessage(track, evt, bytes, checkedPrevious) {
     evt.runningStatus = true;
     bytes.unshift(evt.status);
     evt.status = track.event(track.countEvents() - 1).status;
+    console.log('running' + evt.status);
     return parseMessage(track, evt, bytes, true);    
   } else {
     throw errors.import.MessageType;
@@ -272,8 +273,10 @@ function parseChannelMessage(evt, bytes) {
   var channel = (evt.status & 0x0F);
   var spec = data.binaryMap[type];
 
+  if (!spec) {
+    throw errors.import.ChannelType;
+  }
   evt.kind = spec.kind;
-
   evt.message = spec.message;
   evt.channel = channel;
   evt.parameters = {};
@@ -299,12 +302,13 @@ function parseMetaMessage(evt, bytes) {
   var type = parseInteger(bytes, 1);
   var length = parseInteger(bytes, 1);
   var spec = data.binaryMap[type];
-
   if (!spec) {
+    console.log(bytes.map(function(b){return Number(b).toString(16);}));
+    console.log("ERR"+ type);
     throw errors.import.MetaType;
   }
-  // TODO: compare length and throw error
 
+  // TODO: compare length and throw error
   evt.kind = spec.kind;
   evt.message = spec.message;
   evt.parameters = {};
@@ -312,15 +316,13 @@ function parseMetaMessage(evt, bytes) {
   var cutLength = (spec.length === 'variable' ? length : spec.length);
   if (spec.length === 'variable') {
     evt.parameters.value = valueParsers[spec.valueType](bytes, length);
-    for (var i = 0; i < cutLength; i += 1) {
-      bytes.shift();
-    }
   } else {
     // TODO: document that the parameters are available by name or index
     spec.parameters.forEach(function(p, index) {
       if (p.importers && p.importers.binary) {
         p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
       } else {
+	console.log(p);
         var value = valueParsers[p.valueType](bytes, p.length);
 	evt.parameters[p.name] = value;
       }

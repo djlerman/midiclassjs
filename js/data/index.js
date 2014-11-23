@@ -147,6 +147,7 @@ var eventMap = {
     kind: 'meta',
     name: 'Text',
     length: 'variable',
+    valueType: 'string',
     formats: {
       binary: 0x01,
       text: 'Meta Text',
@@ -158,6 +159,7 @@ var eventMap = {
     kind: 'meta',
     name: 'Copyright Notice',
     length: 'variable',
+    valueType: 'string',
     formats: {
       binary: 0x02,
       text: 'Meta Copyright',
