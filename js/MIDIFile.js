@@ -146,11 +146,23 @@ MIDIFile.prototype.exportBase64 = function() {
   return 'base64,' + window.btoa(this.exportBinary());
 };
 
+
+/**
+ * Constructs a new MIDIFile whose contents reflect the representation
+ * in `binary`. This string is expected to conform to the standard MIDI
+ * file format.
+ *
+ * @param {String} binary - A string of binary data, as provided by
+ * an XMLHttpRequest for a midi file.
+ *
+ * @throws errors.imports.* if parsing the binary string fails,
+ *         or if the data within the string is non-conformant.
+ */
+
 MIDIFile.fromBinary = function(binary) {
-  return importers.binary(new MIDIFile(), binary);
+  return importers.binary(
+    new MIDIFile(), Array.prototype.slice.call(binary));
 };
-
-
 
 
 MIDIFile.importText = function(text) {
