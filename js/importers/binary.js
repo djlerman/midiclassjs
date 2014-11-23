@@ -242,7 +242,6 @@ function parseMessage(track, evt, bytes, checkedPrevious) {
     evt.runningStatus = true;
     bytes.unshift(evt.status);
     evt.status = track.event(track.countEvents() - 1).status;
-    console.log('running' + evt.status);
     return parseMessage(track, evt, bytes, true);    
   } else {
     throw errors.import.MessageType;
@@ -322,7 +321,6 @@ function parseMetaMessage(evt, bytes) {
       if (p.importers && p.importers.binary) {
         p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
       } else {
-	console.log(p);
         var value = valueParsers[p.valueType](bytes, p.length);
 	evt.parameters[p.name] = value;
       }
