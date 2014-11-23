@@ -145,7 +145,7 @@ describe('importBinary', function() {
         type: types.text,
         time: 0x00,
         parameters: {
-          value: "TEST MIDI"
+          value: 'TEST MIDI'
         }
       }, {
         type: types.setTempo,

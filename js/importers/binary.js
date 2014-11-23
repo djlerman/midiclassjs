@@ -302,8 +302,6 @@ function parseMetaMessage(evt, bytes) {
   var length = parseInteger(bytes, 1);
   var spec = data.binaryMap[type];
   if (!spec) {
-    console.log(bytes.map(function(b){return Number(b).toString(16);}));
-    console.log("ERR"+ type);
     throw errors.import.MetaType;
   }
 

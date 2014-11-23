@@ -9,9 +9,11 @@ var importers = require('./importers');
 var exporters = require('./exporters');
 var MIDITrack = require('./MIDITrack');
 
+
 /**
  * Creates a new MIDIFile
  *
+ * @class
  * @param {Number} [type] - the type of the midifile; only needed
  *        if you desire a single-track Type-1 file
  * @throws errors.parameters.Type if type is not 0 or 1
@@ -41,7 +43,7 @@ MIDIFile.prototype.type = function() {
 
 /**
  * Returns the {miditools.MIDITrack} at index `n`
- * @returns {miditools.MIDITrack} the track at index `n`
+ * @returns {MIDITrack} the track at index `n`
  */
 
 MIDIFile.prototype.track = function(n) {
@@ -54,7 +56,7 @@ MIDIFile.prototype.track = function(n) {
 
 /**
  * Adds a new, empty track to the file, then returns the track.
- * @returns {MIDITools.MIDITrack} the newly-added track
+ * @returns {MIDITrack} the newly-added track
  * @throws errors.midi.trackOverflow if the file already has
  *         the maximum number of tracks
  */
@@ -98,9 +100,10 @@ MIDIFile.prototype.countTracks = function() {
 
 
 /**
- * @returns the timing of the MIDIFile, which is usually a measure
- *          of *ticks per beat*; see ??? for details
- * TODO: put reference in above description
+ * @returns {MIDIFile~FramesSpec|MIDIFile~TickSpec}
+ * the timing of the MIDIFile, which is usually a measure
+ * of *ticks per beat*; see ??? for details
+ * @todo put reference in above description
  */
 
 MIDIFile.prototype.getTiming = function() {
@@ -110,15 +113,31 @@ MIDIFile.prototype.getTiming = function() {
 
 
 /**
+ * Specifies a fps resolution header.
+ * TODO: add more
+ * @typedef MIDIFile~FramesSpec
+ * @param {Number} framesPerSecond
+ * @param {Number} ticksPerFrame
+ */
+
+/**
+ * Specifies a 'ticks per beat' resolution header.
+ * TODO: add more
+ * @typedef MIDIFile~TickSpec
+ * @param {String} type
+ * @param {Number} ticksPerBeat
+ */
+
+/**
  * Sets the MIDI file's header field for time divisions.
- * @param {Number|PlainObject} If `timing` is a number,
- *        then the MIDIFile's division type will be set to
- *        `ticksPerBeat` and the number will be used as the
- *        value of this field. If `timing` is an object,
- *        then it must have the properties `framesPerSecond` and
- *        `ticksPerFrame`, and these will be used to set the
- *        time division as documented in ???
- * TODO: add reference
+ * @param {Number|MIDIFile~FramesSpec} timing
+ * if `timing` is a number, then the MIDIFile's division type
+ * will be set to `ticksPerBeat` and the number will be used as the
+ * value of this field. If `timing` is an object,
+ * then it must have the properties `framesPerSecond` and
+ * `ticksPerFrame`, and these will be used to set the
+ * time division as documented in ???
+ * @todo add reference
  */
 
 MIDIFile.prototype.setTiming = function(timing) {
@@ -132,7 +151,6 @@ MIDIFile.prototype.setTiming = function(timing) {
     this._timing.type = 'framesPerSecond';
     this._timing.framesPerSecond = timing.framesPerSecond;
     this._timing.ticksPerFrame = timing.ticksPerFrame;
-    this._channels = [];
   } else if (typeof timing === 'number') {
     this._timing.type = 'ticksPerBeat';
     this._timing.ticksPerBeat = timing;

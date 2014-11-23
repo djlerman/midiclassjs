@@ -4,7 +4,7 @@ var data = require('./data');
 var errors = require('./errors');
 
 /**
- * Creates a new MIDITrack
+ * @class MIDITrack
  */
 function MIDITrack() {
   this._events = [];

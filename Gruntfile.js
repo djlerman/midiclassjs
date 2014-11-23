@@ -20,17 +20,15 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
-
-    dox: {
-      options: {
-        title: "MIDITools"
-      },
-      files: {
-        src: ['js/'],
-        dest: 'docs/api/'
+    jsdoc: {
+      dist: {
+        src: ['js/*.js', 'js/*/*.js'],
+        options: {
+          destination: 'docs/api/',
+          configure: 'etc/jsdoc.conf'
+        }
       }
     },
-
     docco: {
       debug: {
         src: ['js/*.js'],
@@ -76,7 +74,9 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'browserify', 'jasmine_node', 'dox', 'docco', 'markdown']
+      tasks: ['jshint', 'browserify', 'jasmine_node', 'jsdoc', 'docco'
+//        ,'markdown'
+      ]
     }
   });
 
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
       'grunt-contrib-jshint',
       'grunt-contrib-watch',
       'grunt-browserify',
-      'grunt-dox',
+      'grunt-jsdoc',
       'grunt-docco',
       'grunt-markdown'
     ],

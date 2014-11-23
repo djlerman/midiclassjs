@@ -14,11 +14,12 @@
     "grunt-docco": "^0.3.3",
     "grunt-dox": "^0.5.0",
     "grunt-jasmine-node": "^0.2.1",
-    "grunt-jsdoc": "*",
+    "grunt-jsdoc": "^0.5.7",
     "grunt-markdown": "^0.6.1",
     "grunt-simple-mocha": "^0.4.0",
     "jaguarjs-jsdoc": "0.0.1",
     "jasmine-node": "^1.14.5",
+    "jsdoc": "^3.3.0-alpha10",
     "mocha": "^2.0.1",
     "watchify": "^2.1.1"
   }
