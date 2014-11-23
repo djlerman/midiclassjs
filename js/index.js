@@ -1,6 +1,6 @@
 (function(global) {
   var http = require('http');
-  var fs = require('fs');  
+  var fs = require('fs');
   var MIDIFile = require('./MIDIFile');
   var MIDISequence = require('./MIDISequence');
   exports.MIDIFile = MIDIFile;
@@ -38,10 +38,11 @@
     }
     fs.readFile(path, function(err, data) {
       if (err) {
-	return (error && error(err)) || false;
+        return (error && error(err)) || false;
       }
       try {
-        return callback(MIDIFile.fromBinary(Array.prototype.slice.call(data)));
+        return callback(MIDIFile.fromBinary(Array.prototype.slice.call(
+          data)));
       } catch (e) {
         return (error && error(e)) || false;
       }
@@ -50,9 +51,9 @@
   };
 
   function toByteString(str) {
-  return Array.prototype.map.call(str, function(ch) {
-    return (0x00FF & ch.charCodeAt(0));
-  });
+    return Array.prototype.map.call(str, function(ch) {
+      return (0x00FF & ch.charCodeAt(0));
+    });
   }
 
 

@@ -1,7 +1,9 @@
 var mt = require('../js/index');
 var data = require('../js/data');
 var fs = require('fs');
+
 describe('importBinary', function() {
+  
   /*
    * Header parsing
    */
