@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: midijs-api</title>
+    
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":false,"cleverLinks":false,"applicationName":"MIDITools","meta":{"title":"","description":"","keyword":""},"linenums":true,"default":{}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">MIDITools</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="MIDITools">
+            <span class="title">
+                <a href="MIDITools.html">MIDITools</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="MIDIFile">
+            <span class="title">
+                <a href="MIDIFile.html">MIDIFile</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="MIDIFile#type"><a href="MIDIFile.html#type">type</a></li>
+            
+                <li data-name="MIDIFile#track"><a href="MIDIFile.html#track">track</a></li>
+            
+                <li data-name="MIDIFile#addTrack"><a href="MIDIFile.html#addTrack">addTrack</a></li>
+            
+                <li data-name="MIDIFile#removeTrack"><a href="MIDIFile.html#removeTrack">removeTrack</a></li>
+            
+                <li data-name="MIDIFile#countTracks"><a href="MIDIFile.html#countTracks">countTracks</a></li>
+            
+                <li data-name="MIDIFile#getTiming"><a href="MIDIFile.html#getTiming">getTiming</a></li>
+            
+                <li data-name="MIDIFile#setTiming"><a href="MIDIFile.html#setTiming">setTiming</a></li>
+            
+                <li data-name="MIDIFile.fromBinary"><a href="MIDIFile.html#fromBinary">fromBinary</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="">Tutorial: midijs-api</h1>
+        <section>
+    
+<header>
+    
+
+    <h2>midijs-api</h2>
+</header>  
+
+<article>
+    <h2>MIDI.loadPlugin.js</h2>
+<p>Decides which framework is best to use, and sends request.</p>
+<pre><code>// interface to download soundfont, then execute callback;
+MIDI.loadPlugin(callback, soundfont);</code></pre>
+<pre><code>// simple example to get started;
+MIDI.loadPlugin(function() {
+    MIDI.noteOn(0, 100, 127, 0); // plays note once loaded
+}, &quot;soundfont/soundfont-ogg-guitar.js&quot;);</code></pre>
+<h2>MIDI.Soundfont.js</h2>
+<p>Customizable base64 Soundfont.</p>
+<p>Encode your own soundfonts, Drums, Guitars, and so on.
+You are listening to Fluid (R3) General MIDI SoundFont (GM).</p>
+<h2>MIDI.Plugin.js</h2>
+<p>Ties together the following frameworks;</p>
+<pre><code>MIDI.noteOn(channel, note, velocity, delay);
+MIDI.noteOff(channel, note, delay);
+MIDI.chordOn(channel, chord, velocity, delay);
+MIDI.chordOff(channel, chord, delay);
+MIDI.keyToNote = object; // A0 => 21
+MIDI.noteToKey = object; // 21 => A0</code></pre>
+<h2>MIDI.Player.js</h2>
+<p>Streams the MIDI to the browser.</p>
+<pre><code>MIDI.Player.currentTime = integer; // time we are at now within the song.
+MIDI.Player.endTime = integer; // time when song ends.
+MIDI.Player.playing = boolean; // are we playing? yes or no.
+MIDI.Player.loadFile(file, callback); // load .MIDI from base64 or binary XML request.
+MIDI.Player.start(); // start the MIDI track (you can put this in the loadFile callback)
+MIDI.Player.resume(); // resume the MIDI track from pause.
+MIDI.Player.pause(); // pause the MIDI track.
+MIDI.Player.stop(); // stops all audio being played, and resets currentTime to 0.
+Callback whenever a note is played;
+
+MIDI.Player.removeListener(); // removes current listener.
+MIDI.Player.addListener(function(data) { // set it to your own function!
+    var now = data.now; // where we are now
+    var end = data.end; // time when song ends
+    var channel = data.channel; // channel note is playing on
+    var message = data.message; // 128 is noteOff, 144 is noteOn
+    var note = data.note; // the note
+    var velocity = data.velocity; // the velocity of the note
+    // then do whatever you want with the information!
+});
+
+Smooth animation, interpolates between onMidiEvent calls;
+MIDI.Player.clearAnimation(); // clears current animation.
+MIDI.Player.setAnimation(function(data) {
+    var now = data.now; // where we are now
+    var end = data.end; // time when song ends
+    var events = data.events; // all the notes currently being processed
+    // then do what you want with the information!
+});</code></pre>
+<h2>DOMLoader.js</h2>
+<p>Loads scripts in synchronously, or asynchronously.</p>
+<pre><code>DOMLoader.script.add(src, callback);
+DOMLoader.XMLHttp.js:  Cross-browser XMLHttpd request.</code></pre>
+<h3>DOMLoader.sendRequest(config)</h3>
+<pre><code>config {
+  url: the url of the resource,
+  data: set to true for a content-type request of application/x-wwww-form-urlencoded,
+  onerror: callback for errors (same parameters as XMLHttpRequest.onerror),
+  onprogress: called on progress updates  (same parameters as XMLHttpRequest.onprogress),
+  onload: called when complete (req is parameter)
+}</code></pre>
+</article>
+
+</section>  
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Nov 23 2014 01:08:10 GMT-0500 (EST)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

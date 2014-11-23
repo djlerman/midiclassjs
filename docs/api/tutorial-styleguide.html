@@ -1,118 +1,114 @@
-<!DOCTYPE  html>
+<!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
+    <title>Tutorial: styleguide</title>
     
-    <title>doc</title>
-    <style>
-      /*github.com style (c) Vasily Polovnyov <vast@whiteants.net>*/
-      pre code {
-        display: block; padding: 0.5em;
-        color: #333;
-        background: #f8f8ff
-      }
-      pre .comment,
-      pre .template_comment,
-      pre .diff .header,
-      pre .javadoc {
-        color: #998;
-        font-style: italic
-      }
-      pre .keyword,
-      pre .css .rule .keyword,
-      pre .winutils,
-      pre .javascript .title,
-      pre .nginx .title,
-      pre .subst,
-      pre .request,
-      pre .status {
-        color: #333;
-        font-weight: bold
-      }
-      pre .number,
-      pre .hexcolor,
-      pre .ruby .constant {
-        color: #099;
-      }
-      pre .string,
-      pre .tag .value,
-      pre .phpdoc,
-      pre .tex .formula {
-        color: #d14
-      }
-      pre .title,
-      pre .id {
-        color: #900;
-        font-weight: bold
-      }
-      pre .javascript .title,
-      pre .lisp .title,
-      pre .clojure .title,
-      pre .subst {
-        font-weight: normal
-      }
-      pre .class .title,
-      pre .haskell .type,
-      pre .vhdl .literal,
-      pre .tex .command {
-        color: #458;
-        font-weight: bold
-      }
-      pre .tag,
-      pre .tag .title,
-      pre .rules .property,
-      pre .django .tag .keyword {
-        color: #000080;
-        font-weight: normal
-      }
-      pre .attribute,
-      pre .variable,
-      pre .lisp .body {
-        color: #008080
-      }
-      pre .regexp {
-        color: #009926
-      }
-      pre .class {
-        color: #458;
-        font-weight: bold
-      }
-      pre .symbol,
-      pre .ruby .symbol .string,
-      pre .lisp .keyword,
-      pre .tex .special,
-      pre .prompt {
-        color: #990073
-      }
-      pre .built_in,
-      pre .lisp .title,
-      pre .clojure .built_in {
-        color: #0086b3
-      }
-      pre .preprocessor,
-      pre .pi,
-      pre .doctype,
-      pre .shebang,
-      pre .cdata {
-        color: #999;
-        font-weight: bold
-      }
-      pre .deletion {
-        background: #fdd
-      }
-      pre .addition {
-        background: #dfd
-      }
-      pre .diff .change {
-        background: #0086b3
-      }
-      pre .chunk {
-        color: #aaa
-      }
-    </style>
-  </head>
-  <body>  
-    <h1 id="node-js-style-guide">Node.js Style Guide</h1>
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":false,"cleverLinks":false,"applicationName":"MIDITools","meta":{"title":"","description":"","keyword":""},"linenums":true,"default":{}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">MIDITools</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="MIDITools">
+            <span class="title">
+                <a href="MIDITools.html">MIDITools</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="MIDIFile">
+            <span class="title">
+                <a href="MIDIFile.html">MIDIFile</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="MIDIFile#type"><a href="MIDIFile.html#type">type</a></li>
+            
+                <li data-name="MIDIFile#track"><a href="MIDIFile.html#track">track</a></li>
+            
+                <li data-name="MIDIFile#addTrack"><a href="MIDIFile.html#addTrack">addTrack</a></li>
+            
+                <li data-name="MIDIFile#removeTrack"><a href="MIDIFile.html#removeTrack">removeTrack</a></li>
+            
+                <li data-name="MIDIFile#countTracks"><a href="MIDIFile.html#countTracks">countTracks</a></li>
+            
+                <li data-name="MIDIFile#getTiming"><a href="MIDIFile.html#getTiming">getTiming</a></li>
+            
+                <li data-name="MIDIFile#setTiming"><a href="MIDIFile.html#setTiming">setTiming</a></li>
+            
+                <li data-name="MIDIFile.fromBinary"><a href="MIDIFile.html#fromBinary">fromBinary</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="">Tutorial: styleguide</h1>
+        <section>
+    
+<header>
+    
+
+    <h2>styleguide</h2>
+</header>  
+
+<article>
+    <h1>Node.js Style Guide</h1>
 <p>This is a guide for writing consistent and aesthetically pleasing node.js code.
 It is inspired by what is popular within the community, and flavored with some
 personal opinions.</p>
@@ -124,7 +120,7 @@ licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC B
 license. You are encouraged to fork this repository and make adjustments
 according to your preferences.</p>
 <p><img src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" alt="Creative Commons License"></p>
-<h2 id="table-of-contents">Table of contents</h2>
+<h2>Table of contents</h2>
 <ul>
 <li><a href="#2-spaces-for-indention">2 Spaces for indention</a></li>
 <li><a href="#newlines">Newlines</a></li>
@@ -145,85 +141,85 @@ according to your preferences.</p>
 <li><a href="#objectfreeze-objectpreventextensions-objectseal-with-eval">Object.freeze, Object.preventExtensions, Object.seal, with, eval</a></li>
 <li><a href="#getters-and-setters">Getters and setters</a></li>
 </ul>
-<h2 id="2-spaces-for-indention">2 Spaces for indention</h2>
+<h2>2 Spaces for indention</h2>
 <p>Use 2 spaces for indenting your code and swear an oath to never mix tabs and
 spaces - a special kind of hell is awaiting you otherwise.</p>
-<h2 id="newlines">Newlines</h2>
+<h2>Newlines</h2>
 <p>Use UNIX-style newlines (<code>\n</code>), and a newline character as the last character
 of a file. Windows-style newlines (<code>\r\n</code>) are forbidden inside any repository.</p>
-<h2 id="no-trailing-whitespace">No trailing whitespace</h2>
+<h2>No trailing whitespace</h2>
 <p>Just like you brush your teeth after every meal, you clean up any trailing
 whitespace in your JS files before committing. Otherwise the rotten smell of
 careless neglect will eventually drive away contributors and/or co-workers.</p>
-<h2 id="use-semicolons">Use Semicolons</h2>
+<h2>Use Semicolons</h2>
 <p>According to <a href="http://news.ycombinator.com/item?id=1547647">scientific research</a>, the usage of semicolons is
 a core value of our community. Consider the points of <a href="http://blog.izs.me/post/2353458699/an-open-letter-to-javascript-leaders-regarding">the opposition</a>, but
 be a traditionalist when it comes to abusing error correction mechanisms for
 cheap syntactic pleasures.</p>
-<h2 id="80-characters-per-line">80 characters per line</h2>
+<h2>80 characters per line</h2>
 <p>Limit your lines to 80 characters. Yes, screens have gotten much bigger over the
 last few years, but your brain has not. Use the additional room for split screen,
 your editor supports that, right?</p>
-<h2 id="use-single-quotes">Use single quotes</h2>
+<h2>Use single quotes</h2>
 <p>Use single quotes, unless you are writing JSON.</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">var foo = &#39;bar&#39;;</code></pre>
+<pre><code class="lang-js">var foo = 'bar';</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">var foo = &quot;bar&quot;;</code></pre>
-<h2 id="opening-braces-go-on-the-same-line">Opening braces go on the same line</h2>
+<h2>Opening braces go on the same line</h2>
 <p>Your opening braces go on the same line as the statement.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">if (true) {
-  console.log(&#39;winning&#39;);
+  console.log('winning');
 }</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">if (true)
 {
-  console.log(&#39;losing&#39;);
+  console.log('losing');
 }</code></pre>
 <p>Also, notice the use of whitespace before and after the condition statement.</p>
-<h2 id="method-chaining">Method chaining</h2>
+<h2>Method chaining</h2>
 <p>One method per line should be used if you want to chain methods.</p>
-<p>You should also indent these methods so it&#39;s easier to tell they are part of the same chain.</p>
+<p>You should also indent these methods so it's easier to tell they are part of the same chain.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">User
-  .findOne({ name: &#39;foo&#39; })
-  .populate(&#39;bar&#39;)
+  .findOne({ name: 'foo' })
+  .populate('bar')
   .exec(function(err, user) {
     return true;
   });
 `</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">User
-.findOne({ name: &#39;foo&#39; })
-.populate(&#39;bar&#39;)
+.findOne({ name: 'foo' })
+.populate('bar')
 .exec(function(err, user) {
   return true;
 });
 
-User.findOne({ name: &#39;foo&#39; })
-  .populate(&#39;bar&#39;)
+User.findOne({ name: 'foo' })
+  .populate('bar')
   .exec(function(err, user) {
     return true;
   });
 
-User.findOne({ name: &#39;foo&#39; }).populate(&#39;bar&#39;)
+User.findOne({ name: 'foo' }).populate('bar')
 .exec(function(err, user) {
   return true;
 });
 
-User.findOne({ name: &#39;foo&#39; }).populate(&#39;bar&#39;)
+User.findOne({ name: 'foo' }).populate('bar')
   .exec(function(err, user) {
     return true;
   });
 `</code></pre>
-<h2 id="declare-one-variable-per-var-statement">Declare one variable per var statement</h2>
+<h2>Declare one variable per var statement</h2>
 <p>Declare one variable per var statement, it makes it easier to re-order the
 lines. However, ignore <a href="http://javascript.crockford.com/code.html">Crockford</a> when it comes to
 declaring variables deeper inside a function, just put the declarations wherever
 they make sense.</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">var keys   = [&#39;foo&#39;, &#39;bar&#39;];
+<pre><code class="lang-js">var keys   = ['foo', 'bar'];
 var values = [23, 42];
 
 var object = {};
@@ -232,7 +228,7 @@ while (keys.length) {
   object[key] = values.pop();
 }</code></pre>
 <p><em>Wrong:</em></p>
-<pre><code class="lang-js">var keys = [&#39;foo&#39;, &#39;bar&#39;],
+<pre><code class="lang-js">var keys = ['foo', 'bar'],
     values = [23, 42],
     object = {},
     key;
@@ -241,15 +237,15 @@ while (keys.length) {
   key = keys.pop();
   object[key] = values.pop();
 }</code></pre>
-<h2 id="use-lowercamelcase-for-variables-properties-and-function-names">Use lowerCamelCase for variables, properties and function names</h2>
+<h2>Use lowerCamelCase for variables, properties and function names</h2>
 <p>Variables, properties and function names should use <code>lowerCamelCase</code>.  They
 should also be descriptive. Single character variables and uncommon
 abbreviations should generally be avoided.</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">var adminUser = db.query(&#39;SELECT * FROM users ...&#39;);</code></pre>
+<pre><code class="lang-js">var adminUser = db.query('SELECT * FROM users ...');</code></pre>
 <p><em>Wrong:</em></p>
-<pre><code class="lang-js">var admin_user = db.query(&#39;SELECT * FROM users ...&#39;);</code></pre>
-<h2 id="use-uppercamelcase-for-class-names">Use UpperCamelCase for class names</h2>
+<pre><code class="lang-js">var admin_user = db.query('SELECT * FROM users ...');</code></pre>
+<h2>Use UpperCamelCase for class names</h2>
 <p>Class names should be capitalized using <code>UpperCamelCase</code>.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">function BankAccount() {
@@ -257,10 +253,10 @@ abbreviations should generally be avoided.</p>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">function bank_Account() {
 }</code></pre>
-<h2 id="use-uppercase-for-constants">Use UPPERCASE for Constants</h2>
+<h2>Use UPPERCASE for Constants</h2>
 <p>Constants should be declared as regular variables or static class properties,
 using all uppercase letters.</p>
-<p>Node.js / V8 actually supports mozilla&#39;s <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">const</a> extension, but
+<p>Node.js / V8 actually supports mozilla's <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">const</a> extension, but
 unfortunately that cannot be applied to class members, nor is it part of any
 ECMA standard.</p>
 <p><em>Right:</em></p>
@@ -275,36 +271,36 @@ File.FULL_PERMISSIONS = 0777;</code></pre>
 function File() {
 }
 File.fullPermissions = 0777;</code></pre>
-<h2 id="object-array-creation">Object / Array creation</h2>
+<h2>Object / Array creation</h2>
 <p>Use trailing commas and put <em>short</em> declarations on a single line. Only quote
 keys when your interpreter complains:</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">var a = [&#39;hello&#39;, &#39;world&#39;];
+<pre><code class="lang-js">var a = ['hello', 'world'];
 var b = {
-  good: &#39;code&#39;,
-  &#39;is generally&#39;: &#39;pretty&#39;,
+  good: 'code',
+  'is generally': 'pretty',
 };</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">var a = [
-  &#39;hello&#39;, &#39;world&#39;
+  'hello', 'world'
 ];
-var b = {&quot;good&quot;: &#39;code&#39;
-        , is generally: &#39;pretty&#39;
+var b = {&quot;good&quot;: 'code'
+        , is generally: 'pretty'
         };</code></pre>
-<h2 id="use-the-operator">Use the === operator</h2>
+<h2>Use the === operator</h2>
 <p>Programming is not about remembering <a href="https://developer.mozilla.org/en/JavaScript/Reference/Operators/Comparison_Operators">stupid rules</a>. Use
 the triple equality operator as it will work just as expected.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">var a = 0;
-if (a !== &#39;&#39;) {
-  console.log(&#39;winning&#39;);
+if (a !== '') {
+  console.log('winning');
 }</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">var a = 0;
-if (a == &#39;&#39;) {
-  console.log(&#39;losing&#39;);
+if (a == '') {
+  console.log('losing');
 }</code></pre>
-<h2 id="use-multi-line-ternary-operator">Use multi-line ternary operator</h2>
+<h2>Use multi-line ternary operator</h2>
 <p>The ternary operator should not be used on a single line. Split it up into multiple lines instead.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">var foo = (a === b)
@@ -312,13 +308,13 @@ if (a == &#39;&#39;) {
   : 2;</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">var foo = (a === b) ? 1 : 2;</code></pre>
-<h2 id="do-not-extend-built-in-prototypes">Do not extend built-in prototypes</h2>
+<h2>Do not extend built-in prototypes</h2>
 <p>Do not extend the prototype of native JavaScript objects. Your future self will
 be forever grateful.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">var a = [];
 if (!a.length) {
-  console.log(&#39;winning&#39;);
+  console.log('winning');
 }</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">Array.prototype.empty = function() {
@@ -327,34 +323,34 @@ if (!a.length) {
 
 var a = [];
 if (a.empty()) {
-  console.log(&#39;losing&#39;);
+  console.log('losing');
 }</code></pre>
-<h2 id="use-descriptive-conditions">Use descriptive conditions</h2>
+<h2>Use descriptive conditions</h2>
 <p>Any non-trivial conditions should be assigned to a descriptively named variable or function:</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">var isValidPassword = password.length &gt;= 4 &amp;&amp; /^(?=.*\d).{4,}$/.test(password);
+<pre><code class="lang-js">var isValidPassword = password.length >= 4 && /^(?=.*\d).{4,}$/.test(password);
 
 if (isValidPassword) {
-  console.log(&#39;winning&#39;);
+  console.log('winning');
 }</code></pre>
 <p><em>Wrong:</em></p>
-<pre><code class="lang-js">if (password.length &gt;= 4 &amp;&amp; /^(?=.*\d).{4,}$/.test(password)) {
-  console.log(&#39;losing&#39;);
+<pre><code class="lang-js">if (password.length >= 4 && /^(?=.*\d).{4,}$/.test(password)) {
+  console.log('losing');
 }</code></pre>
-<h2 id="write-small-functions">Write small functions</h2>
+<h2>Write small functions</h2>
 <p>Keep your functions short. A good function fits on a slide that the people in
-the last row of a big room can comfortably read. So don&#39;t count on them having
+the last row of a big room can comfortably read. So don't count on them having
 perfect vision and limit yourself to ~15 lines of code per function.</p>
-<h2 id="return-early-from-functions">Return early from functions</h2>
-<p>To avoid deep nesting of if-statements, always return a function&#39;s value as early
+<h2>Return early from functions</h2>
+<p>To avoid deep nesting of if-statements, always return a function's value as early
 as possible.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">function isPercentage(val) {
-  if (val &lt; 0) {
+  if (val < 0) {
     return false;
   }
 
-  if (val &gt; 100) {
+  if (val > 100) {
     return false;
   }
 
@@ -362,8 +358,8 @@ as possible.</p>
 }</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">function isPercentage(val) {
-  if (val &gt;= 0) {
-    if (val &lt; 100) {
+  if (val >= 0) {
+    if (val < 100) {
       return true;
     } else {
       return false;
@@ -375,42 +371,42 @@ as possible.</p>
 <p>Or for this particular example it may also be fine to shorten things even
 further:</p>
 <pre><code class="lang-js">function isPercentage(val) {
-  var isInRange = (val &gt;= 0 &amp;&amp; val &lt;= 100);
+  var isInRange = (val >= 0 && val <= 100);
   return isInRange;
 }</code></pre>
-<h2 id="name-your-closures">Name your closures</h2>
+<h2>Name your closures</h2>
 <p>Feel free to give your closures a name. It shows that you care about them, and
 will produce better stack traces, heap and cpu profiles.</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">req.on(&#39;end&#39;, function onEnd() {
-  console.log(&#39;winning&#39;);
+<pre><code class="lang-js">req.on('end', function onEnd() {
+  console.log('winning');
 });</code></pre>
 <p><em>Wrong:</em></p>
-<pre><code class="lang-js">req.on(&#39;end&#39;, function() {
-  console.log(&#39;losing&#39;);
+<pre><code class="lang-js">req.on('end', function() {
+  console.log('losing');
 });</code></pre>
-<h2 id="no-nested-closures">No nested closures</h2>
-<p>Use closures, but don&#39;t nest them. Otherwise your code will become a mess.</p>
+<h2>No nested closures</h2>
+<p>Use closures, but don't nest them. Otherwise your code will become a mess.</p>
 <p><em>Right:</em></p>
 <pre><code class="lang-js">setTimeout(function() {
   client.connect(afterConnect);
 }, 1000);
 
 function afterConnect() {
-  console.log(&#39;winning&#39;);
+  console.log('winning');
 }</code></pre>
 <p><em>Wrong:</em></p>
 <pre><code class="lang-js">setTimeout(function() {
   client.connect(function() {
-    console.log(&#39;losing&#39;);
+    console.log('losing');
   });
 }, 1000);</code></pre>
-<h2 id="use-slashes-for-comments">Use slashes for comments</h2>
+<h2>Use slashes for comments</h2>
 <p>Use slashes for both single line and multi line comments. Try to write
 comments that explain higher level mechanisms or clarify difficult
-segments of your code. Don&#39;t use comments to restate trivial things.</p>
+segments of your code. Don't use comments to restate trivial things.</p>
 <p><em>Right:</em></p>
-<pre><code class="lang-js">// &#39;ID_SOMETHING=VALUE&#39; -&gt; [&#39;ID_SOMETHING=VALUE&#39;, &#39;SOMETHING&#39;, &#39;VALUE&#39;]
+<pre><code class="lang-js">// 'ID_SOMETHING=VALUE' -> ['ID_SOMETHING=VALUE', 'SOMETHING', 'VALUE']
 var matches = item.match(/ID_([^\n]+)=([^\n]+)/));
 
 // This function has a nasty side effect where a failure to increment a
@@ -420,7 +416,7 @@ function loadUser(id, cb) {
   // ...
 }
 
-var isSessionValid = (session.expires &lt; Date.now());
+var isSessionValid = (session.expires < Date.now());
 if (isSessionValid) {
   // ...
 }</code></pre>
@@ -434,18 +430,32 @@ function loadUser(id, cb) {
 }
 
 // Check if the session is valid
-var isSessionValid = (session.expires &lt; Date.now());
+var isSessionValid = (session.expires < Date.now());
 // If the session is valid
 if (isSessionValid) {
   // ...
 }</code></pre>
-<h2 id="object-freeze-object-preventextensions-object-seal-with-eval">Object.freeze, Object.preventExtensions, Object.seal, with, eval</h2>
+<h2>Object.freeze, Object.preventExtensions, Object.seal, with, eval</h2>
 <p>Crazy shit that you will probably never need. Stay away from it.</p>
-<h2 id="getters-and-setters">Getters and setters</h2>
+<h2>Getters and setters</h2>
 <p>Do not use setters, they cause more problems for people who try to use your
 software than they can solve.</p>
 <p>Feel free to use getters that are free from <a href="http://en.wikipedia.org/wiki/Side_effect_(computer_science)">side effects</a>, like
 providing a length property for a collection class.</p>
+</article>
 
-  </body>
+</section>  
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Nov 23 2014 01:08:10 GMT-0500 (EST)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
 </html>

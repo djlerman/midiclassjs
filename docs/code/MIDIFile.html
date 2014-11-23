@@ -72,9 +72,11 @@
 <span class="hljs-keyword">var</span> exporters = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./exporters'</span>);
 <span class="hljs-keyword">var</span> MIDITrack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./MIDITrack'</span>);
 
+
 <span class="hljs-comment">/**
  * Creates a new MIDIFile
  *
+ * @class
  * @param {Number} [type] - the type of the midifile; only needed
  *        if you desire a single-track Type-1 file
  * @throws errors.parameters.Type if type is not 0 or 1
@@ -104,7 +106,7 @@ MIDIFile.prototype.type = <span class="hljs-function"><span class="hljs-keyword"
 
 <span class="hljs-comment">/**
  * Returns the {miditools.MIDITrack} at index `n`
- * @returns {miditools.MIDITrack} the track at index `n`
+ * @returns {MIDITrack} the track at index `n`
  */</span>
 
 MIDIFile.prototype.track = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> </span>{
@@ -117,7 +119,7 @@ MIDIFile.prototype.track = <span class="hljs-function"><span class="hljs-keyword
 
 <span class="hljs-comment">/**
  * Adds a new, empty track to the file, then returns the track.
- * @returns {MIDITools.MIDITrack} the newly-added track
+ * @returns {MIDITrack} the newly-added track
  * @throws errors.midi.trackOverflow if the file already has
  *         the maximum number of tracks
  */</span>
@@ -161,9 +163,10 @@ MIDIFile.prototype.countTracks = <span class="hljs-function"><span class="hljs-k
 
 
 <span class="hljs-comment">/**
- * @returns the timing of the MIDIFile, which is usually a measure
- *          of *ticks per beat*; see ??? for details
- * TODO: put reference in above description
+ * @returns {MIDIFile~FramesSpec|MIDIFile~TickSpec}
+ * the timing of the MIDIFile, which is usually a measure
+ * of *ticks per beat*; see ??? for details
+ * @todo put reference in above description
  */</span>
 
 MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
@@ -186,15 +189,31 @@ MIDIFile.prototype.getTiming = <span class="hljs-function"><span class="hljs-key
 
 
 <span class="hljs-comment">/**
+ * Specifies a fps resolution header.
+ * TODO: add more
+ * @typedef MIDIFile~FramesSpec
+ * @param {Number} framesPerSecond
+ * @param {Number} ticksPerFrame
+ */</span>
+
+<span class="hljs-comment">/**
+ * Specifies a 'ticks per beat' resolution header.
+ * TODO: add more
+ * @typedef MIDIFile~TickSpec
+ * @param {String} type
+ * @param {Number} ticksPerBeat
+ */</span>
+
+<span class="hljs-comment">/**
  * Sets the MIDI file's header field for time divisions.
- * @param {Number|PlainObject} If `timing` is a number,
- *        then the MIDIFile's division type will be set to
- *        `ticksPerBeat` and the number will be used as the
- *        value of this field. If `timing` is an object,
- *        then it must have the properties `framesPerSecond` and
- *        `ticksPerFrame`, and these will be used to set the
- *        time division as documented in ???
- * TODO: add reference
+ * @param {Number|MIDIFile~FramesSpec} timing
+ * if `timing` is a number, then the MIDIFile's division type
+ * will be set to `ticksPerBeat` and the number will be used as the
+ * value of this field. If `timing` is an object,
+ * then it must have the properties `framesPerSecond` and
+ * `ticksPerFrame`, and these will be used to set the
+ * time division as documented in ???
+ * @todo add reference
  */</span>
 
 MIDIFile.prototype.setTiming = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(timing)</span> </span>{
@@ -208,7 +227,6 @@ MIDIFile.prototype.setTiming = <span class="hljs-function"><span class="hljs-key
     <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'framesPerSecond'</span>;
     <span class="hljs-keyword">this</span>._timing.framesPerSecond = timing.framesPerSecond;
     <span class="hljs-keyword">this</span>._timing.ticksPerFrame = timing.ticksPerFrame;
-    <span class="hljs-keyword">this</span>._channels = [];
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> timing === <span class="hljs-string">'number'</span>) {
     <span class="hljs-keyword">this</span>._timing.type = <span class="hljs-string">'ticksPerBeat'</span>;
     <span class="hljs-keyword">this</span>._timing.ticksPerBeat = timing;
@@ -222,11 +240,23 @@ MIDIFile.prototype.exportBase64 = <span class="hljs-function"><span class="hljs-
   <span class="hljs-keyword">return</span> <span class="hljs-string">'base64,'</span> + <span class="hljs-built_in">window</span>.btoa(<span class="hljs-keyword">this</span>.exportBinary());
 };
 
+
+<span class="hljs-comment">/**
+ * Constructs a new MIDIFile whose contents reflect the representation
+ * in `binary`. This string is expected to conform to the standard MIDI
+ * file format.
+ *
+ * @param {String} binary - A string of binary data, as provided by
+ * an XMLHttpRequest for a midi file.
+ *
+ * @throws errors.imports.* if parsing the binary string fails,
+ *         or if the data within the string is non-conformant.
+ */</span>
+
 MIDIFile.fromBinary = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(binary)</span> </span>{
-  <span class="hljs-keyword">return</span> importers.binary(<span class="hljs-keyword">new</span> MIDIFile(), binary);
+  <span class="hljs-keyword">return</span> importers.binary(
+    <span class="hljs-keyword">new</span> MIDIFile(), <span class="hljs-built_in">Array</span>.prototype.slice.call(binary));
 };
-
-
 
 
 MIDIFile.importText = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text)</span> </span>{
