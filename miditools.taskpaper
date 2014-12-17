@@ -21,40 +21,40 @@ MIDIFile:
 			- track(i) @code @done(2014-11-18)
 				- valid calls @done(2014-11-18)
 				- invalid calls @done(2014-11-18)
-		events:
-			- filterEvents() /* over all tracks */ @none
+		events: @not-started
+			- filterEvents() /* over all tracks */ @not-started
 				- wait for MIDITrack's filterEvents @done(2014-11-19)
 		header info:
-			- getTiming() @code @done(2014-11-18)
+			- getTiming() @done(2014-11-18)
 			- type() @code @done(2014-11-18)
 		import/export:
 			- importBinary @testing
 			- importBase64 @started @dep(importBinary)
 			- importText @started
-			- importXML @none
+			- importXML @not-started
 			- exportBinary @started
 			- exportBase64 @started @dep(exportBinary)
 			- exportText @started
-			- exportXML @none
+			- exportXML @not-started
 MIDITrack:
 	docs:
 		- summary
 	code:
-		addEvent():
+		addEvent(): @testing
 			- add valid event
 			- add invalid event
 			- add event with invalid type
 			- add event with invalid parameter(s)
-		removeEvent(i): @code
+		removeEvent(i): @testing
 			- replace valid event
 			- replace invalid event
 			- replace event with invalid type - check preservation
 			- replace event with invalid parameter(s) - check preservation
-		event(i): @code 
+		event(i): @testing
 			- valid index
 			- invalid index
-		countEvents(): @code @done(2014-11-18)
-		filterEvents(): @none
+		countEvents(): @done(2014-11-18)
+		filterEvents(): @not-started
 			- decide on API
 MIDISequence:
 	docs:
@@ -62,10 +62,10 @@ MIDISequence:
 	code:
 		- getTempo() @code
 		- setTempo() @code
-		- soloChannel(i) @none
-		- transpose(numSteps) @none
-		- setVolume(level) @none
-		- getVolume(level) @none
+		- soloChannel(i) @not-started
+		- transpose(numSteps) @not-started
+		- setVolume(level) @not-started
+		- getVolume(level) @not-started
 		- channel(i) @code
 		- getTitle() @code
 		- setTitle(t) @code
@@ -77,20 +77,20 @@ MIDIChannel:
 	docs:
 		- summary
 	code:
-		- transpose(numSteps) @none
-		- setVolume(level) @none
-		- getVolume(level) @none
+		- transpose(numSteps) @not-started
+		- setVolume(level) @not-started
+		- getVolume(level) @not-started
 Utils:
-	- eventToText(evt) @none
-	- eventToXML(evt) @none 
-	- textToEvent(txt) @none
-	- xmlToEvent(xml) @none
+	- eventToText(evt) @not-started
+	- eventToXML(evt) @not-started 
+	- textToEvent(txt) @not-started
+	- xmlToEvent(xml) @not-started
 MISC: Save / Load (?):
-	- data() @none
-	- loadData() @none
+	- data() @not-started
+	- loadData() @not-started
 MISC: MIDI object supplement (?):
-	- MIDI.drumset @none
-	- MIDI.drumkitList @none
+	- MIDI.drumset @not-started
+	- MIDI.drumkitList @not-started
 MISC fixes:
 	- add andrew (and twitter handle) to the acknowledgements
 	- replace DOMLoader with custom async loader
