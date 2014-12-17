@@ -20,27 +20,20 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
-    jsdoc: {
-      dist: {
-        src: ['js/*.js', 'js/*/*.js'],
+    groc: {
+      js: {
+        src: [
+	  'js/*.js', 'js/*/*.js', 'README.md'
+        ],
         options: {
-          destination: 'docs/api/',
-          configure: 'etc/jsdoc.conf'
-        }
-      }
-    },
-    docco: {
-      debug: {
-        src: ['js/*.js'],
-        options: {
-          output: 'docs/code/'
+	  'out': 'docs/'
         }
       }
     },
 
     markdown: {
       all: {
-        files: [{
+        files: [{ 
           expand: true,
           src: 'docs/ref/*.md',
           dest: '.',
@@ -74,7 +67,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'browserify', 'jasmine_node', 'jsdoc', 'docco'
+      tasks: ['jshint', 'browserify', 'jasmine_node', 'groc'
 //        ,'markdown'
       ]
     }
@@ -83,12 +76,10 @@ module.exports = function(grunt) {
   var taskConfig = {
     tasks: [
       'grunt-jasmine-node',
-      'grunt-contrib-uglify',
       'grunt-contrib-jshint',
       'grunt-contrib-watch',
       'grunt-browserify',
-      'grunt-jsdoc',
-      'grunt-docco',
+      'grunt-groc',
       'grunt-markdown'
     ],
     register: [{
