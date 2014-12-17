@@ -38,6 +38,13 @@ MIDITrack.prototype.addEvent = function(evt) {
 };
 
 /**
+ * @todo
+ */
+MIDITrack.prototype.addEvents = function(evts) {
+  this._events = this._events.concat(evts.map(checkEvent));
+};
+
+/**
  * Replaces the event at index `i` with `evt`; `evt`'s
  * parameters are checked as if it were added
  * with `addEvent`. Throws an error if the parameters
@@ -59,7 +66,7 @@ function checkEvent(evt) {
   else {
     spec.parameters.forEach(function(p, index) {
       if (evt.parameters[p.name] === 'undefined') {
-	throw errors.track.parameterMissing;
+  throw errors.track.parameterMissing;
       }
       checked[p.name] = evt.parameters[p.name];
       checked[index] = checked[p.name];
