@@ -4,6 +4,7 @@ Up-front:
 	- read styleguide in docs/ref
 MIDIFile:
 	docs:
+		- add groc support
 		- summary
 	code:
 		constructor: @done(2014-11-18)
