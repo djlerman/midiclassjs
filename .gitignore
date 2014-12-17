@@ -6,6 +6,7 @@ npm-debug.log
 php-version/
 node_modules/
 dist/
+docs/
 res/
 *.tern-project*
 # Emacs
