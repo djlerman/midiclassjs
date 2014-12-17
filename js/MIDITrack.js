@@ -3,9 +3,6 @@
 var data = require('./data');
 var errors = require('./errors');
 
-/**
- * @class MIDITrack
- */
 function MIDITrack() {
   this._events = [];
   this._eventTypes = {};
@@ -14,7 +11,7 @@ function MIDITrack() {
 
 /**
  * Returns the event object at index `i`.
- * @returns the `i`th event object in this track
+ * @returns {Event} the `i`th event object in this track
  */
 
 MIDITrack.prototype.event = function(i) {
@@ -29,7 +26,7 @@ MIDITrack.prototype.event = function(i) {
  * defines index properties for these parameters in their defined
  * ordering as per the MIDI specification.
  *
- * @throws error.track.parameterMissing if an event parameter
+ * @throws {error.track.parameterMissing} if an event parameter
  *         is missing
  */
 

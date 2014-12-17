@@ -82,4 +82,10 @@ describe('MIDIChannel', function() {
       expect(midi.countBeats()).toBe(4);
     });
   });
+  describe('getVolume', function() {
+    it('should return 64 for an empty sequence', function() {
+      var midi = new mt.createSequence();
+      // expect(midi.getVolume()).toBe(64);
+    });
+   });
 });

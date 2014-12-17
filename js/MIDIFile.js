@@ -13,10 +13,9 @@ var MIDITrack = require('./MIDITrack');
 /**
  * Creates a new MIDIFile
  *
- * @class
  * @param {Number} [type] - the type of the midifile; only needed
  *        if you desire a single-track Type-1 file
- * @throws errors.parameters.Type if type is not 0 or 1
+ * @throws {errors.parameters.Type} if type is not 0 or 1
  */
 
 function MIDIFile(type) {
@@ -57,7 +56,7 @@ MIDIFile.prototype.track = function(n) {
 /**
  * Adds a new, empty track to the file, then returns the track.
  * @returns {MIDITrack} the newly-added track
- * @throws errors.midi.trackOverflow if the file already has
+ * @throws {errors.midi.trackOverflow} if the file already has
  *         the maximum number of tracks
  */
 
@@ -77,7 +76,7 @@ MIDIFile.prototype.addTrack = function() {
 
 /**
  * Removes the track at index `n` from the file
- * @throws errors.midi.removeInvalidTrack if the track does
+ * @throws {errors.midi.removeInvalidTrack} if the track does
  *         not exist in this file
  */
 
@@ -173,7 +172,7 @@ MIDIFile.prototype.exportBase64 = function() {
  * @param {String} binary - A string of binary data, as provided by
  * an XMLHttpRequest for a midi file.
  *
- * @throws errors.imports.* if parsing the binary string fails,
+ * @throws {errors.imports.*} if parsing the binary string fails,
  *         or if the data within the string is non-conformant.
  */
 
