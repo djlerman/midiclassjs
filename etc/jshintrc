@@ -1,9 +1,10 @@
 {
   "globals": {
-    "DOMLoader": false
+    "DOMLoader": false,
+    "console": false
   },
     "browser": true,
-        "browserify": true,	
+    "browserify": true,	
   "funcscope": true,
   "eqnull": true,
   "maxlen": 80,
