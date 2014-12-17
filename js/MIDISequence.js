@@ -56,11 +56,6 @@ function getLargestTickCount(midi) {
       return Math.max(previous, current);
     }, 0);
 }
-
-MIDISequence.prototype.getTempo = function() {
-  return this._tempo;
-};
-
 MIDISequence.prototype.beatLength = function() {
   return (60000 / this._tempo);
 };
@@ -69,10 +64,26 @@ MIDISequence.prototype.ticksPerBeat = function() {
   return this._midi.getTiming().ticksPerBeat;
 };
 
+MIDISequence.prototype.getTempo = function() {
+  return this._tempo;
+};
+
 MIDISequence.prototype.setTempo = function(bpm) {
-  this._tempo = bpm;
-  this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(
-    bpm);
+  this._tempo = parseInt(bpm);
+  this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(bpm);
+  // TODO: create a utility checkEvent?
+  this._meta.tempo.parameters[0] = util.bpmToTempo(bpm);
+  
+};
+MIDISequence.prototype.changeTempo = function(when, bpm) {
+  var tempoEvent = {
+    timestamp: when,
+    message: 'setTempo',
+    parameters: {
+      microsecondsPerBeat: util.bpmToTempo(bpm)
+    }
+  };
+  this._midi.track(0).addEvent(tempoEvent);
 };
 
 MIDISequence.prototype.getTimeSignature = function() {
@@ -113,10 +124,28 @@ MIDISequence.prototype.channel = function(n) {
     var trackCount = this._midi.countTracks();
     this._midi.addTrack();
     this._channels[n] = new MIDIChannel(this._midi.track(trackCount), n,
-      this);
+      this._midi);
   }
   return this._channels[n];
 };
+
+MIDISequence.prototype.countTicks = function() {
+  return this.usedChannels().reduce(function(maxTicks, current) {
+    var channelTicks = current.countTicks();
+    return (maxTicks < channelTicks) ? channelTicks : maxTicks;
+  }, 0);
+};
+MIDISequence.prototype.repeat = function(n) {
+  var maxTicks = this.usedChannels().reduce(function(maxTicks, current) {
+    var channelTicks = current.countTicks();
+    return (maxTicks < channelTicks) ? channelTicks : maxTicks;
+  }, 0);
+
+  this.usedChannels().forEach(function(channel) {
+    channel.repeat(n, (maxTicks - channel.countTicks()));
+  });
+};
+
 
 MIDISequence.prototype.toFile = function() {
   this.usedChannels().forEach(function(ch) {

@@ -38,8 +38,8 @@ MIDITrack.prototype.addEvent = function(evt) {
 };
 
 /**
- * Replaces the event at index `i` with `evt`;
- * `evt`'s parameters are checked as if it were added
+ * Replaces the event at index `i` with `evt`; `evt`'s
+ * parameters are checked as if it were added
  * with `addEvent`. Throws an error if the parameters
  * are invalid, and preserves current track events.
  */

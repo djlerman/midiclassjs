@@ -1,42 +1,53 @@
 var data = require('./data');
 
-function MIDIChannel(t, n, s) {
+function MIDIChannel(t, n, m) {
   this._track = t;
   this._number = n;
-  this._sequence = s;
-  this._track.addEvent({
+  this._midi = m;
+  var trackLength = this._midi.track(0).countEvents();
+  this._totalTicks = 0;
+  m.track(0).addEvent({
     timestamp: 0,
     message: 'midiChannelPrefix',
     parameters: {
       value: this._number
     }
   });
-  this._track.addEvent({
+  m.track(0).addEvent({
     timestamp: 0,
     message: 'instrumentName',
     parameters: {
       value: 'unknown'
     }
   });
-  this.addEvent(0, 'programChange', {
-    program: 1
-  });
-  this._track.addEvent({
+  m.track(0).addEvent({
     timestamp: 0,
     message: 'sequenceTrackName',
     parameters: {
       value: 'Untitled Track'
     }
   });
+  
+  this._track.addEvent({
+    timestamp: 0,
+    channel: this._number,
+    message: 'programChange',
+    parameters: {
+      program: 1
+    }
+  });
   this._meta = {
-    instrumentName: this._track.event(1),
-    program: this._track.event(2),
-    trackName: this._track.event(3)
+    instrumentName: m.track(0).event(trackLength+1),
+    trackName: m.track(0).event(trackLength+2),
+    program: this._track.event(0)
   };
+  
 }
 
 MIDIChannel.prototype.setName = function(name) {
+  // TODO: replace with a sane method that sets value & 0 at same time
   this._meta.trackName.parameters.value = name;
+  this._meta.trackName.parameters[0] = name;
 };
 
 MIDIChannel.prototype.getName = function() {
@@ -44,9 +55,11 @@ MIDIChannel.prototype.getName = function() {
 };
 
 MIDIChannel.prototype.setInstrument = function(name) {
+  // TODO: replace with a sane method that sets value & 0 at same time
   this._meta.instrumentName.parameters.value = name;
-  this._meta.program.parameters.program = data.GeneralMIDI.byName[
-    name];
+  this._meta.instrumentName.parameters[0] = name;
+  // TODO: re-enable
+  // this._meta.program.parameters.program = data.GeneralMIDI.byName[name];
   // TODO: Use replace event
 };
 
@@ -55,6 +68,8 @@ MIDIChannel.prototype.getInstrument = function() {
 };
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
+  this._totalTicks += delta;
+
   var spec = data.typeMap[msg];
   var evt = {
     timestamp: delta,
@@ -79,10 +94,33 @@ MIDIChannel.prototype.number = function() {
   return this._number;
 };
 
+MIDIChannel.prototype.toTrack = function() {
+  return this._track;
+};
+
+MIDIChannel.prototype.repeat = function(n, offset) {
+  var originalLength = this._track.countEvents();
+  
+  for (var i = 0; i < n; i += 1) {
+    if (this._track.countEvents() > 1) {
+      var first = Object.create(this._track.event(1)); // copy
+      first.timestamp += offset;
+      this._track.addEvent(first);
+    }
+    for (var j = 2; j < originalLength; j += 1) {
+      this._track.addEvent(this._track.event(j));
+    }
+  }
+};
+
+MIDIChannel.prototype.countTicks = function() {
+  return this._totalTicks;
+};
+
 MIDIChannel.prototype.eventsInBeat = function(beatIndex) {
   // TODO: Translation for parameters, etc.
-  var startTick = this._sequence.ticksPerBeat() * beatIndex;
-  var endTick = startTick + this._sequence.ticksPerBeat();
+  var startTick = this._midi.getTiming().ticksPerBeat * beatIndex;
+  var endTick = startTick + this._midi.getTiming().ticksPerBeat;
   var currentTick = 0;
   var events = [];
 
