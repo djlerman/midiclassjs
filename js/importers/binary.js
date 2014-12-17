@@ -242,7 +242,7 @@ function parseMessage(track, evt, bytes, checkedPrevious) {
     evt.runningStatus = true;
     bytes.unshift(evt.status);
     evt.status = track.event(track.countEvents() - 1).status;
-    return parseMessage(track, evt, bytes, true);    
+    return parseMessage(track, evt, bytes, true);
   } else {
     throw errors.import.MessageType;
   }
@@ -303,7 +303,7 @@ function parseMetaMessage(evt, bytes) {
   var spec = data.binaryMap[type];
   if (!spec) {
     throw errors.import.MetaType;
-    
+
   }
 
   evt.kind = spec.kind;
@@ -319,7 +319,7 @@ function parseMetaMessage(evt, bytes) {
         p.importers.binary(parseInteger(bytes, p.length), evt.parameters);
       } else {
         var value = valueParsers[p.valueType](bytes, p.length);
-	evt.parameters[p.name] = value;
+        evt.parameters[p.name] = value;
       }
     });
   }
@@ -385,5 +385,3 @@ function parseInteger(bytes, limit) {
   }
   return result;
 }
-
-

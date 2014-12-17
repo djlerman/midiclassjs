@@ -95,12 +95,12 @@ var eventMap = {
       name: 'pitchValue',
       length: 2,
       importers: {
-	binary: function(value, params) {
-	  var removed = (value & 0x7F7F);
-	  var top = ((removed & 0xFF00) >> 1);
-	  var bottom = (removed & 0x00FF) >> 1;
-	  params.pitchValue = (top + bottom);
-	}
+        binary: function(value, params) {
+          var removed = (value & 0x7F7F);
+          var top = ((removed & 0xFF00) >> 1);
+          var bottom = (removed & 0x00FF) >> 1;
+          params.pitchValue = (top + bottom);
+        }
       }
     }],
     formats: {
