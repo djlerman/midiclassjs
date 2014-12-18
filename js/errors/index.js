@@ -11,6 +11,10 @@ exports.track = {
   parameterMissing: new Error('The event is missing a required parameter')
 };
 
+exports.general = {
+  volumeRange: new RangeError('invalid volume (outside 0 - 127)')
+};
+
 exports.import = {
   DeltaInvalid: new Error('Event contained an invalid delta-time value'),
   FileSize: new Error('File is too small to be a standard MIDI file.'),

@@ -404,6 +404,9 @@ exports.typeMap = {};
 exports.typeToBinary = {};
 exports.eventTypes = {};
 exports.textMap = {};
+exports.controllers = {
+  VOLUME: 7
+};
 exports.GeneralMIDI = {
   byName: {
     'synth_drum': 114

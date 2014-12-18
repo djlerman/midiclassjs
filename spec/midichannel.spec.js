@@ -1,4 +1,6 @@
 var mt = require('../js/index');
+var errors = require('../js/errors');
+
 describe('MIDIChannel', function() {
   describe('countBeats', function() {
     it('should return 0 for an empty sequence', function() {
@@ -81,11 +83,38 @@ describe('MIDIChannel', function() {
       });
       expect(midi.countBeats()).toBe(4);
     });
-  });
+  }); // countBeats
+
   describe('getVolume', function() {
     it('should return 64 for an empty sequence', function() {
       var midi = new mt.createSequence();
-      // expect(midi.getVolume()).toBe(64);
+      expect(midi.channel(0).getVolume()).toBe(64);
     });
-   });
+  }); // getVolume
+
+  describe('setVolume', function() {
+    it('should set volume value on valid call', function() {
+      var midi = new mt.createSequence();
+      midi.channel(0).setVolume(100);
+      expect(midi.channel(0).getVolume()).toBe(100);
+    });
+
+    it('should result in a different track value', function() {
+      var midi = new mt.createSequence();
+      midi.channel(0).setVolume(100);
+      var evt = midi.channel(0).toTrack().filterEvents(
+        'controlChange')[0];
+      expect(evt.parameters.value).toBe(100);
+    });
+
+    it('should throw exception for values outside 0 - 127', function() {
+      var ch = new mt.createSequence().channel(0);
+      expect(function() {
+        ch.setVolume(-1);
+      }).toThrow(errors.general.volumeRange);
+      expect(function() {
+        ch.setVolume(128);
+      }).toThrow(errors.general.volumeRange);      
+    }); // setVolume
+  });
 });

@@ -1,4 +1,9 @@
 var data = require('./data');
+var errors = require('./errors');
+
+/**
+ * @class MIDIChannel
+ */
 
 function MIDIChannel(t, n, m) {
   this._track = t;
@@ -27,7 +32,7 @@ function MIDIChannel(t, n, m) {
       value: 'Untitled Track'
     }
   });
-  
+
   this._track.addEvent({
     timestamp: 0,
     channel: this._number,
@@ -36,16 +41,26 @@ function MIDIChannel(t, n, m) {
       program: 1
     }
   });
+  this._track.addEvent({
+    timestamp: 0,
+    channel: this._number,
+    message: 'controlChange',
+    parameters: {
+      program: data.controllers.VOLUME,
+      value: 64
+    }
+  });
   this._meta = {
-    instrumentName: m.track(0).event(trackLength+1),
-    trackName: m.track(0).event(trackLength+2),
-    program: this._track.event(0)
+    instrumentName: m.track(0).event(trackLength + 1),
+    trackName: m.track(0).event(trackLength + 2),
+    program: this._track.event(0),
+    volume: 1
   };
-  
+
 }
 
 MIDIChannel.prototype.setName = function(name) {
-  // TODO: replace with a sane method that sets value & 0 at same time
+  // TODO: replace with a replaceEvent() call
   this._meta.trackName.parameters.value = name;
   this._meta.trackName.parameters[0] = name;
 };
@@ -54,9 +69,48 @@ MIDIChannel.prototype.getName = function() {
   return this._meta.trackName.parameters.value;
 };
 
+
+/**
+ * Returns the channel's volume at the start of the MIDI
+ * sequence. This volume is not affected by `controlChange`
+ * events that occur later in the sequence. *If no calls are
+ * made to `setVolume()`, this method will return `64`.*
+ * **Note:** This volume is the *coarse volume*; no support is
+ * available for *fine volume*.
+ *
+ * @method getVolume
+ * @returns {Number [0 - 127]}
+ */
+MIDIChannel.prototype.getVolume = function() {
+  return this._track.event(this._meta.volume).parameters.value;
+};
+
+
+/**
+ * Sets the channel's volume at the start of the MIDI sequence. This
+ * method has no affect on by volume-changing `controlChange` events
+ * that occur later in the sequence. Setting the value to 0 will
+ * mute the channel.
+ *
+ * **Note:** This volume is the *coarse volume*; no support is
+ * available for *fine volume*.
+ *
+ * @method setVolume
+ * @param {Number [0 - 127]} newVolume
+ * The channel's new volume level.
+ */
+MIDIChannel.prototype.setVolume = function(newVolume) {
+  if (!(0 <= newVolume && newVolume <= 127)) {
+    throw errors.general.volumeRange;
+  }
+
+  var volumeEvent = this._track.event(this._meta.volume);
+  volumeEvent.parameters.value = newVolume;
+  this._track.replaceEvent(this._meta.volume, volumeEvent);
+};
+
 MIDIChannel.prototype.setInstrument = function(name) {
-  // TODO: replace with a sane method that sets value & 0 at same time
-  this._meta.instrumentName.parameters.value = name;
+  // TODO: replace with a replaceEvent() call
   this._meta.instrumentName.parameters[0] = name;
   // TODO: re-enable
   // this._meta.program.parameters.program = data.GeneralMIDI.byName[name];
@@ -100,7 +154,7 @@ MIDIChannel.prototype.toTrack = function() {
 
 MIDIChannel.prototype.repeat = function(n, offset) {
   var originalLength = this._track.countEvents();
-  
+
   for (var i = 0; i < n; i += 1) {
     if (this._track.countEvents() > 1) {
       var first = Object.create(this._track.event(1)); // copy

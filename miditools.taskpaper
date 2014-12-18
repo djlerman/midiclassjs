@@ -47,13 +47,15 @@ MIDITrack:
 			- add event with invalid type
 			- add event with invalid parameter(s)
 		removeEvent(i): @testing
-			- replace valid event
-			- replace invalid event
+		replaceEvent(i): @code
+			- replace with valid event
+			- replace with invalid event
 			- replace event with invalid type - check preservation
 			- replace event with invalid parameter(s) - check preservation
 		event(i): @testing
 			- valid index
 			- invalid index
+			- check that copy is defensive
 		countEvents(): @done(2014-11-18)
 		filterEvents(): @not-started
 			- decide on API
@@ -65,13 +67,9 @@ MIDISequence:
 		- setTempo() @code
 		- soloChannel(i) @not-started
 		- transpose(numSteps) @not-started
-		- setVolume(level) @not-started
-		- getVolume(level) @not-started
 		- channel(i) @code
 		- getTitle() @code
 		- setTitle(t) @code
-		- getVolume() @code
-		- setVolume() /* over all tracks */ @code
 		- exportFile() /* creates COPY first */ @started
 		- more metadata methods
 MIDIChannel:
@@ -79,8 +77,8 @@ MIDIChannel:
 		- summary
 	code:
 		- transpose(numSteps) @not-started
-		- setVolume(level) @not-started
-		- getVolume(level) @not-started
+		- setVolume(level)
+		- getVolume()
 Utils:
 	- eventToText(evt) @not-started
 	- eventToXML(evt) @not-started 
