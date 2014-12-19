@@ -156,9 +156,15 @@ Note Off    	  |`0x8`   |`note`          |`velocity`
 Note On     	  |`0x9`   |`note`          |`velocity`
 After Touch 	  |`0xA`   |`note`          |`amount`
 Control Change    |`0xB`   |`controller`    |`value`
-Program  Change   |`0xC`   |`program`       | N/A
+Program Change   |`0xC`   |`program`       | N/A
 Channel Pressure  |`0xD`   |`amount`        | N/A
 Pitch Wheel       |`0xE`   |`pitchValue1`   |`pitchValue2`
+
+### Defined Controllers for `controlChange` Events
+
+Name | Number | Value
+-----|--------|------
+Volume (Coarse) | `0x7` | Volume level (0 &ndash; 127)
 
 ## References
 

@@ -77,8 +77,19 @@ MIDIChannel:
 		- summary
 	code:
 		- transpose(numSteps) @not-started
-		- setVolume(level)
-		- getVolume()
+		- number @code
+		- countTicks @code
+		- setVolume(level) @done(2014-12-18)
+		- getVolume() @done(2014-12-18)
+		- getInstrument @done(2014-12-19)
+		- setInstrument @done(2014-12-19)
+		- getName @code
+		- setName @code
+		- event @code
+		- addEvent @code
+		- countEvents
+		- eventsInBeat
+		- toTrack
 Utils:
 	- eventToText(evt) @not-started
 	- eventToXML(evt) @not-started 

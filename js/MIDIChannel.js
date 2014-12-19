@@ -52,8 +52,11 @@ function MIDIChannel(t, n, m) {
   });
   this._meta = {
     instrumentName: m.track(0).event(trackLength + 1),
-    trackName: m.track(0).event(trackLength + 2),
-    program: this._track.event(0),
+    trackName: m.track(0).event(trackLength + 2)
+  };
+
+  this._events = {
+    program: 0,
     volume: 1
   };
 
@@ -82,7 +85,7 @@ MIDIChannel.prototype.getName = function() {
  * @returns {Number [0 - 127]}
  */
 MIDIChannel.prototype.getVolume = function() {
-  return this._track.event(this._meta.volume).parameters.value;
+  return this._track.event(this._events.volume).parameters.value;
 };
 
 
@@ -104,21 +107,19 @@ MIDIChannel.prototype.setVolume = function(newVolume) {
     throw errors.general.volumeRange;
   }
 
-  var volumeEvent = this._track.event(this._meta.volume);
+  var volumeEvent = this._track.event(this._events.volume);
   volumeEvent.parameters.value = newVolume;
-  this._track.replaceEvent(this._meta.volume, volumeEvent);
+  this._track.replaceEvent(this._events.volume, volumeEvent);
 };
 
-MIDIChannel.prototype.setInstrument = function(name) {
-  // TODO: replace with a replaceEvent() call
-  this._meta.instrumentName.parameters[0] = name;
-  // TODO: re-enable
-  // this._meta.program.parameters.program = data.GeneralMIDI.byName[name];
-  // TODO: Use replace event
+MIDIChannel.prototype.setInstrument = function(number) {
+  var programEvent = this._track.event(this._events.program);
+  programEvent.parameters.program = number;
+  this._track.replaceEvent(this._program.volume, programEvent);
 };
 
 MIDIChannel.prototype.getInstrument = function() {
-  return this._meta.instrumentName.parameters.value;
+  return this._events.program.parameters.program;
 };
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
