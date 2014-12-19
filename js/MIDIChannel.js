@@ -115,7 +115,7 @@ MIDIChannel.prototype.setVolume = function(newVolume) {
 MIDIChannel.prototype.setInstrument = function(number) {
   var programEvent = this._track.event(this._events.program);
   programEvent.parameters.program = number;
-  this._track.replaceEvent(this._program.volume, programEvent);
+  this._track.replaceEvent(this._events.program, programEvent);
 };
 
 MIDIChannel.prototype.getInstrument = function() {
