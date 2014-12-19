@@ -119,7 +119,7 @@ MIDIChannel.prototype.setInstrument = function(number) {
 };
 
 MIDIChannel.prototype.getInstrument = function() {
-  return this._events.program.parameters.program;
+  return this._track.event(this._events.program).parameters.program;
 };
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
