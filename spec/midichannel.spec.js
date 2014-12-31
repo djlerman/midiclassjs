@@ -124,6 +124,13 @@ describe('MIDIChannel', function() {
       expect(midi.channel(0).getName()).toBe('channel0');
       expect(midi.channel(7).getName()).toBe('channel7');
     });
-  }); // getVolume
+  }); // getName
 
+  describe('setName', function() {
+    it('should set channel name properly', function() {
+      var midi = new mt.createSequence();
+      midi.channel(0).setName('test channel');
+      expect(midi.channel(0).getName()).toBe('test channel');
+    });
+  });
 });

@@ -63,6 +63,11 @@ function MIDIChannel(t, n, m) {
 
 }
 
+/**
+ * Returns this channel's assigned number. This is a read-only value.
+ * @method number
+ * @returns {Number} between 0 and 15
+ */
 MIDIChannel.prototype.number = function() {
   return this._number;
 };
@@ -89,14 +94,9 @@ MIDIChannel.prototype.getName = function() {
  */
 
 MIDIChannel.prototype.setName = function(name) {
-  // TODO: replace with a replaceEvent() call
-  this._meta.trackName.parameters.value = name;
-  this._meta.trackName.parameters[0] = name;
-
-  var nameEvent = this._track.event(this._meta.trackName);
+  var nameEvent = this._track.event(this._events.trackName);
   nameEvent.parameters.value = name;
   this._track.replaceEvent(this._events.trackName, nameEvent);
-
 };
 
 
