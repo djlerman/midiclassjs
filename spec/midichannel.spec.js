@@ -117,4 +117,13 @@ describe('MIDIChannel', function() {
       }).toThrow(errors.general.volumeRange);      
     }); // setVolume
   });
+  
+  describe('getName', function() {
+    it('should return channelN for channelN by default', function() {
+      var midi = new mt.createSequence();
+      expect(midi.channel(0).getName()).toBe('channel0');
+      expect(midi.channel(7).getName()).toBe('channel7');
+    });
+  }); // getVolume
+
 });

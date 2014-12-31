@@ -25,11 +25,12 @@ function MIDIChannel(t, n, m) {
       value: 'unknown'
     }
   });
-  m.track(0).addEvent({
+  
+  this._track.addEvent({
     timestamp: 0,
     message: 'sequenceTrackName',
     parameters: {
-      value: 'Untitled Track'
+      value: 'channel'+n
     }
   });
 
@@ -51,39 +52,66 @@ function MIDIChannel(t, n, m) {
     }
   });
   this._meta = {
-    instrumentName: m.track(0).event(trackLength + 1),
-    trackName: m.track(0).event(trackLength + 2)
+    instrumentName: m.track(0).event(trackLength + 1)
   };
 
   this._events = {
-    program: 0,
-    volume: 1
+    trackName: 0,
+    program: 1,
+    volume: 2
   };
 
 }
+
+MIDIChannel.prototype.number = function() {
+  return this._number;
+};
+
+
+/**
+ * Returns the channel's name. By default, this is `channelN`,
+ * where `N` is the channel's number (0 -- 15).
+ *
+ * @method getName
+ * @returns {String}
+ */
+
+MIDIChannel.prototype.getName = function() {
+  return this._track.event(this._events.trackName).parameters.value;
+};
+
+
+/**
+ * Sets the name of the channel to the value of `name`.
+ *
+ * @method setName
+ * @param {String} name
+ */
 
 MIDIChannel.prototype.setName = function(name) {
   // TODO: replace with a replaceEvent() call
   this._meta.trackName.parameters.value = name;
   this._meta.trackName.parameters[0] = name;
-};
 
-MIDIChannel.prototype.getName = function() {
-  return this._meta.trackName.parameters.value;
+  var nameEvent = this._track.event(this._meta.trackName);
+  nameEvent.parameters.value = name;
+  this._track.replaceEvent(this._events.trackName, nameEvent);
+
 };
 
 
 /**
  * Returns the channel's volume at the start of the MIDI
- * sequence. This volume is not affected by `controlChange`
- * events that occur later in the sequence. *If no calls are
- * made to `setVolume()`, this method will return `64`.*
+ * sequence. This volume is not affected by `controlChange` events
+ * that occur later in the sequence. By default, this value is
+ * 64.
  * **Note:** This volume is the *coarse volume*; no support is
  * available for *fine volume*.
  *
  * @method getVolume
- * @returns {Number [0 - 127]}
+ * @returns {Number} in the range [0 - 127]
  */
+
 MIDIChannel.prototype.getVolume = function() {
   return this._track.event(this._events.volume).parameters.value;
 };
@@ -101,7 +129,10 @@ MIDIChannel.prototype.getVolume = function() {
  * @method setVolume
  * @param {Number [0 - 127]} newVolume
  * The channel's new volume level.
+ * @throws {errors.general.volumeRange} if `newVolume` is outside
+ * the required range
  */
+
 MIDIChannel.prototype.setVolume = function(newVolume) {
   if (!(0 <= newVolume && newVolume <= 127)) {
     throw errors.general.volumeRange;
@@ -112,14 +143,20 @@ MIDIChannel.prototype.setVolume = function(newVolume) {
   this._track.replaceEvent(this._events.volume, volumeEvent);
 };
 
+MIDIChannel.prototype.getInstrument = function() {
+  return this._track.event(this._events.program).parameters.program;
+};
+
 MIDIChannel.prototype.setInstrument = function(number) {
   var programEvent = this._track.event(this._events.program);
   programEvent.parameters.program = number;
   this._track.replaceEvent(this._events.program, programEvent);
 };
 
-MIDIChannel.prototype.getInstrument = function() {
-  return this._track.event(this._events.program).parameters.program;
+
+MIDIChannel.prototype.event = function(index) {
+  // TODO: Translation for parameters, etc.
+  return this._track.event(index);
 };
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
@@ -136,18 +173,11 @@ MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
   this._track.addEvent(evt);
 };
 
+
 MIDIChannel.prototype.countEvents = function() {
   return this._track.countEvents();
 };
 
-MIDIChannel.prototype.event = function(index) {
-  // TODO: Translation for parameters, etc.
-  return this._track.event(index);
-};
-
-MIDIChannel.prototype.number = function() {
-  return this._number;
-};
 
 MIDIChannel.prototype.toTrack = function() {
   return this._track;
