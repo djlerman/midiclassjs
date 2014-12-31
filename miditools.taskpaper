@@ -83,13 +83,14 @@ MIDIChannel:
 		- getVolume() @done(2014-12-18)
 		- getInstrument @done(2014-12-19)
 		- setInstrument @done(2014-12-19)
-		- getName @code
-		- setName @code
+		- getName @done(2014-12-31)
+		- setName @done(2014-12-31)
 		- event @code
 		- addEvent @code
-		- countEvents
-		- eventsInBeat
-		- toTrack
+		- removeEvent @not-started
+		- countEvents @not-started
+		- eventsInBeat @not-started
+		- toTrack !!! COPY !!! @not-started
 Utils:
 	- eventToText(evt) @not-started
 	- eventToXML(evt) @not-started 
