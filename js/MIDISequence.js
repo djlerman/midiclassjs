@@ -135,17 +135,6 @@ MIDISequence.prototype.countTicks = function() {
     return (maxTicks < channelTicks) ? channelTicks : maxTicks;
   }, 0);
 };
-MIDISequence.prototype.repeat = function(n) {
-  var maxTicks = this.usedChannels().reduce(function(maxTicks, current) {
-    var channelTicks = current.countTicks();
-    return (maxTicks < channelTicks) ? channelTicks : maxTicks;
-  }, 0);
-
-  this.usedChannels().forEach(function(channel) {
-    channel.repeat(n, (maxTicks - channel.countTicks()));
-  });
-};
-
 
 MIDISequence.prototype.toFile = function() {
   this.usedChannels().forEach(function(ch) {

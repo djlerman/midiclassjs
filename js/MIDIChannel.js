@@ -183,21 +183,6 @@ MIDIChannel.prototype.toTrack = function() {
   return this._track;
 };
 
-MIDIChannel.prototype.repeat = function(n, offset) {
-  var originalLength = this._track.countEvents();
-
-  for (var i = 0; i < n; i += 1) {
-    if (this._track.countEvents() > 1) {
-      var first = Object.create(this._track.event(1)); // copy
-      first.timestamp += offset;
-      this._track.addEvent(first);
-    }
-    for (var j = 2; j < originalLength; j += 1) {
-      this._track.addEvent(this._track.event(j));
-    }
-  }
-};
-
 MIDIChannel.prototype.countTicks = function() {
   return this._totalTicks;
 };
