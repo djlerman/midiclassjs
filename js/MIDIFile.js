@@ -32,6 +32,8 @@ function MIDIFile(type) {
 
 /**
  * Returns the type (0 or 1) of this MIDIFile.
+ *
+ * @method type
  * @returns {Number} the type of the MIDI file
  */
 
@@ -42,6 +44,7 @@ MIDIFile.prototype.type = function() {
 
 /**
  * Returns the {miditools.MIDITrack} at index `n`
+ * @method track
  * @returns {MIDITrack} the track at index `n`
  */
 
@@ -55,6 +58,8 @@ MIDIFile.prototype.track = function(n) {
 
 /**
  * Adds a new, empty track to the file, then returns the track.
+ *
+ * @method addTrack
  * @returns {MIDITrack} the newly-added track
  * @throws {errors.midi.trackOverflow} if the file already has
  *         the maximum number of tracks
@@ -76,6 +81,8 @@ MIDIFile.prototype.addTrack = function() {
 
 /**
  * Removes the track at index `n` from the file
+ *
+ * @method removeTrack
  * @throws {errors.midi.removeInvalidTrack} if the track does
  *         not exist in this file
  */
@@ -90,6 +97,8 @@ MIDIFile.prototype.removeTrack = function(n) {
 
 /**
  * Returns the number of tracks in the MIDIFile.
+ *
+ * @method countTracks
  * @returns {Number} total number of tracks stored in the MIDIFile
  */
 
@@ -99,6 +108,8 @@ MIDIFile.prototype.countTracks = function() {
 
 
 /**
+ * @method getTiming
+ *
  * @returns {MIDIFile~FramesSpec|MIDIFile~TickSpec}
  * the timing of the MIDIFile, which is usually a measure
  * of *ticks per beat*; see ??? for details
@@ -129,14 +140,16 @@ MIDIFile.prototype.getTiming = function() {
 
 /**
  * Sets the MIDI file's header field for time divisions.
+ *
+ * @method setTiming
  * @param {Number|MIDIFile~FramesSpec} timing
  * if `timing` is a number, then the MIDIFile's division type
  * will be set to `ticksPerBeat` and the number will be used as the
  * value of this field. If `timing` is an object,
  * then it must have the properties `framesPerSecond` and
  * `ticksPerFrame`, and these will be used to set the
- * time division as documented in ???
- * @todo add reference
+ * time division as documented in TODO
+ *
  */
 
 MIDIFile.prototype.setTiming = function(timing) {
@@ -158,7 +171,11 @@ MIDIFile.prototype.setTiming = function(timing) {
   }
 };
 
-
+/**
+ * Exports the MIDIFile as base64.
+ *
+ * @method exportBase64
+ */
 MIDIFile.prototype.exportBase64 = function() {
   return 'base64,' + window.btoa(this.exportBinary());
 };
@@ -169,8 +186,9 @@ MIDIFile.prototype.exportBase64 = function() {
  * in `binary`. This string is expected to conform to the standard MIDI
  * file format.
  *
- * @param {String} binary - A string of binary data, as provided by
- * an XMLHttpRequest for a midi file.
+ * @function MIDIFile.fromBinary
+ * @param {String} binary A string of binary data, as provided by an
+ *        `XMLHttpRequest` for a midi file.
  *
  * @throws {errors.imports.*} if parsing the binary string fails,
  *         or if the data within the string is non-conformant.
@@ -182,6 +200,10 @@ MIDIFile.fromBinary = function(binary) {
 };
 
 
+/**
+ * TODO
+ * @function MIDIFile.importText
+ */
 MIDIFile.importText = function(text) {
   return importers.text(new MIDIFile(), text);
 };
