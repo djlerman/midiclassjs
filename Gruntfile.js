@@ -75,11 +75,11 @@ module.exports = function(grunt) {
 
   var taskConfig = {
     tasks: [
-      'grunt-jasmine-node',
       'grunt-contrib-jshint',
       'grunt-contrib-watch',
       'grunt-browserify',
       'grunt-groc',
+      "grunt-jasmine-node",
       'grunt-markdown'
     ],
     register: [{
