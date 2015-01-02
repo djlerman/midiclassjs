@@ -2,7 +2,6 @@ var mt = require('../js/index');
 var errors = require('../js/errors');
 
 describe('MIDIChannel', function() {
-
   describe('getVolume', function() {
     it('should return 64 for an empty sequence', function() {
       var midi = new mt.createSequence();
@@ -59,7 +58,7 @@ describe('MIDIChannel', function() {
       expect(midi.channel(0).getInstrument()).toBe(0);
       expect(midi.channel(7).getInstrument()).toBe(0);
     });
-  }); // getName
+  }); // getInstrument
 
   describe('setInstrument', function() {
     it('should set instrument ID properly', function() {
@@ -77,5 +76,5 @@ describe('MIDIChannel', function() {
         ch.setInstrument(128);
       }).toThrow(errors.general.instrumentRange);
     });
-  }); // setName
+  }); // setInstrument
 });

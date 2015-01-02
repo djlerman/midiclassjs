@@ -46,9 +46,10 @@ MIDISequence.prototype.countBeats = function() {
 function getLargestTickCount(midi) {
   return midi.usedChannels()
     .map(function(ch) {
+      var track = ch.toTrack();
       var ticks = 0;
-      for (var i = 0; i < ch.countEvents(); i += 1) {
-        ticks += ch.event(i).timestamp;
+      for (var i = 0; i < track.countEvents(); i += 1) {
+        ticks += track.event(i).timestamp;
       }
       return ticks;
     })

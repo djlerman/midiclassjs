@@ -129,6 +129,13 @@ MIDIChannel.prototype.setInstrument = function(id) {
 };
 
 
+/**
+ * Returns the event at index `i`.
+ *
+ * @method event
+ * @returns {Object} the event at index `i`
+ */
+
 MIDIChannel.prototype.event = function(index) {
   return this._track.event(index);
 };
@@ -156,27 +163,32 @@ MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
   var spec = data.typeMap[msg];
   var evt = {
     timestamp: delta,
-    channel: this._number,
     message: spec.message,
     parameters: parameters
   };
 
+  if (spec.kind === 'channel') {
+    evt.channel = this._number;
+  }
+
   this._track.addEvent(evt);
 };
 
-
 /**
- * Creates a MIDI track representing this channel. Modifications
- * to this track will not affect the channel.
+ * Returns a MIDI track representation of this channel.  Modifications
+ * to this track will affect the channel, so no guarantees are made
+ * about correctness of methods after this operation is complete. This
+ * method is provided for modifying the track further after the
+ * MIDIChannel abstraction is no longer needed.
  * 
  * @method toTrack
+ *
  * @returns {MIDITrack}
  */
 
 MIDIChannel.prototype.toTrack = function() {
   return this._track;
 };
-
 
 // ## Representation
 
