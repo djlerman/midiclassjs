@@ -1,8 +1,7 @@
 var mt = require('../js/index');
 var errors = require('../js/errors');
 
-describe('MIDIChannel', function() {
-describe('MIDIChannel', function() {
+describe('MIDISequence', function() {
     describe('countBeats', function() {
     it('should return 0 for an empty sequence', function() {
       var midi = new mt.createSequence();

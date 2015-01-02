@@ -67,7 +67,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'browserify', 'jasmine_node', 'groc'
+      tasks: ['jshint', 'jasmine_node', 'groc'
 //        ,'markdown'
       ]
     }
