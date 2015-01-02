@@ -74,7 +74,7 @@ MIDISequence.prototype.setTempo = function(bpm) {
   this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(bpm);
   // TODO: create a utility checkEvent?
   this._meta.tempo.parameters[0] = util.bpmToTempo(bpm);
-  
+
 };
 MIDISequence.prototype.changeTempo = function(when, bpm) {
   var tempoEvent = {
@@ -124,8 +124,8 @@ MIDISequence.prototype.channel = function(n) {
   if (!this._channels[n]) {
     var trackCount = this._midi.countTracks();
     this._midi.addTrack();
-    this._channels[n] = new MIDIChannel(this._midi.track(trackCount), n,
-      this._midi);
+    this._channels[n] = new MIDIChannel(n, this._midi.track(trackCount), this
+      ._midi.track(0));
   }
   return this._channels[n];
 };

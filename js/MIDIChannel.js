@@ -5,10 +5,26 @@
 var data = require('./data');
 var errors = require('./errors');
 
+//
 // ## Overview
+//
 
+// The `MIDIChannel` API is provided as a thin wrapper around a
+// `MIDITrack` object. When using the `MIDISequence` API to build a
+// new MIDI file, this API is useful for manipulating the metadata
+// required for the channel.  Any channel accessed by the client is
+// assigned:
+//
+// - a name
+// - an instrument
+// - a volume setting
 
+// These may be manipulated without dealing with the underlying
+// event/message API.
+
+//
 // ## API
+//
 
 /**
  * Returns this channel's assigned number. This is a read-only value.
@@ -31,7 +47,7 @@ MIDIChannel.prototype.number = function() {
  */
 
 MIDIChannel.prototype.getName = function() {
-  return this._track.event(this._events.trackName).parameters.value;
+  return this._meta.event(this._events.trackName).parameters.value;
 };
 
 
@@ -43,9 +59,9 @@ MIDIChannel.prototype.getName = function() {
  */
 
 MIDIChannel.prototype.setName = function(name) {
-  var nameEvent = this._track.event(this._events.trackName);
+  var nameEvent = this._meta.event(this._events.trackName);
   nameEvent.parameters.value = name;
-  this._track.replaceEvent(this._events.trackName, nameEvent);
+  this._meta.replaceEvent(this._events.trackName, nameEvent);
 };
 
 
@@ -174,6 +190,7 @@ MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
   this._track.addEvent(evt);
 };
 
+
 /**
  * Returns a MIDI track representation of this channel.  Modifications
  * to this track will affect the channel, so no guarantees are made
@@ -190,30 +207,39 @@ MIDIChannel.prototype.toTrack = function() {
   return this._track;
 };
 
-// ## Representation
 
-function MIDIChannel(t, n, m) {
+//
+// ## Representation
+//
+
+// The MIDISequence API keeps a 1:1 relationship between channels and
+// tracks. The MIDIChannel's track should only contain channel events
+// associated with that channel. This constructor and the various
+// MIDIChannel methods maintain convention.
+
+/**
+ * **Note: Clients should not normally use this constructor.**
+ *
+ * @param {Number} n the number of this channel
+ * @param {MIDITrack} t the representative track. It should be empty.
+ * @param {MIDITrack} mt the track to use for metadata
+ */
+
+function MIDIChannel(n, t, mt) {
+  var metaLength = mt.countEvents();
   this._track = t;
   this._number = n;
-  this._midi = m;
-  
-  this._track.addEvent({
+  this._meta = mt;
+
+  mt.addEvent({
     timestamp: 0,
     message: 'midiChannelPrefix',
     parameters: {
       value: this._number
     }
   });
-  
-  this._track.addEvent({
-    timestamp: 0,
-    message: 'instrumentName',
-    parameters: {
-      value: 'unknown'
-    }
-  });
 
-  this._track.addEvent({
+  mt.addEvent({
     timestamp: 0,
     message: 'sequenceTrackName',
     parameters: {
@@ -240,10 +266,9 @@ function MIDIChannel(t, n, m) {
   });
 
   this._events = {
-    instrumentName: 1,
-    trackName: 2,
-    program: 3,
-    volume: 4
+    trackName: metaLength+1,
+    program: 0,
+    volume: 1
   };
 
 }

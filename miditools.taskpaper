@@ -2,106 +2,104 @@ Up-front:
 	- pick a style convention @done(2014-11-14)
 	- pick a module-ordering scheme
 	- read styleguide in docs/ref
-MIDIFile:
-	docs:
-		- add groc support @done(2014-12-17)
-		- summary
-	code:
-		constructor: @done(2014-11-18)
-			- empty @done(2014-11-18)
-			- with type 1 @done(2014-11-18)
-			- with invalid type @done(2014-11-18)
-		tracks: @done(2014-11-18)
-			- addTrack() @code @done(2014-11-18)
-				- second track goes to type 1 @done(2014-11-18)
-				- too many throws error @done(2014-11-18)
-			- removeTrack() @code @done(2014-11-18)
-				- remove existingb @done(2014-11-18)
-				- remove non-existing @done(2014-11-18)
-			- countTracks() @code @done(2014-11-18)
-			- track(i) @code @done(2014-11-18)
-				- valid calls @done(2014-11-18)
-				- invalid calls @done(2014-11-18)
-		events: @not-started
-			- filterEvents() /* over all tracks */ @not-started
-				- wait for MIDITrack's filterEvents @done(2014-11-19)
-		header info:
-			- getTiming() @done(2014-11-18)
-			- type() @code @done(2014-11-18)
-		import/export:
-			- importBinary @testing
-			- importBase64 @started @dep(importBinary)
-			- importText @started
-			- importXML @not-started
-			- exportBinary @started
-			- exportBase64 @started @dep(exportBinary)
-			- exportText @started
-			- exportXML @not-started
-MIDITrack:
-	docs:
-		- summary
-	code:
-		addEvent(): @testing
-			- add valid event
-			- add invalid event
-			- add event with invalid type
-			- add event with invalid parameter(s)
-		removeEvent(i): @testing
-		replaceEvent(i): @code
-			- replace with valid event
-			- replace with invalid event
-			- replace event with invalid type - check preservation
-			- replace event with invalid parameter(s) - check preservation
-		event(i): @testing
-			- valid index
-			- invalid index
-			- check that copy is defensive
-		countEvents(): @done(2014-11-18)
-		filterEvents(): @not-started
-			- decide on API
-MIDISequence:
-	docs:
-		- summary
-	code:
-		- getTempo() @code
-		- setTempo() @code
-		- soloChannel(i) @not-started
+API:
+	MIDIFile:
+		docs:
+			- add groc support @done(2014-12-17)
+			- summary
+		code:
+			constructor: @done(2014-11-18)
+				- empty @done(2014-11-18)
+				- with type 1 @done(2014-11-18)
+				- with invalid type @done(2014-11-18)
+			tracks: @done(2014-11-18)
+				- addTrack() @code @done(2014-11-18)
+					- second track goes to type 1 @done(2014-11-18)
+					- too many throws error @done(2014-11-18)
+				- removeTrack() @code @done(2014-11-18)
+					- remove existingb @done(2014-11-18)
+					- remove non-existing @done(2014-11-18)
+				- countTracks() @code @done(2014-11-18)
+				- track(i) @code @done(2014-11-18)
+					- valid calls @done(2014-11-18)
+					- invalid calls @done(2014-11-18)
+			events: @not-started
+				- filterEvents() /* over all tracks */ @not-started
+					- wait for MIDITrack's filterEvents @done(2014-11-19)
+			header info:
+				- getTiming() @done(2014-11-18)
+				- type() @code @done(2014-11-18)
+			import/export:
+				- importBinary @testing
+				- importBase64 @started @dep(importBinary)
+				- importText @started
+				- importXML @not-started
+				- exportBinary @started
+				- exportBase64 @started @dep(exportBinary)
+				- exportText @started
+				- exportXML @not-started
+	MIDITrack:
+		docs:
+			- summary
+		code:
+			addEvent(): @testing
+				- add valid event
+				- add invalid event
+				- add event with invalid type
+				- add event with invalid parameter(s)
+			removeEvent(i): @testing
+			replaceEvent(i): @code
+				- replace with valid event
+				- replace with invalid event
+				- replace event with invalid type - check preservation
+				- replace event with invalid parameter(s) - check preservation
+			event(i): @testing
+				- valid index
+				- invalid index
+				- check that copy is defensive
+			countEvents(): @done(2014-11-18)
+			filterEvents(): @not-started
+				- decide on API
+	MIDISequence:
+		docs:
+			- summary
+		code:
+			- getTempo() @code
+			- setTempo() @code
+			- soloChannel(i) @not-started
+			- transpose(numSteps) @not-started
+			- channel(i) @code
+			- getTitle() @code
+			- setTitle(t) @code
+			- exportFile() /* creates COPY first */ @started
+			- more metadata methods
+	Utils:
+		- eventToText(evt) @not-started
+		- eventToXML(evt) @not-started 
+		- textToEvent(txt) @not-started
+		- xmlToEvent(xml) @not-started
 		- transpose(numSteps) @not-started
-		- channel(i) @code
-		- getTitle() @code
-		- setTitle(t) @code
-		- exportFile() /* creates COPY first */ @started
-		- more metadata methods
-MIDIChannel:
-	docs:
-		- summary
-	code:
-		- transpose(numSteps) @not-started
-		- number @code
-		- countTicks @code
-		- setVolume(level) @done(2014-12-18)
-		- getVolume() @done(2014-12-18)
-		- getInstrument @done(2014-12-19)
-		- setInstrument @done(2014-12-19)
-		- getName @done(2014-12-31)
-		- setName @done(2014-12-31)
-		- event @code
-		- addEvent @code
-		- removeEvent @not-started
-		- countEvents @not-started
-		- eventsInBeat @not-started
-		- toTrack !!! COPY !!! @not-started
-Utils:
-	- eventToText(evt) @not-started
-	- eventToXML(evt) @not-started 
-	- textToEvent(txt) @not-started
-	- xmlToEvent(xml) @not-started
-MISC: Save / Load (?):
-	- data() @not-started
-	- loadData() @not-started
-MISC: MIDI object supplement (?):
-	- MIDI.drumset @not-started
-	- MIDI.drumkitList @not-started
+	MISC: Save / Load (?):
+		- data() @not-started
+		- loadData() @not-started
+	MISC: MIDI object supplement (?):
+		- MIDI.drumset @not-started
+		- MIDI.drumkitList @not-started
+	MIDIChannel: @done(2015-01-02)
+		docs: @done(2015-01-02)
+			- summary @done(2015-01-02)
+			- implementation @done(2015-01-02)
+		code: @done(2015-01-02)
+			- number @done(2014-12-31)
+			- setVolume(level) @done(2014-12-18)
+			- getVolume() @done(2014-12-18)
+			- getInstrument @done(2014-12-19)
+			- setInstrument @done(2014-12-19)
+			- getName @done(2014-12-31)
+			- setName @done(2014-12-31)
+			- event  @done(2015-01-02)
+			- addEvent  @done(2015-01-02)
+			- toTrack  @done(2015-01-02)
 MISC fixes:
 	- add andrew (and twitter handle) to the acknowledgements
 	- replace DOMLoader with custom async loader
