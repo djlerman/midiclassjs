@@ -25,12 +25,12 @@ function MIDIChannel(t, n, m) {
       value: 'unknown'
     }
   });
-  
+
   this._track.addEvent({
     timestamp: 0,
     message: 'sequenceTrackName',
     parameters: {
-      value: 'channel'+n
+      value: 'channel' + n
     }
   });
 
@@ -39,7 +39,7 @@ function MIDIChannel(t, n, m) {
     channel: this._number,
     message: 'programChange',
     parameters: {
-      program: 1
+      program: 0
     }
   });
   this._track.addEvent({
@@ -65,6 +65,7 @@ function MIDIChannel(t, n, m) {
 
 /**
  * Returns this channel's assigned number. This is a read-only value.
+ *
  * @method number
  * @returns {Number} between 0 and 15
  */
@@ -102,9 +103,10 @@ MIDIChannel.prototype.setName = function(name) {
 
 /**
  * Returns the channel's volume at the start of the MIDI
- * sequence. This volume is not affected by `controlChange` events
- * that occur later in the sequence. By default, this value is
- * 64.
+ * sequence. This value is not affected by `controlChange` events
+ * that occur later in the sequence, so the manual insertion of
+ * another volume-change event later will cause this value to be
+ * incorrect. By default, this value is 64.
  * **Note:** This volume is the *coarse volume*; no support is
  * available for *fine volume*.
  *
@@ -127,10 +129,9 @@ MIDIChannel.prototype.getVolume = function() {
  * available for *fine volume*.
  *
  * @method setVolume
- * @param {Number [0 - 127]} newVolume
- * The channel's new volume level.
+ * @param {Number [0 - 127]} newVolume The channel's new volume level.
  * @throws {errors.general.volumeRange} if `newVolume` is outside
- * the required range
+ *         the required range
  */
 
 MIDIChannel.prototype.setVolume = function(newVolume) {
@@ -143,21 +144,65 @@ MIDIChannel.prototype.setVolume = function(newVolume) {
   this._track.replaceEvent(this._events.volume, volumeEvent);
 };
 
+
+/**
+ * Returns the assigned instrument for this channel. This value is not
+ * affected by `programChange` events that occur later in the
+ * sequence, so the manual insertion of a `programChange` event
+ * later will cause this value to be incorrect. By default, this value
+ * is 0, (Acoustic Grand Piano, for General MIDI).
+ *
+ * @method getInstrument
+ *
+ * @returns {Number [0 - 127]} the id of this channel's instrument
+ */
+
 MIDIChannel.prototype.getInstrument = function() {
   return this._track.event(this._events.program).parameters.program;
 };
 
-MIDIChannel.prototype.setInstrument = function(number) {
+
+/**
+ * Sets the channel's instrument to `id`.
+ *
+ * @method setInstrument
+ * @param {Number [0 - 127]} id channel's new instrument
+ * @throws {errors.general.instrumentRange} if `id` is outside
+ *         the required range
+ */
+
+MIDIChannel.prototype.setInstrument = function(id) {
+  if (!(0 <= id && id <= 127)) {
+    throw errors.general.instrumentRange;
+  }
   var programEvent = this._track.event(this._events.program);
-  programEvent.parameters.program = number;
+  programEvent.parameters.program = id;
   this._track.replaceEvent(this._events.program, programEvent);
 };
 
 
 MIDIChannel.prototype.event = function(index) {
-  // TODO: Translation for parameters, etc.
   return this._track.event(index);
 };
+
+
+/**
+ * Appends the given event to this channel. Checks for all required
+ * parameters for the event's type and throws an error if any are
+ * missing. Though the event need not be a channel event, it should
+ * be a valid event for a track other than track 0 of a Type-1 MIDI
+ * file.
+ *
+ * @method addEvent
+ *
+ * @param {Number} delta number of ticks between the last event in the
+ *        channel and this event
+ * @param {String} msg The message type of the event
+ * @param {Object} parameters A map of parameter values for the event
+ *
+ * @throws {error.track.parameterMissing} if an event parameter
+ *         is missing
+ */
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
   this._totalTicks += delta;
@@ -188,7 +233,6 @@ MIDIChannel.prototype.countTicks = function() {
 };
 
 MIDIChannel.prototype.eventsInBeat = function(beatIndex) {
-  // TODO: Translation for parameters, etc.
   var startTick = this._midi.getTiming().ticksPerBeat * beatIndex;
   var endTick = startTick + this._midi.getTiming().ticksPerBeat;
   var currentTick = 0;

@@ -114,10 +114,10 @@ describe('MIDIChannel', function() {
       }).toThrow(errors.general.volumeRange);
       expect(function() {
         ch.setVolume(128);
-      }).toThrow(errors.general.volumeRange);      
+      }).toThrow(errors.general.volumeRange);
     }); // setVolume
   });
-  
+
   describe('getName', function() {
     it('should return channelN for channelN by default', function() {
       var midi = new mt.createSequence();
@@ -132,5 +132,32 @@ describe('MIDIChannel', function() {
       midi.channel(0).setName('test channel');
       expect(midi.channel(0).getName()).toBe('test channel');
     });
-  });
+  }); // setName
+
+
+  describe('getInstrument', function() {
+    it('should return 0 for any channel by default', function() {
+      var midi = new mt.createSequence();
+      expect(midi.channel(0).getInstrument()).toBe(0);
+      expect(midi.channel(7).getInstrument()).toBe(0);
+    });
+  }); // getName
+
+  describe('setInstrument', function() {
+    it('should set instrument ID properly', function() {
+      var midi = new mt.createSequence();
+      var ch = midi.channel(0);
+      ch.setInstrument(88);
+      var evt = ch.toTrack().filterEvents('programChange')[0];
+      expect(evt.parameters.program).toBe(88);
+      
+    });
+    it('should throw error on invalid ID', function() {
+      expect(function() {
+        var midi = new mt.createSequence();
+        var ch = midi.channel(0);
+        ch.setInstrument(128);
+      }).toThrow(errors.general.instrumentRange);
+    });
+  }); // setName
 });
