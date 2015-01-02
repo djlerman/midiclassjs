@@ -1,67 +1,14 @@
+// # MIDIChannel
+
+'use strict';
+
 var data = require('./data');
 var errors = require('./errors');
 
-/**
- * @class MIDIChannel
- */
+// ## Overview
 
-function MIDIChannel(t, n, m) {
-  this._track = t;
-  this._number = n;
-  this._midi = m;
-  var trackLength = this._midi.track(0).countEvents();
-  this._totalTicks = 0;
-  m.track(0).addEvent({
-    timestamp: 0,
-    message: 'midiChannelPrefix',
-    parameters: {
-      value: this._number
-    }
-  });
-  m.track(0).addEvent({
-    timestamp: 0,
-    message: 'instrumentName',
-    parameters: {
-      value: 'unknown'
-    }
-  });
 
-  this._track.addEvent({
-    timestamp: 0,
-    message: 'sequenceTrackName',
-    parameters: {
-      value: 'channel' + n
-    }
-  });
-
-  this._track.addEvent({
-    timestamp: 0,
-    channel: this._number,
-    message: 'programChange',
-    parameters: {
-      program: 0
-    }
-  });
-  this._track.addEvent({
-    timestamp: 0,
-    channel: this._number,
-    message: 'controlChange',
-    parameters: {
-      program: data.controllers.VOLUME,
-      value: 64
-    }
-  });
-  this._meta = {
-    instrumentName: m.track(0).event(trackLength + 1)
-  };
-
-  this._events = {
-    trackName: 0,
-    program: 1,
-    volume: 2
-  };
-
-}
+// ## API
 
 /**
  * Returns this channel's assigned number. This is a read-only value.
@@ -69,6 +16,7 @@ function MIDIChannel(t, n, m) {
  * @method number
  * @returns {Number} between 0 and 15
  */
+
 MIDIChannel.prototype.number = function() {
   return this._number;
 };
@@ -205,8 +153,6 @@ MIDIChannel.prototype.event = function(index) {
  */
 
 MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
-  this._totalTicks += delta;
-
   var spec = data.typeMap[msg];
   var evt = {
     timestamp: delta,
@@ -219,33 +165,75 @@ MIDIChannel.prototype.addEvent = function(delta, msg, parameters) {
 };
 
 
-MIDIChannel.prototype.countEvents = function() {
-  return this._track.countEvents();
-};
-
+/**
+ * Creates a MIDI track representing this channel. Modifications
+ * to this track will not affect the channel.
+ * 
+ * @method toTrack
+ * @returns {MIDITrack}
+ */
 
 MIDIChannel.prototype.toTrack = function() {
   return this._track;
 };
 
-MIDIChannel.prototype.countTicks = function() {
-  return this._totalTicks;
-};
 
-MIDIChannel.prototype.eventsInBeat = function(beatIndex) {
-  var startTick = this._midi.getTiming().ticksPerBeat * beatIndex;
-  var endTick = startTick + this._midi.getTiming().ticksPerBeat;
-  var currentTick = 0;
-  var events = [];
+// ## Representation
 
-  for (var i = 0, n = this.countEvents(); i < n; i += 1) {
-    currentTick += this.event(i).timestamp;
-    if (startTick <= currentTick && currentTick <= endTick && this.event(
-        i).kind === 'channel') {
-      events.push(this.event(i));
+function MIDIChannel(t, n, m) {
+  this._track = t;
+  this._number = n;
+  this._midi = m;
+  
+  this._track.addEvent({
+    timestamp: 0,
+    message: 'midiChannelPrefix',
+    parameters: {
+      value: this._number
     }
-  }
-  return events;
-};
+  });
+  
+  this._track.addEvent({
+    timestamp: 0,
+    message: 'instrumentName',
+    parameters: {
+      value: 'unknown'
+    }
+  });
+
+  this._track.addEvent({
+    timestamp: 0,
+    message: 'sequenceTrackName',
+    parameters: {
+      value: 'channel' + n
+    }
+  });
+
+  this._track.addEvent({
+    timestamp: 0,
+    channel: this._number,
+    message: 'programChange',
+    parameters: {
+      program: 0
+    }
+  });
+  this._track.addEvent({
+    timestamp: 0,
+    channel: this._number,
+    message: 'controlChange',
+    parameters: {
+      program: data.controllers.VOLUME,
+      value: 64
+    }
+  });
+
+  this._events = {
+    instrumentName: 1,
+    trackName: 2,
+    program: 3,
+    volume: 4
+  };
+
+}
 
 module.exports = MIDIChannel;
