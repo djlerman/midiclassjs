@@ -1,7 +1,7 @@
 'use strict';
 
 var errors = require('../errors');
-var data = require('../Data');
+var data = require('../data');
 
 module.exports = importBinary;
 

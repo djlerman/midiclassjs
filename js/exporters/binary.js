@@ -1,7 +1,7 @@
 'use strict';
 
-var errors = require('../Errors');
-var data = require('../Data');
+var errors = require('../errors');
+var data = require('../data');
 var BinaryBuffer = require('./buffer');
 
 module.exports = exportBinary;
