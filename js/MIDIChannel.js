@@ -260,7 +260,7 @@ function MIDIChannel(n, t, mt) {
     channel: this._number,
     message: 'controlChange',
     parameters: {
-      program: data.controllers.VOLUME,
+      controller: data.controllers.VOLUME,
       value: 64
     }
   });
