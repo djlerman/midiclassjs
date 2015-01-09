@@ -1,9 +1,7 @@
 MIDITools
 =========
 
-### Library for creating and manipulating MIDI files, in-browser or in Node.js
-
-**javascript version of the _php midi class_ using midi.js**
+***Library for creating and manipulating MIDI files, in-browser or in Node.js***
 
 `MIDITools` is a library written in Node.js for
 [paragraphs here]
