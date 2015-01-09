@@ -28,8 +28,16 @@ MIDITrack.prototype.event = function(i) {
  * their appropriate index per the MIDI specification.
  *
  * @method addEvent
- * @throws {error.track.parameterMissing} if an event parameter
+ *
+ * @param {Object} evt
+ * The event object to add to the track
+ *
+ * @throws {errors.track.invalidMessage} if the event's `message`
+ *         property is invalid
+ * @throws {errors.track.parameterMissing} if an event parameter
  *         is missing
+ *
+ * @todo Add parameter information
  */
 
 MIDITrack.prototype.addEvent = function(evt) {
@@ -42,7 +50,13 @@ MIDITrack.prototype.addEvent = function(evt) {
  * `addEvent()`.
  *
  * @method addEvents
- * @throws {error.track.parameterMissing} if an event parameter
+ *
+ * @param {Object[]} evts
+ * The event objects to add to the track
+ *
+ * @throws {errors.track.invalidMessage} if the event's `message`
+ *         property is invalid
+ * @throws {errors.track.parameterMissing} if an event parameter
  *         is missing
  * @see addEvent
  */
@@ -53,10 +67,9 @@ MIDITrack.prototype.addEvents = function(evts) {
 
 
 /**
- * Replaces the event at index `i` with `evt`; `evt`'s
- * parameters are checked as if it were added
- * with `addEvent`. Throws an error if the parameters
- * are invalid, and preserves current track events.
+ * Replaces the event at index `i` with `evt`; `evt`'s parameters are
+ * checked as if it were added with `addEvent`. Throws an error if the
+ * parameters are invalid, and preserves current track events.
  * 
  * @method replaceEvent
  *
@@ -75,15 +88,21 @@ MIDITrack.prototype.replaceEvent = function(i, evt) {
 // Helper function; checks event parameters
 function checkEvent(evt) {
   var spec = data.typeMap[evt.message];
+  if (!spec) {
+    throw errors.track.invalidMessage;
+  }
   evt.kind = spec.kind;
 
   var checked = {};
   if (spec.length === 'variable') {
+    if (evt.parameters.value === undefined) {
+      throw errors.track.parameterMissing;
+    }
     checked.value = evt.parameters.value;
   } else {
     spec.parameters.forEach(function(p, index) {
-      if (evt.parameters[p.name] === 'undefined') {
-  throw errors.track.parameterMissing;
+      if (evt.parameters[p.name] === undefined) {
+        throw errors.track.parameterMissing;
       }
       checked[p.name] = evt.parameters[p.name];
       checked[index] = checked[p.name];

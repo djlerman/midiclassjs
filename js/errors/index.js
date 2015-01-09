@@ -8,7 +8,8 @@ exports.midi = {
   removeInvalidTrack: new Error('Attempted to remove a non-existent track.')
 };
 exports.track = {
-  parameterMissing: new Error('The event is missing a required parameter')
+  parameterMissing: new Error('The event is missing a required parameter.'),
+  invalidMessage: new Error('The event contains an invalid message.')
 };
 
 exports.general = {
