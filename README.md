@@ -18,9 +18,13 @@ $ npm install -g miditools
 Usage
 -----
 
+The MIDITools API has two layers:
+
+1. An API for working with MIDI files directly (`MIDIFile` and `MIDITrack`)
+2. A higher-level API for building new MIDI files (`MIDISequence` and `MIDIChannel`)
+
 Complete API
 ------------
-
 
 Contributing
 ------------
