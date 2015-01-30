@@ -31,6 +31,7 @@ describe('MIDITrack', function() {
           velocity: 0x70
         }
       });
+      expect(t.countEvents()).toBe(1);
       expect(t.event(0).parameters[0]).toBe(0x60);
       expect(t.event(0).parameters[1]).toBe(0x70);
     });
@@ -56,7 +57,7 @@ describe('MIDITrack', function() {
           velocity: 0x70
         }
       });
-
+      expect(t.countEvents()).toBe(2);
       expect(t.event(0).message).toBe('noteOn');
       expect(t.event(1).message).toBe('noteOff');
     });
@@ -89,6 +90,48 @@ describe('MIDITrack', function() {
           }
         });
       }).toThrow(errors.track.parameterMissing);
+    });
+  });
+  
+  describe('replaceEvent', function() {
+    it ('should remove only event', function() {
+      var t = new MIDITrack();
+      t.addEvent({
+        message: 'noteOn',
+        channel: 0,
+        timestamp: 0,
+        parameters: {
+          note: 0x60,
+          velocity: 0x70
+        }
+      });
+      t.removeEvent(0);
+      expect(t.countEvents()).toBe(0);
+    });
+    
+    it ('removes the correct index', function() {
+      var t = new MIDITrack();
+      t.addEvent({
+        message: 'noteOn',
+        channel: 0,
+        timestamp: 0,
+        parameters: {
+          note: 0x60,
+          velocity: 0x70
+        }
+      });
+      t.addEvent({
+        message: 'noteOff',
+        channel: 0,
+        timestamp: 0,
+        parameters: {
+          note: 0x60,
+          velocity: 0x70
+        }
+      });
+      t.removeEvent(1);
+      expect(t.countEvents()).toBe(1);
+      expect(t.event(0).message).toBe('noteOn');
     });
   });
   
@@ -134,6 +177,7 @@ describe('MIDITrack', function() {
       });
       expect(t.event(1).parameters.value).toBe(0x20);
     });
+    
     it ('should leave track unmodified when an error occurs', function() {
       var t = new MIDITrack();
       t.addEvent({

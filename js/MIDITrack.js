@@ -85,6 +85,20 @@ MIDITrack.prototype.replaceEvent = function(i, evt) {
 };
 
 
+/**
+ * Removes the event at index `i`.
+ * 
+ * @method replaceEvent
+ *
+ * @param {Number} i
+ * index of the event to remove
+ */
+
+MIDITrack.prototype.removeEvent = function(i, evt) {
+  this._events.splice(i, 1);
+};
+
+
 // Helper function; checks event parameters
 function checkEvent(evt) {
   var spec = data.typeMap[evt.message];

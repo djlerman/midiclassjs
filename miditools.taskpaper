@@ -1,7 +1,6 @@
 Up-front:
 	- pick a style convention @done(2014-11-14)
 	- pick a module-ordering scheme
-	- read styleguide in docs/ref
 API:
 	MIDIFile:
 		docs:
@@ -41,28 +40,29 @@ API:
 	MIDITrack:
 		docs:
 			- summary
+			- implementation
 		code:
-			addEvent(): @testing
-				- add valid event
-				- add invalid event
-				- add event with invalid type
-				- add event with invalid parameter(s)
-			removeEvent(i): @testing
-			replaceEvent(i): @code
-				- replace with valid event
-				- replace with invalid event
-				- replace event with invalid type - check preservation
-				- replace event with invalid parameter(s) - check preservation
-			event(i): @testing
-				- valid index
-				- invalid index
-				- check that copy is defensive
+			addEvent(): @done(2015-01-30)
+				- add valid event @done(2015-01-30)
+				- add invalid event @done(2015-01-30)
+				- add event with invalid type @done(2015-01-30)
+				- add event with invalid parameter(s) @done(2015-01-30)
+			removeEvent(i): @testing @done(2015-01-30)
+			replaceEvent(i): @done(2015-01-30)
+				- replace with valid event @done(2015-01-30)
+				- replace with invalid event @done(2015-01-30)
+				- replace event with invalid type - check preservation @done(2015-01-30)
+				- replace event with invalid parameter(s) - check preservation @done(2015-01-30)
+			event(i): @done(2015-01-30)
+				- valid index @done(2015-01-30)
+				- invalid index @done(2015-01-30)
 			countEvents(): @done(2014-11-18)
-			filterEvents(): @not-started
-				- decide on API
+			filterEvents(): @code @done(2015-01-30)
+				- decide on API @done(2015-01-30)
 	MIDISequence:
 		docs:
 			- summary
+			- implementation
 		code:
 			- getTempo() @code
 			- setTempo() @code
@@ -73,18 +73,6 @@ API:
 			- setTitle(t) @code
 			- exportFile() /* creates COPY first */ @started
 			- more metadata methods
-	Utils:
-		- eventToText(evt) @not-started
-		- eventToXML(evt) @not-started 
-		- textToEvent(txt) @not-started
-		- xmlToEvent(xml) @not-started
-		- transpose(numSteps) @not-started
-	MISC: Save / Load (?):
-		- data() @not-started
-		- loadData() @not-started
-	MISC: MIDI object supplement (?):
-		- MIDI.drumset @not-started
-		- MIDI.drumkitList @not-started
 	MIDIChannel: @done(2015-01-02)
 		docs: @done(2015-01-02)
 			- summary @done(2015-01-02)
@@ -100,6 +88,26 @@ API:
 			- event  @done(2015-01-02)
 			- addEvent  @done(2015-01-02)
 			- toTrack  @done(2015-01-02)
+	Utils:
+		- eventToText(evt) @not-started
+		- eventToXML(evt) @not-started 
+		- textToEvent(txt) @not-started
+		- xmlToEvent(xml) @not-started
+		- transpose(numSteps) @not-started
+	MISC: Save / Load (?):
+		- data() @not-started
+		- loadData() @not-started
+	MISC: MIDI object supplement (?):
+		- MIDI.drumset @not-started
+		- MIDI.drumkitList @not-started
+Demos:
+	- Convert
+	- Duration
+	- Export
+	- Import
+	- Manipulate
+	- Meta
+	- Sequencer
 MISC fixes:
 	- add andrew (and twitter handle) to the acknowledgements
 	- replace DOMLoader with custom async loader
@@ -107,4 +115,6 @@ MISC fixes:
 	- README updates
 	- check that beatLength() rets correct values
 	- remove noteInBeat()
+	- read styleguide in docs/ref
+	- remove styleguide in docs/ref
 
