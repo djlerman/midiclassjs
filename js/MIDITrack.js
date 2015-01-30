@@ -2,6 +2,7 @@
 
 var data = require('./data');
 var errors = require('./errors');
+
 //
 // ## Overview
 //

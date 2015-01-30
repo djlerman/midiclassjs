@@ -143,12 +143,11 @@ MIDIFile.prototype.getTiming = function() {
  *
  * @method setTiming
  * @param {Number|MIDIFile~FramesSpec} timing
- * if `timing` is a number, then the MIDIFile's division type
- * will be set to `ticksPerBeat` and the number will be used as the
- * value of this field. If `timing` is an object,
- * then it must have the properties `framesPerSecond` and
- * `ticksPerFrame`, and these will be used to set the
- * time division as documented in TODO
+ * if `timing` is a number, then the MIDIFile's division type will be
+ * set to `ticksPerBeat` and the number will be used as the value of
+ * this field. If `timing` is an object, then it must have the
+ * properties `framesPerSecond` and `ticksPerFrame`, and these will be
+ * used to set the time division as documented in TODO
  *
  */
 
