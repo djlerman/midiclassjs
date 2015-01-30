@@ -220,6 +220,8 @@ MIDIChannel.prototype.toTrack = function() {
 /**
  * **Note: Clients should not normally use this constructor.**
  *
+ * @constructs MIDIChannel
+ *
  * @param {Number} n the number of this channel
  * @param {MIDITrack} t the representative track. It should be empty.
  * @param {MIDITrack} mt the track to use for metadata
