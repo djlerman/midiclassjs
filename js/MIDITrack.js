@@ -2,18 +2,23 @@
 
 var data = require('./data');
 var errors = require('./errors');
+//
+// ## Overview
+//
 
-function MIDITrack() {
-  this._events = [];
-  this._eventTypes = {};
-}
+// Represents a single track within a MIDI file. A track is a sequence
+// of *events*. The MIDITrack API allows checked access to its event
+// objects.
 
+//
+// ## API
+//
 
 /**
  * Returns the event object at index `i`.
  * 
  * @method event
- * @returns {Event} the `i`th event object in this track
+ * @returns {Object} the `i`th event object in this track
  */
 
 MIDITrack.prototype.event = function(i) {
@@ -29,15 +34,17 @@ MIDITrack.prototype.event = function(i) {
  *
  * @method addEvent
  *
- * @param {Object} evt
- * The event object to add to the track
+ * @param {Object} evt The event object to add to the track. It must
+ * follow the required structure of event objects as specified in the
+ * overview.
+ * 
+ * @todo TODO link to overview
  *
  * @throws {errors.track.invalidMessage} if the event's `message`
  *         property is invalid
  * @throws {errors.track.parameterMissing} if an event parameter
  *         is missing
  *
- * @todo Add parameter information
  */
 
 MIDITrack.prototype.addEvent = function(evt) {
@@ -155,5 +162,24 @@ MIDITrack.prototype.filterEvents = function(msg) {
     return (evt.message === msg);
   });
 };
+
+
+//
+// ## Representation
+//
+
+// The MIDITrack object is a simple wrapper around an array,
+// providing checking for `addEvent` and `replaceEvent`
+
+
+/**
+ * **Note: Clients should not normally use this constructor.**
+ *
+ * @constructs MIDITrack
+ */
+
+function MIDITrack() {
+  this._events = [];
+}
 
 module.exports = MIDITrack;

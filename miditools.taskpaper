@@ -12,7 +12,8 @@ API:
 				- with type 1 @done(2014-11-18)
 				- with invalid type @done(2014-11-18)
 			tracks: @done(2014-11-18)
-				- addTrack() @code @done(2014-11-18)
+				- addTrack() @docs
+				small amout of documentation left to complete
 					- second track goes to type 1 @done(2014-11-18)
 					- too many throws error @done(2014-11-18)
 				- removeTrack() @code @done(2014-11-18)
