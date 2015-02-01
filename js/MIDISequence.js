@@ -5,6 +5,8 @@ var errors = require('./errors');
 var data = require('./data');
 var util = require('./util');
 
+var MAX_CHANNEL_INDEX = 15;
+
 function MIDISequence() {
   this._midi = new MIDIFile();
   this._channels = [];
@@ -39,6 +41,19 @@ function MIDISequence() {
   };
 }
 
+/**
+ * Counts the total number of beats in the sequence, based on the
+ * channel which has the largest number of beats.  This value will be
+ * a whole number. If the sequence's events take up some percentage of
+ * a beat, that beat will be counted.  For example, given a sequence
+ * in 4/4 time whose events represent 2 quarter-notes followed by a
+ * 32nd note, this method will return 3, even though the third beat is
+ * not completely specified.
+ *
+ * @method countBeats()
+ *
+ * @returns {Number} the total number of beats in this sequence
+ */
 MIDISequence.prototype.countBeats = function() {
   return Math.ceil(getLargestTickCount(this) / this.ticksPerBeat());
 };
@@ -73,6 +88,7 @@ MIDISequence.prototype.setTempo = function(bpm) {
   this._tempo = parseInt(bpm);
   this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(bpm);
   // TODO: create a utility checkEvent?
+
   this._meta.tempo.parameters[0] = util.bpmToTempo(bpm);
 
 };
@@ -119,16 +135,32 @@ MIDISequence.prototype.usedChannels = function() {
   return used;
 };
 
-
+/**
+ * @method channel(i)
+ *
+ * @param {Number} i
+ * The number of channel to return.
+ *
+ * @throws {errors.parameters.Type} if channel is outside of range
+ * `[0, 15]`.
+ *
+ * @returns {MIDIChannel} The channel at index `i`
+ */
 MIDISequence.prototype.channel = function(n) {
+  if (n < 0 || n > MAX_CHANNEL_INDEX) {
+    throw errors.general.channelRange;
+  }
+  
   if (!this._channels[n]) {
     var trackCount = this._midi.countTracks();
     this._midi.addTrack();
     this._channels[n] = new MIDIChannel(n, this._midi.track(trackCount), this
       ._midi.track(0));
   }
+  
   return this._channels[n];
 };
+
 
 MIDISequence.prototype.countTicks = function() {
   return this.usedChannels().reduce(function(maxTicks, current) {

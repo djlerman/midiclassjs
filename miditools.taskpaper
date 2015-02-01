@@ -12,8 +12,7 @@ API:
 				- with type 1 @done(2014-11-18)
 				- with invalid type @done(2014-11-18)
 			tracks: @done(2014-11-18)
-				- addTrack() @docs
-				small amout of documentation left to complete
+				- addTrack() @done(2014-11-18)
 					- second track goes to type 1 @done(2014-11-18)
 					- too many throws error @done(2014-11-18)
 				- removeTrack() @code @done(2014-11-18)
@@ -39,11 +38,12 @@ API:
 				- exportText @started
 				- exportXML @not-started
 	MIDITrack:
-		docs:
-			- summary
-			- implementation
+		docs: @done(2015-01-30)
+			- summary @done(2015-01-30)
+			- implementation @done(2015-01-30)
 		code:
-			addEvent(): @done(2015-01-30)
+			addEvent(): @docs
+				small amount of documentation left to complete
 				- add valid event @done(2015-01-30)
 				- add invalid event @done(2015-01-30)
 				- add event with invalid type @done(2015-01-30)
@@ -65,14 +65,36 @@ API:
 			- summary
 			- implementation
 		code:
-			- getTempo() @code
-			- setTempo() @code
-			- soloChannel(i) @not-started
-			- transpose(numSteps) @not-started
-			- channel(i) @code
-			- getTitle() @code
-			- setTitle(t) @code
-			- exportFile() /* creates COPY first */ @started
+			- getTempo()
+				- doc
+				- tests
+			- setTempo()
+				- doc
+				- tests
+			- soloChannel(i)
+				- doc
+				- tests
+				- code
+			- transpose(numSteps)
+				- code
+				- doc
+				- tests
+			- channel(i)
+				- doc
+				- tests @done(2015-02-01)
+			- getTitle()
+				- doc
+				- tests
+			- setTitle(t) 
+				- doc
+				- tests
+			- exportFile()
+				- code  /* creates COPY first */ 
+				- doc
+				- tests
+			- countBeats() @done(2015-02-01)
+				- doc @done(2015-02-01)
+				- tests @done(2015-02-01)
 			- more metadata methods
 	MIDIChannel: @done(2015-01-02)
 		docs: @done(2015-01-02)
@@ -118,4 +140,5 @@ MISC fixes:
 	- remove noteInBeat()
 	- read styleguide in docs/ref
 	- remove styleguide in docs/ref
+	- add event object specification to documentation
 

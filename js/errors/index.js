@@ -14,7 +14,8 @@ exports.track = {
 
 exports.general = {
   volumeRange: new RangeError('invalid volume (outside 0 - 127)'),
-  instrumentRange: new RangeError('invalid instrument ID (outside 0 - 127)')
+  instrumentRange: new RangeError('invalid instrument ID (outside 0 - 127)'),
+  channelRange: new RangeError('invalid channel ID (outside 0 - 15)')
 };
 
 exports.import = {
