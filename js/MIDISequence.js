@@ -88,6 +88,8 @@ MIDISequence.prototype.getTempo = function() {
  * Sets the initial tempo of the song in bpm. To change the tempo
  * *during* the song, use the `changeTempo()` event.
  *
+ * @method setTempo(bpm)
+ *
  * @param {Number} bpm - Initial tempo in beats per minute
  *
  * @throws {errors.general.tempoRange} if tempo is outside of range
