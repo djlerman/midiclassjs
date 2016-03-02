@@ -1,140 +1,113 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>MIDITools Demos - Sequencer</title>
+<html><head>
+    <title>MIDITools Demos - Sequencer</title>
 
-<script src="../lib/MIDI.js/MIDI.js"></script>
-<script src="../lib/MIDI.js/inc/jasmid/stream.js"></script>
-<script src="../lib/MIDI.js/inc/jasmid/midifile.js"></script>
-<script src="../lib/MIDI.js/inc/jasmid/replayer.js"></script>
-<script src="../lib/MIDI.js/inc/base64binary.js"></script>
+    <script src="../lib/MIDI.js/MIDI.js"></script>
+    <script src="../lib/MIDI.js/inc/jasmid/stream.js"></script>
+    <script src="../lib/MIDI.js/inc/jasmid/midifile.js"></script>
+    <script src="../lib/MIDI.js/inc/jasmid/replayer.js"></script>
+    <script src="../lib/MIDI.js/inc/base64binary.js"></script>
 
-<script src="../dist/midiclassjs.js"></script>
+    <script src="../dist/midiclassjs.js"></script>
 
-<link rel="stylesheet" href="css/960.css" />
-<link rel="stylesheet" href="css/sequencer.css" />
+    <link rel="stylesheet" type="text/css" href="../bower_components/semantic/dist/semantic.css">
 
 </head>
 
 <body>
-  <div class="bar">
-    <div class="container_12">
-    <div class="status grid_2 ">
-      <span class="label bar-label">Status:</span>
-      <span class="status-value">ready</span>
-    </div>
-    <button class="grid_1 push_9 demo-list-button">Demos<span class="arrow"></span></button>
-  </div> <!-- container_12 -->
-  </div> <!-- bar -->
-  <div class="demo-list-container container_12">
-    <ul role="menu" class="grid_2 push_10 demo-list-items">
-      <li class="demo-list-item">Sequencer</li>
-      <li class="demo-list-item">Import Tools</li>
-      <li class="demo-list-item">Export Tools</li>
-      <li class="demo-list-item">Analysis Tools</li>
-    </ul>
-  </div>
-  <div class="container_12">
-  <div class="grid_9 box sequencer">
-    <form>
-    <div class="box-header"><span class="label">Channels</span></div>
-    <table class="seq-tracks">
-    <thead>
-      <tr class="grid_9 alpha omega">
-        <th class="grid_1 alpha">Play?</th>
-        <th class="grid_1">Instrument</th>
-        <th class="grid_1">Volume</th>
-        <th class="grid_6 omega">Notes</th>
-      </tr>
-    </thead>
+    <div class="ui main container">
+        <h1 class="ui dividing header">Demos</h1>
+        <div class="ui grid">
+            <div class="four wide column">
+                <form class="ui segment">
+                    <h4 class="ui header">Saved Songs</h4>
+                    <div class="ui form">
+                        <div class="inline field">
+                            <label>bolero</label>
+                            <div class="mini ui buttons">
+                                <button class="ui mini button">Remove</button>
+                                <span class="or"></span>
+                                <button class="ui mini button positive">
+                                    Load
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer"></div>
+                </form>
+                <div class="ui card">
+                    <div class="ui content horizontal list">
+                        <div class="item">
+                            <i class="ui circular music icon large"></i>
+                            <div class="content">
+                                <div class="ui sub header">Current Song</div>
+                                Bolero
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <span class="right floated">
+                            <i class="heart outline like icon"></i>
+                            717 events
+                        </span>
+                        <i class="comment icon"></i>
+                        3 tracks
+                    </div>
+                    <div class="content">
+                        <div class="three ui icon buttons">
+                            <button class="ui button">
+                                <i class="play icon"></i>
+                            </button>
+                            <button class="ui button">
+                                <i class="download icon"></i>
+                            </button>
+                            <button class="ui button">
+                                <i class="pause icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <div class="ui top attached tabular menu">
+                    <a class="active item" data-tab="first">Sequencer</a>
+                    <a class="item" data-tab="second">Import</a>
+                    <a class="item" data-tab="third">Export</a>
+                    <a class="item" data-tab="third">Analysis</a>
+                </div>
+                <div class="ui bottom attached active tab segment" data-tab="first">
+                    <div class="box-header"><span class="label">Channels</span></div>
+                    <table class="seq-tracks">
+                        <thead>
+                            <tr class="grid_9 alpha omega">
+                                <th class="grid_1 alpha">Play?</th>
+                                <th class="grid_1">Instrument</th>
+                                <th class="grid_1">Volume</th>
+                                <th class="grid_6 omega">Notes</th>
+                            </tr>
+                        </thead>
 
-    <tbody>
-      <tr class="grid_9 alpha omega">
-        <td class="grid_1 alpha"><input type="checkbox"></td>
-        <td class="grid_1">asdf</td>
-        <td class="grid_1"><input class="volume" type="range" min="0" max="127" step="1" /></td>
-        <td class="grid_6 omega"></td>
-      </tr>
-    </tbody>
-    </table>
+                        <tbody>
+                            <tr class="grid_9 alpha omega">
+                                <td class="grid_1 alpha"><input type="checkbox"></td>
+                                <td class="grid_1">asdf</td>
+                                <td class="grid_1"><input class="volume" type="range" min="0" max="127" step="1"></td>
+                                <td class="grid_6 omega"></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-      <div class="box-footer">
-        <label class="label grid_1 alpha" for="bpm">BPM:</label>
-        <input id="bpm" class="grid_1" type="text" pattern="\d+" title="Only numbers allowed"/>
-        
-        <label class="label grid_1" for="measures">Measures:</label>
-        <input id="measures" class="grid_1" type="text" pattern="\d+" title="Only numbers allowed">
-        
-        <input class="submit grid_1 push_4  omega" type="submit" value="Set">
-      </div>
-    </form>
-  </div>
-  
-  <div class="saved box grid_3">
-    <form>
-    <div class="box-header"><span class="label">Saved Songs</span></div>
-      <table class="seq-tracks">
-        <thead>
-          <tr>
-            <th class="grid_1 alpha">Name</th>
-            <th class="grid_2 omega">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="grid_1 alpha">bolero</td>
-            <td class="grid_1 "><button>Load</button></td>
-            <td class="grid_1 omega"><button>Remove</button></td>
-          </tr>
-        </tbody>
-    </table>
-    <div class="box-footer"></div>
-    </form>
-  </div>
-  <div class="clear"></div>
-  <div class="current box push_9 grid_3">
-    <div class="box-header"><span class="label">Current Song</span></div>
-    <form>
-    <div class="grid_2 alpha">
-      <label for="seq-name">Name:</label>
-      <input id="seq-name" type="text">
-    </div>
-    </form>
-    <button class="grid_1 omega">Save</button>
-    <div class="clear"></div>
-    <div class="grid_1 alpha">Tracks: <span>0</span></div>
-    <div class="grid_1">Events: <span>0</span></div>
-    <div class="clear"></div>
-    <button class="grid_1 alpha">Start</button>
-    <button class="grid_1">Stop</button>
-    <div class="grid_1 omega"><a href="#">Download</a></div>
+                    <div class="box-footer">
+                        <label class="label grid_1 alpha" for="bpm">BPM:</label>
+                        <input id="bpm" class="grid_1" type="text" pattern="\d+" title="Only numbers allowed">
 
-    
+                        <label class="label grid_1" for="measures">Measures:</label>
+                        <input id="measures" class="grid_1" type="text" pattern="\d+" title="Only numbers allowed">
 
-  </div>
-  </div> <!-- container -->
-
-<script>
-var button = document.getElementsByClassName('demo-list-button')[0];
-button.addEventListener('click', function(evt) {
-  var menu = document.getElementsByClassName('demo-list-items')[0];
-  menu.style.display = 'block';
-  window.addEventListener('click', createHideListener(menu), false);
-  evt.preventDefault();
-  evt.cancelBubble = true;
-});
-
-function createHideListener(menu) {
-  var hider = function hider(event) {
-    if (event.currentTarget !== menu) {
-      menu.style.display = 'none';
-    }
-    window.removeEventListener(hider);
-  }
-  return hider;
-}
-
-</script>
-
+                        <input class="submit grid_1 push_4  omega" type="submit" value="Set">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- container -->
 </body>
 </html>
