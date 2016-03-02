@@ -67,10 +67,10 @@ API:
 		code:
 			- getTempo()
 				- doc
-				- tests
-			- setTempo()
-				- doc
-				- tests
+				- tests @done(2016-03-01)
+			- setTempo() @done(2016-03-01)
+				- doc @done(2016-03-01)
+				- tests @done(2016-03-01)
 			- soloChannel(i)
 				- doc
 				- tests
