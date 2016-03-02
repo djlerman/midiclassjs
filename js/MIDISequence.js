@@ -125,6 +125,13 @@ MIDISequence.prototype.setName = function(name) {
 };
 
 
+/**
+ * Returns all MIDIChannels that contain messages within this MIDISequence.
+ *
+ * @method usedChannels()
+ *
+ * @returns {MIDIChannel[]} MIDIChannels with messages
+ */
 MIDISequence.prototype.usedChannels = function() {
   var used = [];
   for (var i = 0; i < 16; i += 1) {
@@ -136,28 +143,28 @@ MIDISequence.prototype.usedChannels = function() {
 };
 
 /**
- * @method channel(i)
+ * @method channel(n)
  *
- * @param {Number} i
+ * @param {Number} n
  * The number of channel to return.
  *
  * @throws {errors.parameters.Type} if channel is outside of range
  * `[0, 15]`.
  *
- * @returns {MIDIChannel} The channel at index `i`
+ * @returns {MIDIChannel} The channel at index `n`
  */
 MIDISequence.prototype.channel = function(n) {
   if (n < 0 || n > MAX_CHANNEL_INDEX) {
     throw errors.general.channelRange;
   }
-  
+
   if (!this._channels[n]) {
     var trackCount = this._midi.countTracks();
     this._midi.addTrack();
     this._channels[n] = new MIDIChannel(n, this._midi.track(trackCount), this
       ._midi.track(0));
   }
-  
+
   return this._channels[n];
 };
 
