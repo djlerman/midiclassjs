@@ -84,14 +84,25 @@ MIDISequence.prototype.getTempo = function() {
   return this._tempo;
 };
 
+/**
+ * Sets the initial tempo of the song in bpm. To change the tempo
+ * *during* the song, use the `changeTempo()` event.
+ *
+ * @param {Number} bpm - Initial tempo in beats per minute
+ *
+ * @throws {errors.general.tempoRange} if tempo is outside of range
+ * `[1, 60000]`.
+ */
 MIDISequence.prototype.setTempo = function(bpm) {
+  if (bpm <= 0 || bpm > 60000) {
+    throw errors.general.tempoRange;
+  }
   this._tempo = parseInt(bpm);
   this._meta.tempo.parameters.microsecondsPerBeat = util.bpmToTempo(bpm);
   // TODO: create a utility checkEvent?
-
   this._meta.tempo.parameters[0] = util.bpmToTempo(bpm);
-
 };
+
 MIDISequence.prototype.changeTempo = function(when, bpm) {
   var tempoEvent = {
     timestamp: when,
@@ -148,7 +159,7 @@ MIDISequence.prototype.usedChannels = function() {
  * @param {Number} n
  * The number of channel to return.
  *
- * @throws {errors.parameters.Type} if channel is outside of range
+ * @throws {errors.general.channelRange} if channel is outside of range
  * `[0, 15]`.
  *
  * @returns {MIDIChannel} The channel at index `n`

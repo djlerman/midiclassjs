@@ -164,5 +164,23 @@ describe('MIDISequence', function() {
       midi.setTempo(240);
       expect(midi.getTempo()).toEqual(240);
     });
+
+    it('should throw error given 0 value', function() {
+      expect(function() {
+        midi.setTempo(0);
+      }).toThrow(errors.general.tempoRange);
+    });
+
+    it('should throw error given negative value', function() {
+      expect(function() {
+        midi.setTempo(-1);
+      }).toThrow(errors.general.tempoRange);
+    });
+
+    it('should throw error given value > 60000', function() {
+      expect(function() {
+        midi.setTempo(60001);
+      }).toThrow(errors.general.tempoRange);
+    });
   });
 });
