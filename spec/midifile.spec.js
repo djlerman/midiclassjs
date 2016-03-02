@@ -3,7 +3,7 @@ var mt = require('../js/index');
 describe('MIDIFile', function() {
 
   describe('construction', function() {
-    
+
     it('creates an empty midifile', function() {
       var midi = mt.createMIDI();
       expect(midi.countTracks()).toBe(0);
@@ -12,12 +12,11 @@ describe('MIDIFile', function() {
       expect(midi.type()).toBe(0);
     });
 
-    
     it('creates a Type-1 file when passed valid parameter', function() {
       expect(mt.createMIDI(1).type()).toBe(1);
     });
 
-    
+
     it('throws error on invalid parameter', function() {
       expect(function() {
         mt.createMIDI(2);
@@ -32,7 +31,7 @@ describe('MIDIFile', function() {
       expect(midi.track(0)).toBe(track0);
     });
 
-   
+
     it('throws error on invalid call', function() {
       expect(function() {
 	mt.createMIDI().track(0);
@@ -105,7 +104,7 @@ describe('MIDIFile', function() {
 	framesPerSecond: 25,
 	ticksPerFrame: 40
       });
-      
+
       expect(midi.getTiming().type).toBe('framesPerSecond');
       expect(midi.getTiming().framesPerSecond).toBe(25);
       expect(midi.getTiming().ticksPerFrame).toBe(40);
