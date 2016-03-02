@@ -79,8 +79,8 @@ API:
 				- code
 				- doc
 				- tests
-			- channel(i)
-				- doc
+			- channel(i) @done(2016-03-01)
+				- doc  @done(2016-03-01)
 				- tests @done(2015-02-01)
 			- getTitle()
 				- doc

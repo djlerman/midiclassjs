@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 
     markdown: {
       all: {
-        files: [{ 
+        files: [{
           expand: true,
           src: 'docs/ref/*.md',
           dest: '.',
@@ -84,7 +84,7 @@ module.exports = function(grunt) {
     ],
     register: [{
       name: 'test',
-      tasks: ['jshint']
+      tasks: ['jshint', 'jasmine_node']
     }, {
       name: 'default',
       tasks: ['jshint', 'browserify']
